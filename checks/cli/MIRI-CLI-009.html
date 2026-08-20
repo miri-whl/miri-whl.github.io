@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-009 — One output flag · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-009 — One output flag</h1>
+<p class="lede">The same flag (e.g. <code>--json</code>) selects it on every command — no per-command variants</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge maintenance">severity MEDIUM · 3</span>
+  <span class="tag">weight 2</span>
+  
+  
+  <span class="tag">Landscape §2.3 (Chow)</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-009.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-009.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-009.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ tool list --json
+{&quot;items&quot;: []}
+$ tool status --json
+error: unknown flag: --json (did you mean --output json?)
+# same tool, two grammars for the same concept</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ tool list --json | jq -e .schema_version
+&quot;1&quot;
+$ tool status --json | jq -e .schema_version
+&quot;1&quot;            # one flag, inherited by every command from the root parser</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>The ecosystem&#x27;s own fragmentation shows the cost: kubectl selects JSON with <code>-o json</code>, docker with <code>--format json</code>, and gh with <code>--json &lt;fields&gt;</code> — three grammars for one concept, so nothing an agent learns on one tool transfers to the next. Inside a single CLI the same inconsistency is strictly worse (Chow, landscape §2.3): an agent that learned <code>--json</code> on one command constructs it on the next, gets <code>unknown flag</code>, and from then on treats the whole tool as unreliable, re-verifying every invocation it should have been able to generalize.</p>
+
+<h2>Definition</h2>
+<p>Agents parse stdout; anything unstructured, inconsistent, or polluted forces guesswork and burns recovery turns. This check verifies: The same flag (e.g. <code>--json</code>) selects it on every command — no per-command variants.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>Different commands select machine output with different flags (<code>--json</code> on some, <code>--output json</code> or <code>--format=json</code> on others)</li><li>The root-level output flag exists but is rejected by some subcommands</li><li><code>--describe</code> records per-command output-flag names that differ from the root flag</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Pick one output flag and use it everywhere.</p>
+<ol class="plain">
+  <li>Define the output flag once at the root parser and inherit it everywhere: cobra <code>PersistentFlags()</code>, clap <code>global = true</code>, argparse via a shared parent parser</li><li>Migrate stragglers by aliasing the legacy per-command spelling to the root flag, marking the alias with a <code>lifecycle</code> block (<code>deprecated_since</code>, <code>replacement</code>) per CLI Spec §6 until removal</li><li>Assert uniformity in CI: every command in <code>--describe</code> accepts the root output flag and lists no variant spellings</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
+  <dt>violation_unit</dt><dd>each inconsistent command</dd>
+  
+  <dt>population_unit</dt><dd>all commands in --describe</dd>
+  
+  
+  <dt>category</dt><dd>Machine Output</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/landscape-and-prior-art.md">Landscape §2.3 (Chow)</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-009.yaml" class="mono">MIRI-CLI-009.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-009.html" class="mono">MIRI-CLI-009.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-008.html">← MIRI-CLI-008</a>
+  <a href="MIRI-CLI-010.html">MIRI-CLI-010 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

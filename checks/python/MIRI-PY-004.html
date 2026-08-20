@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-004 — Declarative build config · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-004 — Declarative build config</h1>
+<p class="lede"><code>pyproject.toml</code> with <code>[project]</code> table drives the build</p>
+
+<div class="badgerow">
+  <span class="badge neutral">should</span>
+  <span class="badge neutral">severity MINOR · 2</span>
+  <span class="tag">weight 2</span>
+  
+  
+  <span class="tag">PEP 621</span><span class="tag">PEP 517</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-004.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-004.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-004.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">pyproject.toml: absent
+setup.py:
+  version = subprocess.check_output([&#x27;git&#x27;, &#x27;describe&#x27;]).decode()
+  setup(name=&#x27;example-sdk&#x27;, version=version,
+        install_requires=open(&#x27;reqs.txt&#x27;).read().splitlines())
+# nothing here is knowable without executing the file</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">pyproject.toml:
+  [build-system]
+  requires = [&quot;hatchling&quot;]
+  build-backend = &quot;hatchling.build&quot;
+  [project]
+  name = &quot;example-sdk&quot;
+  version = &quot;2.1.0&quot;
+  dependencies = [&quot;httpx&gt;=0.27&quot;]</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>A setup.py is executed code: the only way to learn the metadata inside it is to run it, which is why static analyzers, index scanners, and Miri&#x27;s own generators cannot see it — and why sdist installs remain an arbitrary-code-execution point. PEP 621&#x27;s <code>[project]</code> table makes name, version, dependencies, and entry points readable by parsing one TOML file, the same property the Miri build step relies on to generate agent-metadata/ without importing the package. PEP 517&#x27;s <code>[build-system]</code> table lets any frontend build the wheel deterministically instead of guessing at a setup.py invocation.</p>
+
+<h2>Definition</h2>
+<p>Miri builds on the existing packaging standards rather than replacing them; a wheel that violates the baseline cannot carry trustworthy agent metadata. This check verifies: <code>pyproject.toml</code> with <code>[project]</code> table drives the build.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>The project ships no pyproject.toml, or pyproject.toml lacks a <code>[project]</code> table</li><li>Name, version, or dependencies are discoverable only by executing setup.py or reading setup.cfg</li><li>No <code>[build-system]</code> table declares <code>requires</code> and <code>build-backend</code></li><li><code>[project]</code> marks a field <code>dynamic</code> without a declared tool source that supplies it</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Move project metadata to the [project] table of pyproject.toml.</p>
+<ol class="plain">
+  <li>Move name, version, dependencies, optional-dependencies, and entry points into <code>[project]</code> (PEP 621); if the version is computed, declare <code>dynamic = [&quot;version&quot;]</code> backed by setuptools-scm or hatch-vcs rather than code in setup.py</li><li>Declare <code>[build-system]</code> with <code>requires</code> and <code>build-backend</code> (PEP 517/518)</li><li>Keep setup.py only as an empty <code>setup()</code> shim if a legacy toolchain still requires one</li><li>Validate the file in CI with <code>validate-pyproject pyproject.toml</code></li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MINOR (numeric 2 of 5)</dd>
+  <dt>violation_unit</dt><dd>the build configuration</dd>
+  
+  
+  <dt>category</dt><dd>Packaging Baseline</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://peps.python.org/pep-0621/">PEP 621</a></li>
+  
+  <li><a href="https://peps.python.org/pep-0517/">PEP 517</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-004.yaml" class="mono">MIRI-PY-004.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-004.html" class="mono">MIRI-PY-004.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-003.html">← MIRI-PY-003</a>
+  <a href="MIRI-PY-005.html">MIRI-PY-005 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

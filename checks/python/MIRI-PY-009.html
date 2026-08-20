@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-009 — migration-guide.json valid · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-009 — migration-guide.json valid</h1>
+<p class="lede">Present for any non-initial release; validates against schema</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge maintenance">severity MEDIUM · 3</span>
+  <span class="tag">weight 3</span>
+  <span class="tag">conditional</span>
+  <span class="tag">requires network</span>
+  <span class="tag">Agent Metadata §4.3</span><span class="tag">schema</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-009.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-009.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-009.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">example_sdk 2.1.0 wheel contents:
+  example_sdk/agent-metadata/sdk-manifest.json
+  example_sdk/agent-metadata/usage-patterns.json
+# no migration-guide.json — an agent trained on 2.0.x keeps calling
+# Client.execute(), renamed in 2.1, with no machine-readable correction</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">agent-metadata/migration-guide.json:
+{&quot;from_version&quot;: &quot;2.0.x&quot;, &quot;to_version&quot;: &quot;2.1.0&quot;, &quot;migration_type&quot;: &quot;minor&quot;,
+ &quot;generated_at&quot;: &quot;2026-08-01T12:00:00Z&quot;,
+ &quot;summary&quot;: {&quot;breaking_changes&quot;: 1, &quot;new_features&quot;: 2, &quot;deprecations&quot;: 1},
+ &quot;deprecations&quot;: [{&quot;id&quot;: &quot;execute_rename&quot;, &quot;deprecated&quot;: &quot;Client.execute()&quot;,
+   &quot;replacement&quot;: &quot;Client.query()&quot;, &quot;removal_version&quot;: &quot;3.0.0&quot;}]}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>A coding agent&#x27;s knowledge of an API is frozen at its training cutoff, and the effect is measured, not hypothetical: empirical studies of LLM code completion report deprecated-API usage rates of 25-38% across eight popular Python libraries, because the model writes for version N-1 against an installed version N. migration-guide.json is the machine-readable delta that closes this gap at generation time, and per Agent Metadata §4.3 its <code>deprecations</code> MUST be derived from the code&#x27;s PEP 702 <code>@deprecated</code> markers, so the guide cannot drift from what the interpreter itself warns about. A non-initial release that ships without one strands every frozen-knowledge consumer with no structured path forward.</p>
+
+<h2>Definition</h2>
+<p>The agent-metadata directory is the wheel&#x27;s machine-readable surface; every file in it must be present, schema-valid, and generated at build time so agents can consume it without parsing or guessing. This check verifies: Present for any non-initial release; validates against schema.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>The wheel is not the project&#x27;s first release and <code>agent-metadata/migration-guide.json</code> is absent</li><li>The document fails migration-guide-v1.json validation (any of from_version, to_version, migration_type, generated_at, summary missing)</li><li><code>to_version</code> does not equal the wheel&#x27;s own version, or <code>from_version</code> names no actually published prior release line</li><li>A <code>deprecations</code> entry lacks id, deprecated, or replacement</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Generate migration-guide.json for every non-initial release.</p>
+<ol class="plain">
+  <li>Generate migration-guide.json in the release build, deriving <code>deprecations</code> from PEP 702 markers (<code>warnings.deprecated</code> on Python 3.13+, <code>typing_extensions.deprecated</code> earlier)</li><li>Set <code>to_version</code> to the release being built and <code>from_version</code> to the prior supported line (e.g. &quot;2.0.x&quot;)</li><li>Populate <code>breaking_changes</code> with old_code/new_code pairs, adding <code>automated_fix</code> find/replace patterns where a mechanical rewrite exists</li><li>Cover every release line still under support, not only N-1</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
+  <dt>violation_unit</dt><dd>each schema violation in migration-guide.json</dd>
+  
+  
+  <dt>requirements</dt><dd>network</dd>
+  
+  <dt>category</dt><dd>Agent Metadata Core</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/agent-metadata-specification.md">Agent Metadata §4.3</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/../../schemas/migration-guide-v1.json">schema</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-009.yaml" class="mono">MIRI-PY-009.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-009.html" class="mono">MIRI-PY-009.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-008.html">← MIRI-PY-008</a>
+  <a href="MIRI-PY-010.html">MIRI-PY-010 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

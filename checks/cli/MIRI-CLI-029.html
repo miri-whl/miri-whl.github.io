@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-029 — changelog --since · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-029 — changelog --since</h1>
+<p class="lede"><code>changelog --since &lt;v&gt; --json</code> implemented</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity HIGH · 4</span>
+  <span class="tag">weight 4</span>
+  
+  
+  <span class="tag">CLI Spec §5.2</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-029.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-029.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-029.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ acme-cli changelog --since 3.0.0 --json
+Error: unknown command &quot;changelog&quot; for &quot;acme-cli&quot;
+# the only changelog is prose on the forge — nothing a returning agent can query</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ acme-cli changelog --since 3.0.0 --json
+{&quot;schema_version&quot;: &quot;1&quot;, &quot;releases&quot;: [
+  {&quot;version&quot;: &quot;3.1.0&quot;, &quot;added&quot;: [&quot;--output archive&quot;], &quot;deprecated&quot;: [&quot;--export&quot;]},
+  {&quot;version&quot;: &quot;3.2.0&quot;, &quot;removed&quot;: [&quot;--export&quot;]}]}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p><code>check-update</code> says only *that* the tool moved; <code>changelog --since</code> says *what* moved. It is the recovery primitive for consumers whose knowledge froze at an older release — frozen weights can never read release notes, and a skill file is only as fresh as its last regeneration (landscape §3.1). Without it, an agent returning after three releases rediscovers surface changes by trial and error: construct from stale knowledge, hit an error, retry with hallucinated variants — the silent degradation loop in which no bug report is ever filed.</p>
+
+<h2>Definition</h2>
+<p>An agent that has been away for three releases must be able to ask what moved; update state must be queryable, passive, and honest offline. This check verifies: <code>changelog --since &lt;v&gt; --json</code> implemented.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>no <code>changelog</code> subcommand exists, or <code>changelog --since &lt;v&gt; --json</code> exits non-zero for a version that exists in the published release history</li><li><code>--since</code> rejects valid prior versions or ignores the bound and dumps the full history</li><li>output is not a JSON document on stdout grouped per release between <code>&lt;v&gt;</code> and the current version</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Implement changelog --since &lt;version&gt; --json per CLI Spec §5.2.</p>
+<ol class="plain">
+  <li>Implement <code>changelog --since &lt;version&gt; --json</code> per §5.2, emitting one entry per release between <code>&lt;version&gt;</code> and <code>current</code></li><li>Derive it from the same schema-as-data struct that generates <code>--help</code> and <code>--describe</code> (§2.3) — a mechanical diff of the schema between releases, never hand-written notes</li><li>Validate accepted <code>--since</code> values against the same release manifest <code>check-update</code> consults, so every published version is accepted</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
+  <dt>violation_unit</dt><dd>the changelog surface</dd>
+  
+  
+  <dt>category</dt><dd>Update &amp; Changelog</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §5.2</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-029.yaml" class="mono">MIRI-CLI-029.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-029.html" class="mono">MIRI-CLI-029.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-028.html">← MIRI-CLI-028</a>
+  <a href="MIRI-CLI-030.html">MIRI-CLI-030 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

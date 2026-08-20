@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-010 — api-graph.json valid · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-010 — api-graph.json valid</h1>
+<p class="lede">If present, validates against schema</p>
+
+<div class="badgerow">
+  <span class="badge neutral">should</span>
+  <span class="badge neutral">severity LOW · 1</span>
+  <span class="tag">weight 1</span>
+  
+  
+  <span class="tag">Agent Metadata §4.5</span><span class="tag">schema</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-010.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-010.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-010.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">api-graph.json:
+{&quot;version&quot;: &quot;1.0&quot;,
+ &quot;nodes&quot;: {&quot;Client&quot;: {&quot;type&quot;: &quot;class&quot;}},
+ &quot;edges&quot;: [{&quot;from&quot;: &quot;QueryBuilder&quot;, &quot;to&quot;: &quot;Client&quot;, &quot;relationship&quot;: &quot;uses&quot;}]}
+# QueryBuilder is not in nodes — the edge asserts a relationship
+# for a component the graph never declares</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">{&quot;version&quot;: &quot;1.0&quot;,
+ &quot;nodes&quot;: {&quot;Client&quot;: {&quot;type&quot;: &quot;class&quot;}, &quot;QueryBuilder&quot;: {&quot;type&quot;: &quot;class&quot;}},
+ &quot;edges&quot;: [{&quot;from&quot;: &quot;QueryBuilder&quot;, &quot;to&quot;: &quot;Client&quot;, &quot;relationship&quot;: &quot;uses&quot;}]}
+# every edge endpoint resolves to a declared node</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>api-graph.json is consumed for relationship reasoning — which classes cooperate, what a workflow touches — and its value inverts when the data is wrong: an edge whose <code>from</code> or <code>to</code> names a node that does not exist reads, to a consumer, exactly like a real relationship, so the agent asserts cooperation between components that were never connected. Because the file is optional, an absent graph degrades gracefully to manifest-only reasoning, while a present-but-broken graph is strictly worse than none; the check therefore validates only what actually ships.</p>
+
+<h2>Definition</h2>
+<p>The agent-metadata directory is the wheel&#x27;s machine-readable surface; every file in it must be present, schema-valid, and generated at build time so agents can consume it without parsing or guessing. This check verifies: If present, validates against schema.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li><code>agent-metadata/api-graph.json</code> is present and fails api-graph-v1.json validation (version, nodes, or edges missing)</li><li>An edge lacks <code>from</code>, <code>to</code>, or <code>relationship</code>, or either endpoint names a key absent from <code>nodes</code></li><li>A workflow&#x27;s <code>steps</code> reference components that appear nowhere in <code>nodes</code></li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Regenerate api-graph.json or fix the dangling edge.</p>
+<ol class="plain">
+  <li>Regenerate the graph in the same build pass that produces sdk-manifest.json, so both derive from one source scan</li><li>Fail the build on dangling references: every edge endpoint and workflow step must resolve to a <code>nodes</code> key</li><li>If the graph cannot be generated reliably, omit the file — this check does not fire on absence</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>LOW (numeric 1 of 5)</dd>
+  <dt>violation_unit</dt><dd>each schema violation in api-graph.json</dd>
+  
+  
+  <dt>category</dt><dd>Agent Metadata Core</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/agent-metadata-specification.md">Agent Metadata §4.5</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/../../schemas/api-graph-v1.json">schema</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-010.yaml" class="mono">MIRI-PY-010.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-010.html" class="mono">MIRI-PY-010.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-009.html">← MIRI-PY-009</a>
+  <a href="MIRI-PY-011.html">MIRI-PY-011 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

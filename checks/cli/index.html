@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Command-line tools checks · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Checks <b>43</b></span><span>Levels <b>36 MUST · 7 SHOULD</b></span><span>Weights <b>Σ = 100</b></span></div>
+<h1>Command-line tools — check definitions</h1>
+
+<p class="lede">Each requirement is verified by a check; each check failure instance is a violation.
+Conformance score = Σ weights of passing checks; any failing MUST caps the score at 74. Severity and violation
+units are committee-assigned and feed the magnitude-aware health score. The YAML definitions are authoritative;
+the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">checklist table</a> is the derived rendering.</p>
+
+<table>
+<thead><tr><th>ID</th><th>Check</th>
+<th class="sortable" data-key="level">Level</th>
+<th class="sortable" data-key="sev">Severity</th>
+<th class="sortable" data-key="weight">Wt</th>
+<th>Verifies</th></tr></thead>
+<tbody>
+
+
+<tr class="cat"><td colspan="6">Baseline Conventions · 12 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-001.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-001.html">MIRI-CLI-001</a></td>
+  <td><a class="rowname" href="MIRI-CLI-001.html">POSIX option syntax</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td><code>-</code> short options, <code>--</code> terminator, options-before-operands accepted</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-002.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-002.html">MIRI-CLI-002</a></td>
+  <td><a class="rowname" href="MIRI-CLI-002.html">Conforming --help</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td><code>--help</code> prints to stdout, exits 0, never pages or blocks</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-003.html" data-level="0" data-sev="2" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-003.html">MIRI-CLI-003</a></td>
+  <td><a class="rowname" href="MIRI-CLI-003.html">--version</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">1</td>
+  <td>Prints version to stdout, exits 0</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-004.html" data-level="1" data-sev="2" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-004.html">MIRI-CLI-004</a></td>
+  <td><a class="rowname" href="MIRI-CLI-004.html">Per-subcommand help</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">1</td>
+  <td><code>&lt;cli&gt; &lt;sub&gt; --help</code> works for every subcommand</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-005.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-005.html">MIRI-CLI-005</a></td>
+  <td><a class="rowname" href="MIRI-CLI-005.html">Color &amp; TTY discipline</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Honors <code>NO_COLOR</code>; detects non-TTY and drops decoration</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-006.html" data-level="0" data-sev="5" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-006.html">MIRI-CLI-006</a></td>
+  <td><a class="rowname" href="MIRI-CLI-006.html">Non-interactive default</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">3</td>
+  <td>No command blocks on a prompt when stdin is not a TTY</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-007.html" data-level="1" data-sev="2" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-007.html">MIRI-CLI-007</a></td>
+  <td><a class="rowname" href="MIRI-CLI-007.html">Pipeline composability</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">1</td>
+  <td>Handles SIGPIPE cleanly; accepts stdin where input is expected</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Machine Output · 18 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-008.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-CLI-008.html">MIRI-CLI-008</a></td>
+  <td><a class="rowname" href="MIRI-CLI-008.html">JSON everywhere</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>Every command supports JSON output</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-009.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-009.html">MIRI-CLI-009</a></td>
+  <td><a class="rowname" href="MIRI-CLI-009.html">One output flag</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td>The same flag (e.g. <code>--json</code>) selects it on every command — no per-command variants</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-010.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-010.html">MIRI-CLI-010</a></td>
+  <td><a class="rowname" href="MIRI-CLI-010.html">schema_version stamped</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Every JSON payload carries top-level <code>schema_version</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-011.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-011.html">MIRI-CLI-011</a></td>
+  <td><a class="rowname" href="MIRI-CLI-011.html">Clean payload channel</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td>No ANSI codes, prose, or warnings mixed into stdout JSON</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-012.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-012.html">MIRI-CLI-012</a></td>
+  <td><a class="rowname" href="MIRI-CLI-012.html">Deterministic ordering</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Same inputs produce identically ordered output</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-013.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-013.html">MIRI-CLI-013</a></td>
+  <td><a class="rowname" href="MIRI-CLI-013.html">Structured errors</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td>Failures emit JSON with a stable machine <code>error.code</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-014.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-014.html">MIRI-CLI-014</a></td>
+  <td><a class="rowname" href="MIRI-CLI-014.html">Recoverable errors</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Errors carry <code>retryable</code> and <code>suggestions</code></td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Identity &amp; Introspection · 22 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-015.html" data-level="0" data-sev="5" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-015.html">MIRI-CLI-015</a></td>
+  <td><a class="rowname" href="MIRI-CLI-015.html">--describe implemented</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">3</td>
+  <td>Machine-readable introspection output exists and is valid JSON</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-016.html" data-level="0" data-sev="5" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-016.html">MIRI-CLI-016</a></td>
+  <td><a class="rowname" href="MIRI-CLI-016.html">Identity purl</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">3</td>
+  <td><code>identity.purl</code> present, well-formed, matches distribution channel</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-017.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-017.html">MIRI-CLI-017</a></td>
+  <td><a class="rowname" href="MIRI-CLI-017.html">Version coherence</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td><code>identity.version</code> equals the binary&#x27;s actual <code>--version</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-018.html" data-level="0" data-sev="3" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-018.html">MIRI-CLI-018</a></td>
+  <td><a class="rowname" href="MIRI-CLI-018.html">Wire schema versioned</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">1</td>
+  <td><code>identity.schema_version</code> present, independent of release version</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-019.html" data-level="0" data-sev="1" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-019.html">MIRI-CLI-019</a></td>
+  <td><a class="rowname" href="MIRI-CLI-019.html">Distribution declared</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">1</td>
+  <td><code>identity.distribution</code> is <code>open-source</code> or <code>private</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-020.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-020.html">MIRI-CLI-020</a></td>
+  <td><a class="rowname" href="MIRI-CLI-020.html">Support block</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td><code>support</code> present with valid <code>status</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-021.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-021.html">MIRI-CLI-021</a></td>
+  <td><a class="rowname" href="MIRI-CLI-021.html">EOL coherence</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td><code>support.status</code> <code>deprecated</code>/<code>eol</code> ⇒ <code>replacement</code> present</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-022.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-022.html">MIRI-CLI-022</a></td>
+  <td><a class="rowname" href="MIRI-CLI-022.html">Advisory sources</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td>≥1 valid entry in <code>advisory_sources</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-023.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-023.html">MIRI-CLI-023</a></td>
+  <td><a class="rowname" href="MIRI-CLI-023.html">Private-source rule</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td><code>distribution: private</code> does not rely solely on public OSV</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-024.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-024.html">MIRI-CLI-024</a></td>
+  <td><a class="rowname" href="MIRI-CLI-024.html">Composition legible</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td>Standalone binary carries embedded module info or references a release SBOM</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Update &amp; Changelog · 14 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-025.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-CLI-025.html">MIRI-CLI-025</a></td>
+  <td><a class="rowname" href="MIRI-CLI-025.html">check-update implemented</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td><code>check-update --json</code> returns the specified shape</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-026.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-026.html">MIRI-CLI-026</a></td>
+  <td><a class="rowname" href="MIRI-CLI-026.html">Passive by default</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td>No implicit update check on normal invocations; nothing printed to other commands&#x27; stdout</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-027.html" data-level="0" data-sev="3" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-027.html">MIRI-CLI-027</a></td>
+  <td><a class="rowname" href="MIRI-CLI-027.html">Offline degradation</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">1</td>
+  <td>Offline returns <code>update_available: null</code>, exit 0 — not an error</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-028.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-028.html">MIRI-CLI-028</a></td>
+  <td><a class="rowname" href="MIRI-CLI-028.html">Security urgency</a> <span class="tag">network</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td><code>urgency: security</code> set when an advisory covers the running version</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-029.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-CLI-029.html">MIRI-CLI-029</a></td>
+  <td><a class="rowname" href="MIRI-CLI-029.html">changelog --since</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td><code>changelog --since &lt;v&gt; --json</code> implemented</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-030.html" data-level="0" data-sev="3" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-030.html">MIRI-CLI-030</a></td>
+  <td><a class="rowname" href="MIRI-CLI-030.html">Changelog coverage</a> <span class="tag">previous-release</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">1</td>
+  <td>Output covers added/removed/deprecated surfaces, schema bumps, exit-code changes</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Deprecation Coherence · 22 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-031.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-031.html">MIRI-CLI-031</a></td>
+  <td><a class="rowname" href="MIRI-CLI-031.html">Lifecycle blocks</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Every deprecated flag/subcommand carries a <code>lifecycle</code> object</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-032.html" data-level="0" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-032.html">MIRI-CLI-032</a></td>
+  <td><a class="rowname" href="MIRI-CLI-032.html">Two-phase fields</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td><code>deprecated_since</code> and <code>removed_in</code>/<code>replacement</code> populated</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-033.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-CLI-033.html">MIRI-CLI-033</a></td>
+  <td><a class="rowname" href="MIRI-CLI-033.html">Teaching errors</a> <span class="tag">previous-release</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>Invoking a removed surface yields the structured error (code, <code>retryable: false</code>, <code>suggestions</code>) — not a generic parse failure</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-034.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-034.html">MIRI-CLI-034</a></td>
+  <td><a class="rowname" href="MIRI-CLI-034.html">Warnings on stderr</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td>Grace-period deprecation warnings never touch stdout</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-035.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-035.html">MIRI-CLI-035</a></td>
+  <td><a class="rowname" href="MIRI-CLI-035.html">Grace period</a> <span class="tag">previous-release</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td>Deprecated surfaces function for ≥1 minor release before removal</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-036.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-036.html">MIRI-CLI-036</a></td>
+  <td><a class="rowname" href="MIRI-CLI-036.html">Changelog coherence</a> <span class="tag">previous-release</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Every deprecation appears in <code>changelog --since</code> of the deprecating release</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-037.html" data-level="0" data-sev="5" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-037.html">MIRI-CLI-037</a></td>
+  <td><a class="rowname" href="MIRI-CLI-037.html">No silent removals</a> <span class="tag">previous-release</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">3</td>
+  <td>Every removed surface was deprecated in ≥1 earlier release</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-038.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-038.html">MIRI-CLI-038</a></td>
+  <td><a class="rowname" href="MIRI-CLI-038.html">Replacements resolve</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td>Every <code>replacement</code> names a surface in the current <code>--describe</code></td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Safety · 12 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-039.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-CLI-039.html">MIRI-CLI-039</a></td>
+  <td><a class="rowname" href="MIRI-CLI-039.html">Dry run on writes</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>Every mutating command supports <code>--dry-run</code> with faithful simulation</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-040.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-CLI-040.html">MIRI-CLI-040</a></td>
+  <td><a class="rowname" href="MIRI-CLI-040.html">Danger marked</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td>Destructive operations flagged as such in <code>--describe</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-041.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-041.html">MIRI-CLI-041</a></td>
+  <td><a class="rowname" href="MIRI-CLI-041.html">Read/write visible</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td>The read-vs-write nature of each command is determinable from <code>--describe</code>/<code>--help</code> alone</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-042.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-CLI-042.html">MIRI-CLI-042</a></td>
+  <td><a class="rowname" href="MIRI-CLI-042.html">Safe retries</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Mutations support idempotency keys or optimistic-lock version guards</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CLI-043.html" data-level="1" data-sev="2" data-weight="1">
+  <td class="id"><a href="MIRI-CLI-043.html">MIRI-CLI-043</a></td>
+  <td><a class="rowname" href="MIRI-CLI-043.html">Graceful cancellation</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">1</td>
+  <td>SIGINT/SIGTERM cleans up partial state before exit</td>
+</tr>
+
+
+</tbody>
+</table>
+<script>
+document.querySelectorAll("tr.rowlink").forEach(function (row) {
+  row.addEventListener("click", function (e) {
+    if (e.target.closest("a")) return;
+    window.location = row.dataset.href;
+  });
+});
+
+// Column sorting: click cycles ascending -> descending -> original (category-grouped) order.
+(function () {
+  var tbody = document.querySelector("tbody");
+  var original = Array.from(tbody.children);
+  var state = { key: null, dir: 0 };
+  document.querySelectorAll("th.sortable").forEach(function (th) {
+    th.addEventListener("click", function () {
+      var key = th.dataset.key;
+      state.dir = state.key === key ? (state.dir + 1) % 3 : 1;
+      state.key = key;
+      document.querySelectorAll("th.sortable").forEach(function (h) { h.removeAttribute("data-dir"); });
+      if (state.dir === 0) {
+        original.forEach(function (r) { tbody.appendChild(r); });
+        return;
+      }
+      th.setAttribute("data-dir", state.dir === 1 ? "asc" : "desc");
+      var rows = original.filter(function (r) { return r.classList.contains("rowlink"); });
+      rows.sort(function (a, b) {
+        var d = Number(a.dataset[key]) - Number(b.dataset[key]);
+        return state.dir === 1 ? d : -d;
+      });
+      tbody.innerHTML = "";
+      rows.forEach(function (r) { tbody.appendChild(r); });
+    });
+  });
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

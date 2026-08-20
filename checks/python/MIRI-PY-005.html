@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-005 — Publish attestations · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-005 — Publish attestations</h1>
+<p class="lede">Release carries index-hosted attestations (provenance)</p>
+
+<div class="badgerow">
+  <span class="badge neutral">should</span>
+  <span class="badge neutral">severity MINOR · 2</span>
+  <span class="tag">weight 2</span>
+  
+  <span class="tag">requires network</span>
+  <span class="tag">PEP 740</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-005.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-005.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-005.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">curl -H &#x27;Accept: application/vnd.pypi.simple.v1+json&#x27; \
+  https://pypi.org/simple/example-sdk/
+# files[]: {&quot;filename&quot;: &quot;example_sdk-2.1.0-py3-none-any.whl&quot;,
+#           &quot;provenance&quot;: null}
+# uploaded with a long-lived API token; no attestations exist</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good"># same request returns:
+# {&quot;filename&quot;: &quot;example_sdk-2.1.0-py3-none-any.whl&quot;,
+#  &quot;provenance&quot;: &quot;https://pypi.org/integrity/example-sdk/2.1.0/example_sdk-2.1.0-py3-none-any.whl/provenance&quot;}
+# attested by Trusted Publisher github.com/example/sdk release.yml</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>PEP 740 attestations bind each uploaded file to the exact source repository and CI workflow that built it; the index verifies them against a Trusted Publisher identity and republishes them under the <code>provenance</code> key of the PEP 691 JSON API. PyPI has accepted attestations since 14 November 2024, and <code>pypa/gh-action-pypi-publish</code> generates them by default under trusted publishing, so their absence is now a configuration choice rather than a tooling gap. The December 2024 ultralytics compromise showed both halves of the mechanism: malicious wheels reached PyPI through an injected GitHub Actions workflow, and the release&#x27;s published provenance is what let responders reconstruct which workflow run produced the poisoned artifacts.</p>
+
+<h2>Definition</h2>
+<p>Miri builds on the existing packaging standards rather than replacing them; a wheel that violates the baseline cannot carry trustworthy agent metadata. This check verifies: Release carries index-hosted attestations (provenance).</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li><code>GET https://pypi.org/simple/&lt;name&gt;/</code> with <code>Accept: application/vnd.pypi.simple.v1+json</code> returns <code>&quot;provenance&quot;: null</code> for the release&#x27;s files</li><li>The declared registry is a public index and no PEP 740 attestation objects exist for any distribution file of the release</li><li>Attestations cover some files of the release but not others (e.g. the wheel is attested, the sdist is not)</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Publish via trusted publishing so PEP 740 attestations are attached.</p>
+<ol class="plain">
+  <li>Configure a Trusted Publisher for the project on PyPI (Manage project -&gt; Publishing), scoped to the release workflow</li><li>Publish from CI with <code>pypa/gh-action-pypi-publish</code>, which generates and uploads attestations by default, or with <code>twine upload --attestations</code></li><li>Revoke long-lived project API tokens once trusted publishing is in place</li><li>Verify after release that the <code>provenance</code> key in the index JSON is populated (the <code>pypi-attestations</code> tool can verify the attestation chain)</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MINOR (numeric 2 of 5)</dd>
+  <dt>violation_unit</dt><dd>the release</dd>
+  
+  
+  <dt>requirements</dt><dd>network</dd>
+  
+  <dt>category</dt><dd>Packaging Baseline</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://peps.python.org/pep-0740/">PEP 740</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-005.yaml" class="mono">MIRI-PY-005.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-005.html" class="mono">MIRI-PY-005.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-004.html">← MIRI-PY-004</a>
+  <a href="MIRI-PY-006.html">MIRI-PY-006 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

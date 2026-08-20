@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-007 — Pipeline composability · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-007 — Pipeline composability</h1>
+<p class="lede">Handles SIGPIPE cleanly; accepts stdin where input is expected</p>
+
+<div class="badgerow">
+  <span class="badge neutral">should</span>
+  <span class="badge neutral">severity MINOR · 2</span>
+  <span class="tag">weight 1</span>
+  
+  
+  <span class="tag">clig.dev</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-007.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-007.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-007.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ tool list | head -1
+item-001
+Traceback (most recent call last):
+  File &quot;tool&quot;, line 88, in main
+BrokenPipeError: [Errno 32] Broken pipe
+# set -e pipeline aborts although head got its line</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ tool list | head -1
+item-001
+$ tool list | head -1 2&gt;err.txt; wc -c &lt; err.txt
+0            # early reader exit produces no crash output
+$ cat ids.txt | tool resolve -    # &#x27;-&#x27; reads stdin
+</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Pipelines are how a CLI&#x27;s output becomes the next tool&#x27;s input, and the classic failure is documented in Python&#x27;s own signal docs: piping to <code>head(1)</code> sends SIGPIPE when the reader closes early, which unhandled Python surfaces as a <code>BrokenPipeError: [Errno 32] Broken pipe</code> traceback (Rust similarly ignores SIGPIPE at startup, turning the same event into a panic on write). The consumer already got its data, but stderr fills with a crash report and the exit status reads as failure — so <code>set -e</code> scripts abort and agents burn turns diagnosing a phantom error. Refusing stdin has the mirror cost: output must detour through temp files instead of composing.</p>
+
+<h2>Definition</h2>
+<p>Agents drive CLIs through the same conventions humans and scripts rely on; a tool that breaks them is invisible or hangs silently in a non-interactive context. This check verifies: Handles SIGPIPE cleanly; accepts stdin where input is expected.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li><code>&lt;cli&gt; list | head -1</code> leaves a traceback, panic message, or crash report on stderr</li><li>The tool&#x27;s exit after a closed pipe reflects an internal crash rather than clean termination (a plain SIGPIPE death, shell status 141, is acceptable)</li><li>A command that conceptually consumes input can read only from file arguments — neither bare stdin nor the <code>-</code> convention works</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Handle SIGPIPE; read stdin where input is expected.</p>
+<ol class="plain">
+  <li>Handle EPIPE as clean shutdown: in Python, catch <code>BrokenPipeError</code>, redirect stdout to <code>os.devnull</code>, and exit quietly per the documented pattern; in Rust, restore default SIGPIPE disposition or map <code>ErrorKind::BrokenPipe</code> to a silent exit</li><li>Accept stdin wherever input is expected, honoring <code>-</code> as the conventional stdin operand</li><li>Add CI assertions: <code>&lt;cli&gt; list | head -1</code> produces empty stderr, and <code>echo &lt;input&gt; | &lt;cli&gt; &lt;consume-cmd&gt;</code> succeeds</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MINOR (numeric 2 of 5)</dd>
+  <dt>violation_unit</dt><dd>each composability failure</dd>
+  
+  
+  <dt>category</dt><dd>Baseline Conventions</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://clig.dev/">clig.dev</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-007.yaml" class="mono">MIRI-CLI-007.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-007.html" class="mono">MIRI-CLI-007.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-006.html">← MIRI-CLI-006</a>
+  <a href="MIRI-CLI-008.html">MIRI-CLI-008 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

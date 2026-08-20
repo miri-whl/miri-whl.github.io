@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python wheels checks · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Checks <b>40</b></span><span>Levels <b>28 MUST · 12 SHOULD</b></span><span>Weights <b>Σ = 100</b></span></div>
+<h1>Python wheels — check definitions</h1>
+
+<p class="lede">Each requirement is verified by a check; each check failure instance is a violation.
+Conformance score = Σ weights of passing checks; any failing MUST caps the score at 74. Severity and violation
+units are committee-assigned and feed the magnitude-aware health score. The YAML definitions are authoritative;
+the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">checklist table</a> is the derived rendering.</p>
+
+<table>
+<thead><tr><th>ID</th><th>Check</th>
+<th class="sortable" data-key="level">Level</th>
+<th class="sortable" data-key="sev">Severity</th>
+<th class="sortable" data-key="weight">Wt</th>
+<th>Verifies</th></tr></thead>
+<tbody>
+
+
+<tr class="cat"><td colspan="6">Packaging Baseline · 10 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-001.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-PY-001.html">MIRI-PY-001</a></td>
+  <td><a class="rowname" href="MIRI-PY-001.html">Wheel structure valid</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td><code>.dist-info/</code> with <code>METADATA</code>, <code>WHEEL</code>, <code>RECORD</code>; archive matches RECORD</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-002.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-PY-002.html">MIRI-PY-002</a></td>
+  <td><a class="rowname" href="MIRI-PY-002.html">Core metadata valid</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td><code>METADATA</code> parses as Core Metadata 2.x; name normalized</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-003.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-PY-003.html">MIRI-PY-003</a></td>
+  <td><a class="rowname" href="MIRI-PY-003.html">Version scheme valid</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td>Version parses under the canonical scheme</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-004.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-PY-004.html">MIRI-PY-004</a></td>
+  <td><a class="rowname" href="MIRI-PY-004.html">Declarative build config</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td><code>pyproject.toml</code> with <code>[project]</code> table drives the build</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-005.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-PY-005.html">MIRI-PY-005</a></td>
+  <td><a class="rowname" href="MIRI-PY-005.html">Publish attestations</a> <span class="tag">network</span></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Release carries index-hosted attestations (provenance)</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Agent Metadata Core · 20 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-006.html" data-level="0" data-sev="5" data-weight="2">
+  <td class="id"><a href="MIRI-PY-006.html">MIRI-PY-006</a></td>
+  <td><a class="rowname" href="MIRI-PY-006.html">agent-metadata/ present</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">2</td>
+  <td>Directory exists in the package</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-007.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-PY-007.html">MIRI-PY-007</a></td>
+  <td><a class="rowname" href="MIRI-PY-007.html">sdk-manifest.json valid</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>Present and validates against schema</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-008.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-PY-008.html">MIRI-PY-008</a></td>
+  <td><a class="rowname" href="MIRI-PY-008.html">usage-patterns.json valid</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Present and validates against schema</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-009.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-PY-009.html">MIRI-PY-009</a></td>
+  <td><a class="rowname" href="MIRI-PY-009.html">migration-guide.json valid</a> <span class="tag">network</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Present for any non-initial release; validates against schema</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-010.html" data-level="1" data-sev="1" data-weight="1">
+  <td class="id"><a href="MIRI-PY-010.html">MIRI-PY-010</a></td>
+  <td><a class="rowname" href="MIRI-PY-010.html">api-graph.json valid</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">1</td>
+  <td>If present, validates against schema</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-011.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-PY-011.html">MIRI-PY-011</a></td>
+  <td><a class="rowname" href="MIRI-PY-011.html">Build-time generation</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td><code>generated_at</code> timestamps within the build window; not hand-edited afterward</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-012.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-PY-012.html">MIRI-PY-012</a></td>
+  <td><a class="rowname" href="MIRI-PY-012.html">Version coherence</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td><code>sdk_version</code> in every metadata file equals the wheel version</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-013.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-PY-013.html">MIRI-PY-013</a></td>
+  <td><a class="rowname" href="MIRI-PY-013.html">JSON hygiene</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td>All metadata files parse as strict UTF-8 JSON (no NaN/Infinity, no comments)</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Examples · 10 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-014.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-PY-014.html">MIRI-PY-014</a></td>
+  <td><a class="rowname" href="MIRI-PY-014.html">Quickstart exists</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td><code>examples/quickstart.py</code> present</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-015.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-PY-015.html">MIRI-PY-015</a></td>
+  <td><a class="rowname" href="MIRI-PY-015.html">Examples runnable</a> <span class="tag">execution</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Every example compiles; executes in sandbox (except external credentials)</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-016.html" data-level="0" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-PY-016.html">MIRI-PY-016</a></td>
+  <td><a class="rowname" href="MIRI-PY-016.html">Example index coherent</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td><code>AGENT_EXAMPLES.json</code> entries ↔ files on disk, both directions</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-017.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-PY-017.html">MIRI-PY-017</a></td>
+  <td><a class="rowname" href="MIRI-PY-017.html">Error handling shown</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Examples demonstrate the package&#x27;s error/exception handling</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Identity &amp; Security · 25 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-018.html" data-level="0" data-sev="5" data-weight="4">
+  <td class="id"><a href="MIRI-PY-018.html">MIRI-PY-018</a></td>
+  <td><a class="rowname" href="MIRI-PY-018.html">lifecycle.json valid</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">4</td>
+  <td>Present and validates against schema</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-019.html" data-level="0" data-sev="5" data-weight="4">
+  <td class="id"><a href="MIRI-PY-019.html">MIRI-PY-019</a></td>
+  <td><a class="rowname" href="MIRI-PY-019.html">purl coherence</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">4</td>
+  <td><code>identity.purl</code> name+version exactly match <code>METADATA</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-020.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-PY-020.html">MIRI-PY-020</a></td>
+  <td><a class="rowname" href="MIRI-PY-020.html">Distribution &amp; registry declared</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td><code>distribution</code> set; <code>registry</code> a well-formed index URL</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-021.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-PY-021.html">MIRI-PY-021</a></td>
+  <td><a class="rowname" href="MIRI-PY-021.html">Advisory sources present</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td>≥1 entry in <code>advisory_sources</code>, valid type and URL</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-022.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-PY-022.html">MIRI-PY-022</a></td>
+  <td><a class="rowname" href="MIRI-PY-022.html">Private-source rule</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td><code>distribution: private</code> does not rely solely on public OSV</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-023.html" data-level="0" data-sev="3" data-weight="2">
+  <td class="id"><a href="MIRI-PY-023.html">MIRI-PY-023</a></td>
+  <td><a class="rowname" href="MIRI-PY-023.html">Update check declared</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">2</td>
+  <td><code>update_check</code> type/URL valid (PyPI JSON or PEP 700 index)</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-024.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-PY-024.html">MIRI-PY-024</a></td>
+  <td><a class="rowname" href="MIRI-PY-024.html">SBOM when bundling</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>Wheels with non-Python components carry <code>.dist-info/sboms/</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-025.html" data-level="1" data-sev="2" data-weight="1">
+  <td class="id"><a href="MIRI-PY-025.html">MIRI-PY-025</a></td>
+  <td><a class="rowname" href="MIRI-PY-025.html">SBOM purls resolvable</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">1</td>
+  <td>SBOM component purls are well-formed</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-026.html" data-level="1" data-sev="1" data-weight="1">
+  <td class="id"><a href="MIRI-PY-026.html">MIRI-PY-026</a></td>
+  <td><a class="rowname" href="MIRI-PY-026.html">VEX well-formed</a> <span class="tag">network</span></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">1</td>
+  <td><code>vex</code> URL, if present, serves an OpenVEX/CycloneDX VEX document</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-027.html" data-level="1" data-sev="1" data-weight="1">
+  <td class="id"><a href="MIRI-PY-027.html">MIRI-PY-027</a></td>
+  <td><a class="rowname" href="MIRI-PY-027.html">Security policy declared</a> <span class="tag">network</span></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">1</td>
+  <td><code>support.security_policy</code> present and resolvable</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Deprecation &amp; Lifecycle Coherence · 25 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-028.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-PY-028.html">MIRI-PY-028</a></td>
+  <td><a class="rowname" href="MIRI-PY-028.html">PEP 702 markers</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>Every interface listed as deprecated carries <code>@deprecated</code>; decorator message names replacement + removal version</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-029.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-PY-029.html">MIRI-PY-029</a></td>
+  <td><a class="rowname" href="MIRI-PY-029.html">Inventory derived</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>Every PEP 702 marker appears in <code>migration-guide.json</code> <code>deprecations</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-030.html" data-level="0" data-sev="5" data-weight="5">
+  <td class="id"><a href="MIRI-PY-030.html">MIRI-PY-030</a></td>
+  <td><a class="rowname" href="MIRI-PY-030.html">No silent removals</a> <span class="tag">previous-release</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">5</td>
+  <td>Every public interface removed since the prior release was listed in an earlier release&#x27;s <code>deprecations</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-031.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-PY-031.html">MIRI-PY-031</a></td>
+  <td><a class="rowname" href="MIRI-PY-031.html">Replacements resolve</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Every <code>deprecations[].replacement</code> exists in the new <code>sdk-manifest.json</code></td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-032.html" data-level="0" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-PY-032.html">MIRI-PY-032</a></td>
+  <td><a class="rowname" href="MIRI-PY-032.html">Removal versions sane</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Every <code>removal_version</code> is greater than the current release</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-033.html" data-level="0" data-sev="4" data-weight="3">
+  <td class="id"><a href="MIRI-PY-033.html">MIRI-PY-033</a></td>
+  <td><a class="rowname" href="MIRI-PY-033.html">Support status coherent</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">3</td>
+  <td><code>support.status</code> in enum; <code>deprecated</code>/<code>eol</code> ⇒ <code>replacement</code> present</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-034.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-PY-034.html">MIRI-PY-034</a></td>
+  <td><a class="rowname" href="MIRI-PY-034.html">Grace period</a> <span class="tag">previous-release</span></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Deprecated interfaces survive ≥2 releases before removal</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-035.html" data-level="1" data-sev="2" data-weight="2">
+  <td class="id"><a href="MIRI-PY-035.html">MIRI-PY-035</a></td>
+  <td><a class="rowname" href="MIRI-PY-035.html">Runtime warnings fire</a> <span class="tag">execution</span></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">MINOR</span></td>
+  <td class="num">2</td>
+  <td>Importing/calling deprecated interfaces emits <code>DeprecationWarning</code></td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Discovery &amp; Degradation · 10 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-036.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-PY-036.html">MIRI-PY-036</a></td>
+  <td><a class="rowname" href="MIRI-PY-036.html">Discovery APIs work</a> <span class="tag">execution</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Package-level discovery functions importable and return coherent data</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-037.html" data-level="1" data-sev="1" data-weight="2">
+  <td class="id"><a href="MIRI-PY-037.html">MIRI-PY-037</a></td>
+  <td><a class="rowname" href="MIRI-PY-037.html">Embedded docs present</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">2</td>
+  <td><code>docs/</code> directory with API reference and troubleshooting</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-038.html" data-level="1" data-sev="1" data-weight="2">
+  <td class="id"><a href="MIRI-PY-038.html">MIRI-PY-038</a></td>
+  <td><a class="rowname" href="MIRI-PY-038.html">Templates coherent</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">2</td>
+  <td><code>TEMPLATES.json</code> entries ↔ template files; placeholders documented</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-039.html" data-level="1" data-sev="1" data-weight="1">
+  <td class="id"><a href="MIRI-PY-039.html">MIRI-PY-039</a></td>
+  <td><a class="rowname" href="MIRI-PY-039.html">Prompt templates valid</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">1</td>
+  <td><code>prompt-templates.md</code>, if present, follows the specified structure</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-040.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-PY-040.html">MIRI-PY-040</a></td>
+  <td><a class="rowname" href="MIRI-PY-040.html">Graceful degradation</a> <span class="tag">execution</span></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td>Package imports and functions normally with all Miri metadata stripped</td>
+</tr>
+
+
+</tbody>
+</table>
+<script>
+document.querySelectorAll("tr.rowlink").forEach(function (row) {
+  row.addEventListener("click", function (e) {
+    if (e.target.closest("a")) return;
+    window.location = row.dataset.href;
+  });
+});
+
+// Column sorting: click cycles ascending -> descending -> original (category-grouped) order.
+(function () {
+  var tbody = document.querySelector("tbody");
+  var original = Array.from(tbody.children);
+  var state = { key: null, dir: 0 };
+  document.querySelectorAll("th.sortable").forEach(function (th) {
+    th.addEventListener("click", function () {
+      var key = th.dataset.key;
+      state.dir = state.key === key ? (state.dir + 1) % 3 : 1;
+      state.key = key;
+      document.querySelectorAll("th.sortable").forEach(function (h) { h.removeAttribute("data-dir"); });
+      if (state.dir === 0) {
+        original.forEach(function (r) { tbody.appendChild(r); });
+        return;
+      }
+      th.setAttribute("data-dir", state.dir === 1 ? "asc" : "desc");
+      var rows = original.filter(function (r) { return r.classList.contains("rowlink"); });
+      rows.sort(function (a, b) {
+        var d = Number(a.dataset[key]) - Number(b.dataset[key]);
+        return state.dir === 1 ? d : -d;
+      });
+      tbody.innerHTML = "";
+      rows.forEach(function (r) { tbody.appendChild(r); });
+    });
+  });
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

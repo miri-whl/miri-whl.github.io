@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-011 — Clean payload channel · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-011 — Clean payload channel</h1>
+<p class="lede">No ANSI codes, prose, or warnings mixed into stdout JSON</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity HIGH · 4</span>
+  <span class="tag">weight 2</span>
+  
+  
+  <span class="tag">CLI Spec §2.5</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-011.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-011.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-011.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ tool list --json
+WARNING: --legacy-ids is deprecated, use --ids
+{&quot;schema_version&quot;: &quot;1&quot;, &quot;items&quot;: []}
+$ tool list --json | jq .
+jq: error (at &lt;stdin&gt;:1): Invalid literal at line 1, column 8
+# every consumer broke the day the warning shipped</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ tool list --json 2&gt;warnings.txt
+{&quot;schema_version&quot;: &quot;1&quot;, &quot;items&quot;: []}
+$ cat warnings.txt
+WARNING: --legacy-ids is deprecated, use --ids
+# payload parses; the notice survives on its own channel</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>CLI Spec §2.5 reserves stdout for the JSON payload and sends all warnings to stderr, because the channels fail differently: a warning on stderr is ignorable, but one stray notice printed into stdout makes the document unparseable — <code>jq</code> aborts with <code>Invalid literal</code>, and every downstream consumer fails simultaneously the day the notice ships, not the day the schema changes. This is the highest-blast-radius mistake available to a machine-output CLI precisely because the trigger is routine (a deprecation notice, an update banner, a stray <code>print</code> in a logging path) while the failure is total.</p>
+
+<h2>Definition</h2>
+<p>Agents parse stdout; anything unstructured, inconsistent, or polluted forces guesswork and burns recovery turns. This check verifies: No ANSI codes, prose, or warnings mixed into stdout JSON.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>stdout of any JSON-mode invocation fails a strict JSON parse (<code>jq -e .</code> non-zero)</li><li>Prose lines — update banners, deprecation notices, progress text — precede, follow, or interleave the JSON document on stdout</li><li>ESC bytes (0x1b) appear inside stdout in JSON mode</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Keep stdout pure JSON; warnings go to stderr.</p>
+<ol class="plain">
+  <li>Route every diagnostic through a channel that writes to stderr; audit logging configuration — many logging frameworks default handlers to stdout</li><li>In JSON mode, write stdout exactly once, from the shared response envelope (one serialized document, then exit)</li><li>Keep decoration out of JSON mode entirely, independent of TTY state (see MIRI-CLI-005)</li><li>Parse your own stdout in CI: for every command, <code>&lt;cmd&gt; --json | jq -e . &gt;/dev/null</code> and assert the byte stream contains no 0x1b</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
+  <dt>violation_unit</dt><dd>each polluted payload</dd>
+  
+  <dt>population_unit</dt><dd>all commands emitting JSON</dd>
+  
+  
+  <dt>category</dt><dd>Machine Output</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §2.5</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-011.yaml" class="mono">MIRI-CLI-011.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-011.html" class="mono">MIRI-CLI-011.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-010.html">← MIRI-CLI-010</a>
+  <a href="MIRI-CLI-012.html">MIRI-CLI-012 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

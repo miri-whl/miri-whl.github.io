@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-013 — Structured errors · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-013 — Structured errors</h1>
+<p class="lede">Failures emit JSON with a stable machine <code>error.code</code></p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity HIGH · 4</span>
+  <span class="tag">weight 3</span>
+  
+  
+  <span class="tag">CLI Spec §6</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-013.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-013.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-013.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ acme deploy --export
+Error: unrecognized arguments: --export
+$ echo $?
+2   # prose only; nothing an agent can branch on survives a rewording</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ acme deploy --export
+{&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;FLAG_REMOVED&quot;, &quot;flag&quot;: &quot;--export&quot;,
+  &quot;removed_in&quot;: &quot;1.18.0&quot;, &quot;retryable&quot;: false,
+  &quot;suggestions&quot;: [&quot;use --output archive instead&quot;]}}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>CLI Spec §6 makes the machine code the one stable surface of a failure: prose wording is free to change between releases, so an agent that branches on message text breaks silently the first time a sentence is reworded. The precedent is settled API practice — AWS service errors carry machine codes such as ThrottlingException that SDK retry classifiers branch on, and RFC 9457 separates the stable problem <code>type</code> from the human <code>detail</code> field consumers are told not to parse. A failure that emits only prose and a bare non-zero exit is the dead end of landscape §3.3: the agent retries with hallucinated variants until something works, and no bug report is ever filed.</p>
+
+<h2>Definition</h2>
+<p>Agents parse stdout; anything unstructured, inconsistent, or polluted forces guesswork and burns recovery turns. This check verifies: Failures emit JSON with a stable machine <code>error.code</code>.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>An induced failure exits non-zero with prose only — no JSON error payload on the machine channel</li><li>The error payload lacks <code>error.code</code>, or lacks <code>ok: false</code>, on a failing invocation</li><li>Error codes appear nowhere in the documented wire contract, leaving message text as the only branching surface</li><li>The same induced failure yields an <code>error.code</code> different from the documented one</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Emit structured errors with a stable machine error.code.</p>
+<ol class="plain">
+  <li>Emit {&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: ...}} as JSON on the machine channel for every failure path, per CLI Spec §6</li><li>Assign UPPER_SNAKE codes from a closed, documented set (AUTH_EXPIRED, FLAG_REMOVED, RESOURCE_NOT_FOUND) and treat the set as API: codes are added, never repurposed or renumbered</li><li>Keep the human explanation in a separate message field that may change freely; keep warnings on stderr so they never corrupt the payload (§2.5)</li><li>Route removed-surface invocations through the structured FLAG_REMOVED teaching error of §6 rather than the argument parser&#x27;s generic failure</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
+  <dt>violation_unit</dt><dd>each unstructured failure</dd>
+  
+  <dt>population_unit</dt><dd>all commands in --describe</dd>
+  
+  
+  <dt>category</dt><dd>Machine Output</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §6</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-013.yaml" class="mono">MIRI-CLI-013.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-013.html" class="mono">MIRI-CLI-013.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-012.html">← MIRI-CLI-012</a>
+  <a href="MIRI-CLI-014.html">MIRI-CLI-014 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

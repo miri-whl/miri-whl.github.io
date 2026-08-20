@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miri Standard · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a class="active" href="index.html">Overview</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="hero-row">
+  <div class="hero-text">
+    <div class="spec-eyebrow"><span>Status <b>🚧 incubation</b></span><span>Version <b>0.1-draft</b></span></div>
+<h1>The Miri Standard</h1>
+<p class="lede">Multi-language packaging standards that make software artifacts — Python wheels, command-line
+                      tools, eventually Go modules and Rust crates — legible to AI agents: structured metadata,
+                      identity and vulnerability signaling, and lifecycle contracts.</p>
+    <p>Named for Miranda Serena Sharifi of <em>Beggars in Spain</em>, whose thought-strings had
+    <em>"structural flaws from the beginning, gaps where information ought to go."</em>
+    Packages have the same flaw; the standard fills the gaps.
+    <a href="origin.html">Read the origin story →</a></p>
+  </div>
+  <span class="framed"><span><img class="avatar" src="assets/miri-green.png" alt="Miri" width="152" height="152"></span></span>
+</div>
+
+<div class="cardgrid">
+  
+  <div class="card">
+    <div class="card-title">Python wheels</div>
+    <div class="mono stat">40<span class="stat-unit"> checks</span></div>
+    <p class="stat-sub">28 MUST · 12 SHOULD · weights Σ = 100</p>
+    <a class="mono stat-link" href="checks/python/index.html">MIRI-PY-001…040 →</a>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">Command-line tools</div>
+    <div class="mono stat">43<span class="stat-unit"> checks</span></div>
+    <p class="stat-sub">36 MUST · 7 SHOULD · weights Σ = 100</p>
+    <a class="mono stat-link" href="checks/cli/index.html">MIRI-CLI-001…043 →</a>
+  </div>
+  
+</div>
+
+<h2>The model</h2>
+<p>Each <span class="principle">requirement</span> in a specification is verified by a
+<span class="principle">check</span>; each check failure instance is a
+<span class="principle">violation</span>. Two scores follow. The <span class="principle">conformance score</span> is
+additive — fixed weights summing to 100, any failing MUST caps at 74 — and comparable across independent linters.
+The <span class="principle">health score</span> is the severity-graded magnitude of what is wrong, computed from
+committee-assigned severities and violation units. Populations are reported, never scored.</p>
+
+<h2>Principles</h2>
+<ul class="plain">
+<li><span class="principle">Declare sources, not verdicts.</span> Artifacts declare identity (purl) and advisory
+sources; consumers compute verdicts at call time.</li>
+<li><span class="principle">Reuse the existing stack.</span> Identity is purl; advisories are OSV records; SBOMs
+follow PEP 770 and CycloneDX/SPDX.</li>
+<li><span class="principle">Same shape for open source and private.</span> Private artifacts differ only in values,
+never in structure.</li>
+<li><span class="principle">Schema as data, derived outputs.</span> One source generates human docs and machine
+metadata.</li>
+<li><span class="principle">Deprecation coherence.</span> Markers, changelog, and removals must agree; no silent
+removals.</li>
+<li><span class="principle">Citation trail.</span> Every normative statement cites the standard it derives from.</li>
+</ul>
+
+<h2>Resources</h2>
+<ul class="plain">
+<li><a href="https://github.com/miri-whl/miri-standard">miri-standard on GitHub</a> — specifications, schemas, and the check definitions</li>
+<li><a href="https://github.com/miri-whl/miri-standard/tree/main/standards/python">Python wheel standards</a> ·
+    <a href="https://github.com/miri-whl/miri-standard/tree/main/standards/cli">CLI standards</a></li>
+<li><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">JSON Schemas</a> — <span class="mono">check-v1</span>,
+    <span class="mono">lifecycle-v1</span>, <span class="mono">sdk-manifest-v1</span>, …</li>
+</ul>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

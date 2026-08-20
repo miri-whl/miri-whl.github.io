@@ -1,0 +1,277 @@
+/* Webfonts. The miri-standard repository ships no font files and specifies no typefaces;
+   these are SUBSTITUTIONS chosen for this design system (see readme.md → Visual foundations).
+   Served from Google Fonts. Replace with self-hosted @font-face rules when brand files exist. */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Azeret+Mono:wght@400;500;600;700&display=swap");
+:root{--font-sans:"Space Grotesk",system-ui,sans-serif;--font-mono:"Azeret Mono",ui-monospace,"SF Mono",Menlo,monospace}
+
+/* Colors. Gold ramp is lifted verbatim from the repo's committed workspace theme
+   (.vscode/settings.json, "muted gold, so this project is recognizable at a glance").
+   Semantic hues are sampled from the Miri mascot colorways in assets/img/. */
+:root{
+  /* Gold — the brand ramp, from the committed VS Code theme */
+  --gold-950:#2E2600;--gold-900:#5E5016;--gold-800:#6E5C1A;--gold-700:#746016;--gold-600:#8A7420;
+  --gold-500:#A08A2A;--gold-400:#D4B840;--gold-300:#F0D060;--gold-200:#C7B76A;--gold-100:#B8AE8A;--gold-50:#F5EFD5;
+
+  /* Warm neutrals — sampled from the grey mascot colorway */
+  --ink-900:#232322;--ink-800:#2F2E2D;--ink-700:#424141;--ink-600:#464445;--ink-500:#6B6A68;
+  --ink-400:#808180;--ink-300:#A7A49B;--ink-200:#D1CBBB;--ink-100:#E7E2D6;--ink-50:#F3F0E7;
+  --paper:#FAF7EE;--paper-white:#FFFFFF;
+
+  /* Semantic hues — mascot colorways */
+  --green-600:#4C6224;--green-500:#61792F;--green-400:#98B455;--green-200:#C9D688;
+  --red-600:#7E231B;--red-500:#9E2E24;--red-400:#D25E51;--red-200:#F1B4AA;
+  --amber-600:#9A7018;--amber-500:#BB8A24;--amber-400:#E0B24D;--amber-200:#F3D59E;
+
+  /* Semantic aliases */
+  --text-strong:var(--ink-900);--text-body:var(--ink-700);--text-muted:var(--ink-500);
+  --text-faint:var(--ink-400);--text-inverse:var(--gold-50);--text-link:var(--gold-700);
+  --surface-page:var(--paper);--surface-card:var(--paper-white);--surface-sunken:var(--ink-50);
+  --surface-inset:var(--gold-50);--surface-code:var(--ink-900);--surface-brand:var(--gold-600);
+  --surface-brand-deep:var(--gold-950);
+  --border-hairline:var(--ink-200);--border-strong:var(--ink-700);--border-brand:var(--gold-500);
+  --focus-ring:var(--gold-500);
+
+  /* Status — lifecycle stages defined by the standard (active → maintenance → deprecated → eol) */
+  --status-active:var(--green-500);--status-active-bg:var(--green-200);
+  --status-maintenance:var(--amber-600);--status-maintenance-bg:var(--amber-200);
+  --status-deprecated:var(--red-500);--status-deprecated-bg:var(--red-200);
+  --status-eol:var(--ink-600);--status-eol-bg:var(--ink-200);
+
+  /* Conformance levels: M (MUST) vs S (SHOULD) */
+  --level-must:var(--red-500);--level-should:var(--ink-500);
+
+  /* Grade bands: 90–100 Gold · 75–89 Silver · 50–74 Bronze · <50 non-conforming */
+  --grade-gold:#D4B840;--grade-silver:#A7A49B;--grade-bronze:#B07A3C;--grade-fail:var(--red-500);
+}
+
+/* Typography. Two families: Space Grotesk for prose and UI, Azeret Mono for identifiers,
+   check IDs, purls, versions, metadata keys, and code. Anything a machine reads is set in mono. */
+:root{
+  --text-2xs:11px;--text-xs:12px;--text-sm:13px;--text-base:15px;--text-md:17px;
+  --text-lg:20px;--text-xl:26px;--text-2xl:34px;--text-3xl:46px;--text-4xl:62px;
+
+  --leading-tight:1.08;--leading-snug:1.28;--leading-normal:1.55;--leading-relaxed:1.7;
+  --weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+  --tracking-tight:-0.02em;--tracking-normal:0;--tracking-wide:0.04em;--tracking-caps:0.1em;
+
+  --font-display:var(--font-sans);--font-body:var(--font-sans);--font-code:var(--font-mono);
+  --font-meta:var(--font-mono);
+}
+
+/* Spacing. 4px base grid; the 2px step exists for the hairline insets the frame motif needs. */
+:root{
+  --space-0:0;--space-px:2px;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
+  --space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;
+  --space-16:64px;--space-20:80px;--space-24:96px;
+  --measure-prose:68ch;--measure-narrow:52ch;
+  --width-content:960px;--width-wide:1200px;--width-sidebar:264px;
+}
+
+/* Borders, radii, shadows. Near-square corners and hairline rules; the mascot's inset
+   picture-frame border is the brand's card motif (--frame-*). No soft ambient shadows. */
+:root{
+  --radius-none:0;--radius-xs:2px;--radius-sm:3px;--radius-md:4px;--radius-pill:999px;
+  --border-width:1px;--border-width-thick:2px;--border-width-frame:3px;
+
+  --shadow-none:none;
+  --shadow-crisp:2px 2px 0 var(--ink-200);
+  --shadow-crisp-brand:3px 3px 0 var(--gold-200);
+  --shadow-inset-top:inset 0 1px 0 rgba(255,255,255,.6);
+
+  /* Frame motif: outer rule + gap + inner rule, as in the mascot avatars */
+  --frame-outer:var(--border-width-frame) solid var(--gold-600);
+  --frame-gap:var(--space-2);
+  --frame-inner:var(--border-width) solid var(--gold-200);
+
+  --card-border:var(--border-width) solid var(--border-hairline);
+  --card-radius:var(--radius-xs);
+  --card-padding:var(--space-5);
+}
+
+/* Motion. Short, flat, no bounce — state changes read as instant, like a linter result. */
+:root{
+  --duration-instant:60ms; /* @kind other */
+  --duration-fast:120ms; /* @kind other */
+  --duration-base:180ms; /* @kind other */
+  --duration-slow:260ms; /* @kind other */
+  --ease-standard:cubic-bezier(.2,0,.38,1); /* @kind other */
+  --ease-out:cubic-bezier(0,0,.35,1); /* @kind other */
+  --ease-in-out:cubic-bezier(.4,0,.2,1); /* @kind other */
+  --transition-ui:background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),color var(--duration-fast) var(--ease-out);
+  --hover-tint:rgba(138,116,32,.08);--press-shift:1px;
+}
+
+/* Component layer - static port of the design system's components.
+   Token values come from tokens/*.css (vendored from the Claude Design canvas). */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); font-size: var(--text-base); line-height: var(--leading-normal);
+       color: var(--text-body); background: var(--surface-page); }
+a { color: var(--text-link); transition: var(--transition-ui); }
+a:hover { color: var(--gold-500); }
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+code, .mono { font-family: var(--font-mono); }
+code { font-size: 0.92em; background: var(--surface-inset); padding: 1px 5px; border-radius: var(--radius-xs); }
+
+/* Top bar */
+.topbar { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-3) var(--space-6);
+  background: var(--surface-card); border-bottom: var(--border-width) solid var(--border-hairline);
+  position: sticky; top: 0; z-index: 5; }
+.topbar .home { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; }
+.topbar .right { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); }
+.logotype { font-family: var(--font-mono); font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight); color: var(--text-strong); line-height: 1.1; }
+.logotype .hyphen { color: var(--gold-500); }
+.btn-secondary { font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--weight-medium);
+  color: var(--text-body); text-decoration: none; border: var(--border-width) solid var(--border-hairline);
+  border-radius: var(--radius-xs); padding: 5px 12px; background: var(--surface-card);
+  transition: var(--transition-ui); }
+.btn-secondary:hover { background: var(--hover-tint); color: var(--text-body); }
+
+/* Shell */
+.shell { display: flex; align-items: stretch; }
+.sidenav { width: var(--width-sidebar); flex: 0 0 var(--width-sidebar);
+  background: var(--surface-sunken); border-right: var(--border-width) solid var(--border-hairline);
+  padding: var(--space-5) var(--space-4); min-height: calc(100vh - 53px); }
+.sidenav .section { margin-bottom: var(--space-6); }
+.sidenav .label { font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase;
+  letter-spacing: var(--tracking-caps); color: var(--text-faint); margin-bottom: var(--space-2); }
+.sidenav a, .sidenav .planned { display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-2); padding: 5px var(--space-2); margin-left: -2px; text-decoration: none;
+  border-left: var(--border-width-thick) solid transparent; font-size: var(--text-sm);
+  color: var(--text-body); transition: var(--transition-ui); }
+.sidenav a:hover { background: var(--gold-50); color: var(--text-body); }
+.sidenav a.active { border-left-color: var(--gold-500); background: var(--gold-50);
+  color: var(--gold-800); font-weight: var(--weight-medium); }
+.sidenav .planned { color: var(--text-faint); cursor: default; }
+.sidenav .planned .mark, .sidenav a .ext { font-family: var(--font-mono); font-size: var(--text-2xs);
+  color: var(--ink-300); }
+main.content { flex: 1; min-width: 0; padding: var(--space-10) var(--space-12); }
+main.content > .inner { max-width: var(--width-content); }
+@media (max-width: 860px) { .sidenav { display: none; } main.content { padding: var(--space-6); } }
+
+/* Spec header */
+.spec-eyebrow { display: flex; gap: var(--space-5); margin-bottom: var(--space-3); flex-wrap: wrap; }
+.spec-eyebrow span { font-family: var(--font-mono); font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-faint); }
+.spec-eyebrow b { color: var(--text-strong); font-weight: var(--weight-medium); }
+h1 { font-size: var(--text-2xl); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-tight);
+     color: var(--text-strong); line-height: var(--leading-tight); }
+.lede { margin-top: var(--space-4); max-width: var(--measure-prose); font-size: var(--text-md);
+        color: var(--text-body); }
+h2 { margin: var(--space-10) 0 var(--space-4); font-size: var(--text-lg); font-weight: var(--weight-semibold);
+     letter-spacing: var(--tracking-tight); color: var(--text-strong);
+     border-bottom: var(--border-width) solid var(--border-hairline); padding-bottom: var(--space-2); }
+h3 { margin: var(--space-6) 0 var(--space-2); font-size: var(--text-base);
+     font-weight: var(--weight-semibold); color: var(--text-strong); }
+p { margin: 0 0 var(--space-4); max-width: var(--measure-prose); }
+
+/* Badges & tags */
+.badge { font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide); text-transform: uppercase; border-radius: var(--radius-xs);
+  padding: 2px 6px; display: inline-block; line-height: 1.5; border: var(--border-width) solid; }
+.badge.neutral { background: var(--ink-100); color: var(--ink-700); border-color: var(--ink-200); }
+.badge.gold { background: var(--gold-50); color: var(--gold-800); border-color: var(--gold-200); }
+.badge.active { background: var(--status-active-bg); color: var(--green-600); border-color: var(--green-400); }
+.badge.maintenance { background: var(--status-maintenance-bg); color: var(--amber-600); border-color: var(--amber-400); }
+.badge.deprecated { background: var(--status-deprecated-bg); color: var(--red-600); border-color: var(--red-400); }
+.badge.eol { background: var(--status-eol-bg); color: var(--ink-700); border-color: var(--ink-300); }
+.tag { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted);
+  border: var(--border-width) solid var(--border-hairline); border-radius: var(--radius-xs);
+  padding: 2px 6px; display: inline-block; line-height: 1.5; background: var(--surface-card); }
+.badgerow { display: flex; gap: var(--space-3); margin: var(--space-4) 0 var(--space-6); flex-wrap: wrap; }
+
+/* Cards */
+.card { background: var(--surface-card); border: var(--card-border); border-radius: var(--card-radius);
+        padding: var(--card-padding); }
+.card .card-title { font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase;
+  letter-spacing: var(--tracking-caps); color: var(--text-faint); margin-bottom: var(--space-2); }
+.cardgrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+@media (max-width: 720px) { .cardgrid { grid-template-columns: 1fr; } }
+.framed { display: inline-block; border: var(--frame-outer); padding: var(--frame-gap);
+          background: var(--gold-50); }
+.framed > span { display: block; border: var(--frame-inner); }
+.avatar { display: block; image-rendering: pixelated; }
+
+/* Data tables */
+table { width: 100%; border-collapse: collapse; margin: var(--space-2) 0 var(--space-6); }
+th { text-align: left; padding: var(--space-2) var(--space-3); font-family: var(--font-mono);
+     font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps);
+     color: var(--ink-400); border-bottom: var(--border-width) solid var(--ink-700); font-weight: var(--weight-medium); }
+td { padding: var(--space-2) var(--space-3); border-bottom: var(--border-width) solid var(--border-hairline);
+     vertical-align: top; font-size: var(--text-sm); }
+tr:hover td { background: var(--hover-tint); }
+td.num { font-family: var(--font-mono); text-align: right; font-size: var(--text-xs); color: var(--text-muted); }
+td.id { font-family: var(--font-mono); font-size: var(--text-xs); white-space: nowrap; }
+td.id a { color: var(--text-strong); text-decoration: none; font-weight: var(--weight-medium); }
+td.id a:hover { color: var(--gold-700); }
+tr.cat td { background: var(--surface-inset); font-family: var(--font-mono); font-size: var(--text-2xs);
+  text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--gold-800); }
+tr.cat:hover td { background: var(--surface-inset); }
+
+/* Code block */
+.codeblock { border: var(--border-width) solid var(--border-hairline); border-radius: var(--radius-xs);
+             margin: var(--space-4) 0 var(--space-6); overflow: hidden; }
+.codeblock .filename { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-faint);
+  background: var(--surface-sunken); padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-width) solid var(--border-hairline); }
+.codeblock pre { background: var(--surface-code); color: var(--ink-100); padding: var(--space-4);
+  overflow-x: auto; font-family: var(--font-mono); font-size: var(--text-xs); line-height: var(--leading-relaxed); }
+
+/* Meta grid, prose, misc */
+dl.meta { display: grid; grid-template-columns: 190px 1fr; gap: var(--space-2) var(--space-4);
+  border: var(--card-border); border-radius: var(--card-radius); padding: var(--space-5);
+  background: var(--surface-card); margin: var(--space-4) 0; }
+dl.meta dt { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); padding-top: 2px; }
+dl.meta dd { font-size: var(--text-sm); }
+.prevnext { display: flex; justify-content: space-between; margin-top: var(--space-10);
+  font-size: var(--text-sm); }
+.prevnext a { font-family: var(--font-mono); text-decoration: none; }
+article.prose { max-width: var(--measure-prose); }
+article.prose blockquote { border-left: var(--border-width-thick) solid var(--gold-500);
+  background: var(--surface-inset); padding: var(--space-3) var(--space-4); margin: 0 0 var(--space-4);
+  color: var(--gold-900); }
+article.prose ul, article.prose ol { margin: 0 0 var(--space-4) var(--space-6); }
+article.prose li { margin-bottom: var(--space-1); }
+ul.plain { margin: 0 0 var(--space-4) var(--space-6); font-size: var(--text-sm); }
+.footer { border-top: var(--border-width) solid var(--border-hairline); margin-top: var(--space-16);
+  padding-top: var(--space-4); display: flex; justify-content: space-between; flex-wrap: wrap;
+  gap: var(--space-2); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-faint); }
+.principle { font-weight: var(--weight-semibold); color: var(--text-strong); }
+
+/* Layout bits used by templates */
+.hero-row { display: flex; gap: var(--space-10); align-items: flex-start; margin-bottom: var(--space-6); }
+.hero-text { flex: 1; min-width: 280px; }
+@media (max-width: 720px) { .hero-row { flex-direction: column; } }
+.stat { font-size: var(--text-2xl); font-weight: var(--weight-medium); color: var(--text-strong); }
+.stat-unit { font-size: var(--text-sm); color: var(--text-faint); }
+.stat-sub { font-size: var(--text-sm); color: var(--text-muted); margin: var(--space-2) 0 var(--space-3); }
+.stat-link { font-size: var(--text-sm); text-decoration: none; font-weight: var(--weight-medium); }
+.example-bad { font-size: var(--text-xs); color: var(--red-600); }
+.example-good { font-size: var(--text-xs); color: var(--green-600); }
+.example-bad, .example-good { display: block; white-space: pre-wrap; line-height: var(--leading-relaxed); }
+.source-note { font-size: var(--text-xs); color: var(--text-faint); }
+.origin-avatar { margin: var(--space-6) 0; }
+
+/* Site-level overrides of the token aliases: the vendored --text-body/--text-muted read
+   too light on paper at 15px — darkened one ink step each (tokens/ stays vendored verbatim). */
+:root { --text-body: var(--ink-800); --text-muted: var(--ink-600); }
+td { color: var(--ink-800); }
+
+/* Whole-row click-through on check indexes */
+tr.rowlink { cursor: pointer; }
+a.rowname { color: var(--ink-800); text-decoration: none; font-weight: var(--weight-medium); }
+a.rowname:hover { color: var(--gold-700); text-decoration: underline; }
+
+/* Sortable table headers */
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--gold-700); }
+th.sortable::after { content: " ↕"; opacity: 0.35; }
+th.sortable[data-dir="asc"]::after { content: " ↑"; opacity: 1; color: var(--gold-700); }
+th.sortable[data-dir="desc"]::after { content: " ↓"; opacity: 1; color: var(--gold-700); }
+
+/* Definition-file link line on check pages */
+.deffile { font-size: var(--text-sm); color: var(--text-muted); margin: 0 0 var(--space-6); }
+
+/* Stacked full-width cards (check pages: violation above compliant) */
+.cardstack { display: grid; grid-template-columns: 1fr; gap: var(--space-4); }

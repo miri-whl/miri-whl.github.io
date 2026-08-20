@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-030 — Changelog coverage · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-030 — Changelog coverage</h1>
+<p class="lede">Output covers added/removed/deprecated surfaces, schema bumps, exit-code changes</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge maintenance">severity MEDIUM · 3</span>
+  <span class="tag">weight 1</span>
+  
+  <span class="tag">requires previous-release</span>
+  <span class="tag">CLI Spec §5.2</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-030.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-030.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-030.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad"># 3.2.0 bumped schema_version 1 -&gt; 2 and changed exit code 3&#x27;s meaning
+$ acme-cli changelog --since 3.1.0 --json
+{&quot;releases&quot;: [{&quot;version&quot;: &quot;3.2.0&quot;, &quot;added&quot;: [&quot;--format&quot;]}]}
+# consumer re-learns the flags, then breaks on the unreported payload shape</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">{&quot;releases&quot;: [{&quot;version&quot;: &quot;3.2.0&quot;, &quot;added&quot;: [&quot;--format&quot;],
+  &quot;schema_version&quot;: {&quot;from&quot;: &quot;1&quot;, &quot;to&quot;: &quot;2&quot;},
+  &quot;exit_codes&quot;: [{&quot;code&quot;: 3, &quot;was&quot;: &quot;not found&quot;, &quot;now&quot;: &quot;permission denied&quot;}]}]}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>§5.2 makes five categories normative — added, removed, and deprecated surfaces, <code>schema_version</code> bumps, and exit-code meaning changes — because these are precisely the change classes that break machine consumers. A changelog that reports new flags but omits the wire-schema bump answers &quot;what moved&quot; incompletely: the consumer updates its command model and still breaks on the payload shape that went unreported, restoring the exact blind spot the command exists to remove. Ecosystem prior art (towncrier-style CI bots) only enforces that *an entry exists*, never that it is complete (§6.3).</p>
+
+<h2>Definition</h2>
+<p>An agent that has been away for three releases must be able to ask what moved; update state must be queryable, passive, and honest offline. This check verifies: Output covers added/removed/deprecated surfaces, schema bumps, exit-code changes.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>diffing the previous release&#x27;s <code>--describe</code> against the current one yields an added, removed, or deprecated surface absent from the <code>changelog --since &lt;previous&gt;</code> output</li><li>a <code>schema_version</code> transition or an exit-code meaning change occurred between the releases but does not appear in the output</li><li>one of the five normative §5.2 categories has no representation in the output shape at all</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Cover added/removed/deprecated surfaces, schema bumps, and exit-code changes.</p>
+<ol class="plain">
+  <li>Generate the changelog mechanically from the schema-as-data diff between releases (§2.3), so surface changes cannot be omitted by hand</li><li>Include <code>schema_version</code> transitions and the exit-code table in the diffed struct, not just flags and subcommands</li><li>Add a release-CI fixture: cut a test release that removes a flag and bumps <code>schema_version</code>, and assert both appear in <code>changelog --since</code></li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
+  <dt>violation_unit</dt><dd>each missing changelog category</dd>
+  
+  
+  <dt>requirements</dt><dd>previous-release</dd>
+  
+  <dt>category</dt><dd>Update &amp; Changelog</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §5.2</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-030.yaml" class="mono">MIRI-CLI-030.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-030.html" class="mono">MIRI-CLI-030.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-029.html">← MIRI-CLI-029</a>
+  <a href="MIRI-CLI-031.html">MIRI-CLI-031 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

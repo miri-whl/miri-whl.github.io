@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-025 — check-update implemented · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-025 — check-update implemented</h1>
+<p class="lede"><code>check-update --json</code> returns the specified shape</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity HIGH · 4</span>
+  <span class="tag">weight 4</span>
+  
+  
+  <span class="tag">CLI Spec §5.1</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-025.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-025.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-025.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ acme-cli check-update --json
+error: unknown command &quot;check-update&quot; for &quot;acme-cli&quot;
+$ echo $?
+1</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ acme-cli check-update --json
+{&quot;schema_version&quot;: &quot;1&quot;, &quot;current&quot;: &quot;3.2.0&quot;, &quot;latest&quot;: &quot;3.4.1&quot;,
+ &quot;update_available&quot;: true, &quot;urgency&quot;: &quot;security&quot;, &quot;advisories&quot;: [&quot;ACME-2026-0007&quot;],
+ &quot;manifest&quot;: &quot;https://releases.acme.example/acme-cli/manifest.json&quot;,
+ &quot;install_hint&quot;: &quot;brew upgrade acme-cli&quot;}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>No standard answers &quot;is there a newer version of this binary&quot;: update-notifier polls the npm registry from a detached child process, Azure CLI ships its own <code>az upgrade</code>, and Homebrew answers only for tools it installed — every vendor a homegrown notifier against a homegrown endpoint that no agent or auditor can discover. <code>check-update --json</code> replaces that zoo with one declared primitive whose <code>manifest</code> field names the endpoint consulted, making the check itself auditable. Without it, an agent whose knowledge froze at 3.2.0 has no standard way to learn that 3.4.1 exists, let alone that the gap is a security release.</p>
+
+<h2>Definition</h2>
+<p>An agent that has been away for three releases must be able to ask what moved; update state must be queryable, passive, and honest offline. This check verifies: <code>check-update --json</code> returns the specified shape.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li><code>&lt;cli&gt; check-update --json</code> is unrecognized or exits non-zero in a healthy online environment</li><li>stdout is not a single JSON document, or lacks any of <code>schema_version</code>, <code>current</code>, <code>latest</code>, <code>update_available</code>, <code>urgency</code></li><li><code>urgency</code> is outside {<code>none</code>, <code>routine</code>, <code>recommended</code>, <code>security</code>}, or <code>current</code> disagrees with the binary&#x27;s <code>--version</code></li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Implement check-update --json per CLI Spec §5.1.</p>
+<ol class="plain">
+  <li>Implement <code>check-update --json</code> returning the §5.1 shape, derived from the same schema-as-data source as <code>--help</code> and <code>--describe</code> (§2.3)</li><li>Point it at a declared manifest: the registry API when registry-distributed (§7.1), the forge&#x27;s releases API or a static JSON file adjacent to the artifacts for direct or private distribution (§8.3)</li><li>Populate <code>manifest</code> with the endpoint consulted and <code>install_hint</code> with the channel-appropriate upgrade command</li><li>Keep the output JSON-on-stdout, exit 0; any diagnostics go to stderr (§2.5)</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
+  <dt>violation_unit</dt><dd>the update surface</dd>
+  
+  
+  <dt>category</dt><dd>Update &amp; Changelog</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §5.1</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-025.yaml" class="mono">MIRI-CLI-025.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-025.html" class="mono">MIRI-CLI-025.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-024.html">← MIRI-CLI-024</a>
+  <a href="MIRI-CLI-026.html">MIRI-CLI-026 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

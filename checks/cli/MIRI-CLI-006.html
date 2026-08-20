@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-006 — Non-interactive default · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-006 — Non-interactive default</h1>
+<p class="lede">No command blocks on a prompt when stdin is not a TTY</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity CRITICAL · 5</span>
+  <span class="tag">weight 3</span>
+  
+  
+  <span class="tag">CLI Spec §2.5</span><span class="tag">anc.dev</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-006.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-006.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-006.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ tool init &lt;/dev/null
+This will create 3 resources. Continue? [y/N]
+(process blocks on read; the CI job burns 60 minutes
+ and dies with a timeout that never mentions the prompt)</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ tool init &lt;/dev/null
+(stderr) confirmation required and stdin is not a TTY
+(stdout) {&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CONFIRMATION_REQUIRED&quot;,
+  &quot;retryable&quot;: true, &quot;suggestions&quot;: [&quot;re-run with --yes&quot;]}}
+$ echo $?
+1            # immediate, structured, recoverable in one turn</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>A tool that prompts when stdin is not a TTY hangs silently: the agent never sees a question, only a stall that ends when the harness or CI timeout kills the job — and the timeout error says nothing about the prompt that caused it. This failure class recurs in shipped tools: <code>pnpm dlx</code> hangs CI jobs on its build-scripts approval prompt (pnpm/pnpm#12108), and <code>opennextjs-cloudflare build</code> blocks non-TTY builds on a config prompt (opennextjs-cloudflare#1198). Failing fast with a structured error naming the answering flag converts an unbounded hang into a one-turn recovery, which is why this check is CRITICAL.</p>
+
+<h2>Definition</h2>
+<p>Agents drive CLIs through the same conventions humans and scripts rely on; a tool that breaks them is invisible or hangs silently in a non-interactive context. This check verifies: No command blocks on a prompt when stdin is not a TTY.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>With stdin closed (<code>&lt;/dev/null</code>), any command prints a prompt and blocks on a read from stdin instead of exiting</li><li>Any command blocks awaiting input in a non-TTY context without printing anything at all</li><li>A confirmation exists that has no flag or environment equivalent recorded in <code>--describe</code></li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Never prompt when stdin is not a TTY; fail fast or take flags.</p>
+<ol class="plain">
+  <li>Detect <code>!isatty(stdin)</code> and never prompt in that state — this must be the default, not opt-in via a <code>--non-interactive</code> flag</li><li>Where confirmation is required, fail fast with a structured error naming the answering flag, e.g. <code>{&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CONFIRMATION_REQUIRED&quot;, &quot;retryable&quot;: true, &quot;suggestions&quot;: [&quot;re-run with --yes&quot;]}}</code> (CLI Spec §6)</li><li>Give every prompt a flag or environment equivalent (<code>--yes</code>, <code>--strategy &lt;v&gt;</code>) and record it in <code>--describe</code></li><li>Add a CI matrix running every command with <code>&lt;/dev/null</code> under a short timeout; any timeout expiry is a failure of this check</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>CRITICAL (numeric 5 of 5)</dd>
+  <dt>violation_unit</dt><dd>each blocking prompt</dd>
+  
+  <dt>population_unit</dt><dd>all commands in --describe</dd>
+  
+  
+  <dt>category</dt><dd>Baseline Conventions</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §2.5</a> <em>(spec)</em></li>
+  
+  <li><a href="https://anc.dev/">anc.dev</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-006.yaml" class="mono">MIRI-CLI-006.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-006.html" class="mono">MIRI-CLI-006.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-005.html">← MIRI-CLI-005</a>
+  <a href="MIRI-CLI-007.html">MIRI-CLI-007 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

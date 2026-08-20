@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-037 — No silent removals · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-037 — No silent removals</h1>
+<p class="lede">Every removed surface was deprecated in ≥1 earlier release</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity CRITICAL · 5</span>
+  <span class="tag">weight 3</span>
+  
+  <span class="tag">requires previous-release</span>
+  <span class="tag">CLI Spec §6.3-2</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-037.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-037.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-037.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">2.5.0: --describe lists subcommand &quot;snapshot&quot;; no lifecycle block, no changelog notice
+2.6.0: &quot;snapshot&quot; is gone from --describe
+$ tool snapshot
+error: unknown command &quot;snapshot&quot; — a dead-end parse failure; agents built on 2.5.0 knowledge retry blind</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">2.6.0: &quot;snapshot&quot; carries lifecycle {status: deprecated, removed_in: &quot;2.7.0&quot;, replacement: &quot;backup create&quot;}, functions, warns on stderr
+2.7.0: &quot;snapshot&quot; removed; invoking it returns
+{&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;COMMAND_REMOVED&quot;, &quot;removed_in&quot;: &quot;2.7.0&quot;,
+  &quot;retryable&quot;: false, &quot;suggestions&quot;: [&quot;use &#x27;tool backup create&#x27; instead&quot;]}}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Spec §6.3-2 forbids removing any surface that was never published as deprecated. <code>kubectl get --export</code> announced its removal four releases ahead and its disappearance in 1.18 still broke Helm chart template generation and CI/CD backup pipelines; a silent removal grants dependents not even that chance. The failure mode with agent consumers is worse and quieter: frozen model weights keep constructing the dead invocation forever, the agent hits an unrecognized-argument error, retries hallucinated variants, and no bug report is ever filed — the maintainer never learns the interface degraded (landscape §3.1).</p>
+
+<h2>Definition</h2>
+<p>Deprecation markers, the changelog, and actual removals must agree; a removed flag that answers with a dead-end error strands every consumer working from stale knowledge. This check verifies: Every removed surface was deprecated in ≥1 earlier release.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>Diffing the previous release&#x27;s <code>--describe</code> against the current one: a subcommand or flag present before is absent now and never appeared with <code>lifecycle.status: deprecated</code> in any earlier release</li><li><code>changelog --since &lt;previous&gt;</code> lists a surface under removed with no matching deprecated entry in any prior release&#x27;s section</li><li>The check declares the <code>previous-release</code> requirement; a linter without access to a prior release skips with the fixed reason rather than passing</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Deprecate first: lifecycle block + changelog entry + grace period, then remove.</p>
+<ol class="plain">
+  <li>Reinstate the removed surface in a patch release, attaching a full <code>lifecycle</code> block (<code>status: deprecated</code>, <code>deprecated_since</code>, <code>removed_in</code>, <code>replacement</code>)</li><li>Hold the §7.3 grace period — the surface functions and warns on stderr for at least one minor release — then remove it, keeping the structured <code>FLAG_REMOVED</code> teaching error of §6 in place</li><li>Gate releases in CI on the no-silent-removals diff: compare the release candidate&#x27;s <code>--describe</code> against the previous release&#x27;s and fail on any undeprecated disappearance</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>CRITICAL (numeric 5 of 5)</dd>
+  <dt>violation_unit</dt><dd>each silently removed surface</dd>
+  
+  <dt>population_unit</dt><dd>all surfaces removed since the previous release</dd>
+  
+  
+  <dt>requirements</dt><dd>previous-release</dd>
+  
+  <dt>category</dt><dd>Deprecation Coherence</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §6.3-2</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-037.yaml" class="mono">MIRI-CLI-037.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-037.html" class="mono">MIRI-CLI-037.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-036.html">← MIRI-CLI-036</a>
+  <a href="MIRI-CLI-038.html">MIRI-CLI-038 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

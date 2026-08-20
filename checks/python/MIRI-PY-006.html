@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-006 — agent-metadata/ present · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-006 — agent-metadata/ present</h1>
+<p class="lede">Directory exists in the package</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity CRITICAL · 5</span>
+  <span class="tag">weight 2</span>
+  
+  
+  <span class="tag">Miri Wheel Ext. §3.2</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-006.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-006.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-006.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">src/example_sdk/agent-metadata/sdk-manifest.json   # exists in the repo
+unzip -l dist/example_sdk-2.1.0-py3-none-any.whl | grep agent-metadata
+# (no output) — the backend shipped only *.py; every installed copy
+# of the package lacks the directory</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">unzip -l dist/example_sdk-2.1.0-py3-none-any.whl
+  example_sdk/agent-metadata/sdk-manifest.json
+  example_sdk/agent-metadata/usage-patterns.json
+  example_sdk/agent-metadata/lifecycle.json</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Wheel Extensions §3.1.2 places agent-metadata/ inside the import package specifically so a plain <code>pip install</code> delivers it and <code>importlib.resources</code> can read it with no network access; it is the root the entire Miri surface hangs from, and without it an agent is back to the linear README-and-guesswork path the standard exists to eliminate. The characteristic failure is packaging, not authorship, and it is silent: setuptools ships only <code>*.py</code> unless package-data names the JSON files, and hatchling&#x27;s default file selection excludes git-ignored paths — which build-time-generated metadata usually is — so the directory exists in the repository, vanishes from the built wheel, and nothing warns.</p>
+
+<h2>Definition</h2>
+<p>The agent-metadata directory is the wheel&#x27;s machine-readable surface; every file in it must be present, schema-valid, and generated at build time so agents can consume it without parsing or guessing. This check verifies: Directory exists in the package.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>No <code>agent-metadata/</code> directory exists under any import package in the wheel (checked against RECORD and the archive listing)</li><li>The directory exists but contains none of the files the specification defines (sdk-manifest.json, usage-patterns.json, lifecycle.json, ...)</li><li>The directory&#x27;s files are present but unreadable (zero-byte or undecodable)</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Add the agent-metadata/ directory and generate its files at build time.</p>
+<ol class="plain">
+  <li>Run the Miri generation step at build time so <code>src/&lt;package&gt;/agent-metadata/</code> is populated before the backend collects files</li><li>Make the backend include it: setuptools needs <code>[tool.setuptools.package-data] example_sdk = [&quot;agent-metadata/*.json&quot;, &quot;agent-metadata/*.md&quot;]</code>; hatchling needs <code>[tool.hatch.build] artifacts = [&quot;*/agent-metadata/*&quot;]</code> because its defaults exclude git-ignored generated files</li><li>Verify the built artifact, not the source tree: <code>unzip -l dist/example_sdk-*.whl | grep agent-metadata/</code></li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>CRITICAL (numeric 5 of 5)</dd>
+  <dt>violation_unit</dt><dd>the package</dd>
+  
+  
+  <dt>category</dt><dd>Agent Metadata Core</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-wheel-extensions.md">Miri Wheel Ext. §3.2</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-006.yaml" class="mono">MIRI-PY-006.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-006.html" class="mono">MIRI-PY-006.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-005.html">← MIRI-PY-005</a>
+  <a href="MIRI-PY-007.html">MIRI-PY-007 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

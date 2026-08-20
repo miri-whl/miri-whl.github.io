@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-039 — Dry run on writes · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-039 — Dry run on writes</h1>
+<p class="lede">Every mutating command supports <code>--dry-run</code> with faithful simulation</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity HIGH · 4</span>
+  <span class="tag">weight 4</span>
+  
+  
+  <span class="tag">Landscape §2.2 (anc.dev)</span><span class="tag">CLI Spec §9</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-039.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-039.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-039.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ tool delete --prefix tmp/ --dry-run
+error: unknown flag --dry-run
+The only way to learn which objects match the prefix is to delete them.</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ tool delete --prefix tmp/ --dry-run --json
+{&quot;schema_version&quot;: &quot;1&quot;, &quot;would_delete&quot;: [&quot;tmp/a.log&quot;, &quot;tmp/b.log&quot;], &quot;count&quot;: 2}
+$ tool delete --prefix tmp/ --json
+{&quot;schema_version&quot;: &quot;1&quot;, &quot;deleted&quot;: [&quot;tmp/a.log&quot;, &quot;tmp/b.log&quot;], &quot;count&quot;: 2}
+The dry run touched nothing and the real run performed exactly the reported plan.</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>anc.dev makes <code>--dry-run</code> on every write operation one of its six MUST-level requirements, and Agent-First CLI principle 10 (faithful dry run — simulation over approximation) names the fidelity half: a preview computed by a separate code path drifts from the real behavior and is worse than no preview, because the agent trusts it. <code>terraform plan</code> is the archetype — the plan is produced by the same graph walk that <code>apply</code> executes, which is what makes gating a pipeline on plan output defensible; <code>aws s3 rm --dryrun</code> shows the operations that would be performed without running them. A mutating command without a faithful dry run forces every consumer, human or agent, to test in production.</p>
+
+<h2>Definition</h2>
+<p>Agents retry, parallelize, and act without human review between steps; mutations must be previewable, marked, and safe to repeat. This check verifies: Every mutating command supports <code>--dry-run</code> with faithful simulation.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>A command marked mutating in <code>--describe</code> accepts no <code>--dry-run</code> flag (or a documented equivalent declared in the introspection output)</li><li>Running the command with <code>--dry-run</code> changes observable state — files written, remote resources created or deleted, counters advanced</li><li>The dry-run report names actions the subsequent real run does not perform, or the real run performs actions the dry run did not report</li><li>The dry-run path is implemented separately from the execution planner rather than sharing it (static evidence of divergence by construction)</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Add faithful --dry-run to every write operation.</p>
+<ol class="plain">
+  <li>Structure every write as plan-then-execute, and implement <code>--dry-run</code> as the shared planner with the execute step skipped — the <code>terraform plan</code>/<code>apply</code> split</li><li>Emit the plan as JSON on stdout: the list of <code>{action, target}</code> pairs the real run would perform, so a harness can gate on it</li><li>Declare dry-run support per command in the schema-as-data source so it surfaces in <code>--describe</code> (§2.3)</li><li>Verify fidelity in CI: fingerprint state, run <code>--dry-run</code>, assert the fingerprint is unchanged; then run for real and assert the performed actions equal the reported plan</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
+  <dt>violation_unit</dt><dd>each mutating command without dry-run</dd>
+  
+  <dt>population_unit</dt><dd>all mutating commands in --describe</dd>
+  
+  
+  <dt>category</dt><dd>Safety</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/landscape-and-prior-art.md">Landscape §2.2 (anc.dev)</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §9</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-039.yaml" class="mono">MIRI-CLI-039.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-039.html" class="mono">MIRI-CLI-039.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-038.html">← MIRI-CLI-038</a>
+  <a href="MIRI-CLI-040.html">MIRI-CLI-040 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

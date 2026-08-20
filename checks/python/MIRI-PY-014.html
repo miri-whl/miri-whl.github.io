@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-014 — Quickstart exists · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-014 — Quickstart exists</h1>
+<p class="lede"><code>examples/quickstart.py</code> present</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge maintenance">severity MEDIUM · 3</span>
+  <span class="tag">weight 3</span>
+  
+  
+  <span class="tag">Miri Wheel Ext. §5.1</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-014.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-014.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-014.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">Wheel contents:
+  example_sdk/agent-metadata/sdk-manifest.json
+  example_sdk/examples/advanced.py
+  METADATA: Agent-Quickstart-File: examples/quickstart.py  &lt;- points at a file the wheel does not contain</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">example_sdk/examples/quickstart.py:
+  from example_sdk import Client
+  client = Client(api_key=&quot;YOUR_API_KEY&quot;)  # placeholder documented in header
+  result = client.fetch(&quot;users&quot;)
+  print(f&quot;fetched {len(result)} records&quot;)  # end-to-end in four lines, no extra dependencies</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Miri Wheel Extensions §5.1 names examples/quickstart.py as the one required example and §9.1.1 makes its presence the floor of basic conformance; the enhanced METADATA field Agent-Quickstart-File points to it by path. It is the first artifact an agent executes to confirm its model of the API before generating integration code — in its absence the agent synthesizes the install-to-first-result path from prose and signatures, which is exactly the guessing this standard exists to remove.</p>
+
+<h2>Definition</h2>
+<p>Embedded examples are the primary learning path for agents; an example that does not run teaches a wrong lesson at machine speed. This check verifies: <code>examples/quickstart.py</code> present.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>examples/quickstart.py is absent from the built wheel</li><li>METADATA Agent-Quickstart-File names a path that does not exist in the wheel</li><li>quickstart.py exists but never imports the package it ships in, or contains no executable statements (empty stub)</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Add a minimal runnable quickstart example.</p>
+<ol class="plain">
+  <li>Add examples/quickstart.py demonstrating the minimal install-to-first-result flow: import, configure, one call, printed result</li><li>Keep it dependency-light — nothing beyond the package&#x27;s own Requires-Dist; move auth, error, and async flows to authentication.py, error_handling.py, and async/ per §5.1</li><li>Register it in AGENT_EXAMPLES.json with complexity &quot;beginner&quot; and set Agent-Quickstart-File: examples/quickstart.py in the enhanced METADATA</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
+  <dt>violation_unit</dt><dd>the examples directory</dd>
+  
+  
+  <dt>category</dt><dd>Examples</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-wheel-extensions.md">Miri Wheel Ext. §5.1</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-014.yaml" class="mono">MIRI-PY-014.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-014.html" class="mono">MIRI-PY-014.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-013.html">← MIRI-PY-013</a>
+  <a href="MIRI-PY-015.html">MIRI-PY-015 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

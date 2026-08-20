@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-011 — Build-time generation · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-011 — Build-time generation</h1>
+<p class="lede"><code>generated_at</code> timestamps within the build window; not hand-edited afterward</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge maintenance">severity MEDIUM · 3</span>
+  <span class="tag">weight 2</span>
+  
+  
+  <span class="tag">Agent Metadata §5</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-011.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-011.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-011.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">agent-metadata/ inside a wheel built 2026-08-15:
+  sdk-manifest.json    &quot;generated_at&quot;: &quot;2026-08-15T14:02:07Z&quot;
+  usage-patterns.json  &quot;generated_at&quot;: &quot;2026-08-15T14:02:07Z&quot;
+  lifecycle.json       &quot;generated_at&quot;: &quot;2026-05-12T09:31:44Z&quot;  &lt;- three months stale, hand-carried from the previous release</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">All files stamped from one build clock, inside the build window:
+  sdk-manifest.json    &quot;generated_at&quot;: &quot;2026-08-15T14:02:07Z&quot;
+  usage-patterns.json  &quot;generated_at&quot;: &quot;2026-08-15T14:02:07Z&quot;
+  lifecycle.json       &quot;generated_at&quot;: &quot;2026-08-15T14:02:07Z&quot;
+  (wheel built 2026-08-15T14:02–14:03Z; CI regenerates and diffs clean)</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Agent Metadata §5.1 makes generation a build step precisely because hand-maintained metadata drifts from the code within one release cycle, and the generated_at stamp is the only audit trail an external linter has. An agent trusts stale metadata more than stale prose, because the standard promises the file was derived from this exact build — a timestamp outside the build window breaks that promise silently, with no runtime error to surface it.</p>
+
+<h2>Definition</h2>
+<p>The agent-metadata directory is the wheel&#x27;s machine-readable surface; every file in it must be present, schema-valid, and generated at build time so agents can consume it without parsing or guessing. This check verifies: <code>generated_at</code> timestamps within the build window; not hand-edited afterward.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>generated_at in any agent-metadata file is absent or does not parse as an RFC 3339 / ISO 8601 timestamp</li><li>generated_at predates the wheel&#x27;s build (dist-info METADATA creation or the release tag) by more than the linter&#x27;s build-window tolerance</li><li>generated_at values across agent-metadata files spread wider than one build run&#x27;s tolerance (files stamped by different generator runs)</li><li>generated_at is later than the wheel&#x27;s own build timestamp (file edited after packaging)</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Generate agent metadata inside the build, never by hand afterward.</p>
+<ol class="plain">
+  <li>Run the metadata generator as a build-backend hook (Agent Metadata §5.1) — a hatchling/setuptools build step that writes agent-metadata/ into the sdist and wheel — never as a manual pre-release chore</li><li>Capture one datetime.now(timezone.utc) per build and stamp every generated file with the same value</li><li>In CI, compare each file&#x27;s generated_at against the build&#x27;s own timestamp and fail on any file outside the window</li><li>Reject commits that modify agent-metadata/ without a generator run: regenerate in CI and fail on diff (or compare checksums)</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
+  <dt>violation_unit</dt><dd>each stale metadata file</dd>
+  
+  <dt>population_unit</dt><dd>all files in agent-metadata/</dd>
+  
+  
+  <dt>category</dt><dd>Agent Metadata Core</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/agent-metadata-specification.md">Agent Metadata §5</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-011.yaml" class="mono">MIRI-PY-011.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-011.html" class="mono">MIRI-PY-011.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-010.html">← MIRI-PY-010</a>
+  <a href="MIRI-PY-012.html">MIRI-PY-012 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

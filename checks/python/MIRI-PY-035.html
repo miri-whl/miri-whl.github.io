@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-035 — Runtime warnings fire · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-035 — Runtime warnings fire</h1>
+<p class="lede">Importing/calling deprecated interfaces emits <code>DeprecationWarning</code></p>
+
+<div class="badgerow">
+  <span class="badge neutral">should</span>
+  <span class="badge neutral">severity MINOR · 2</span>
+  <span class="tag">weight 2</span>
+  
+  <span class="tag">requires execution</span>
+  <span class="tag">PEP 565</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-035.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-035.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-035.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">def legacy_connect(self):
+    &quot;&quot;&quot;Deprecated: use connect() instead.&quot;&quot;&quot;   # docstring only
+    return self.connect()
+# catch_warnings(record=True) captures nothing — consumer CI logs stay clean until the removal breaks them</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">@deprecated(&quot;legacy_connect() is deprecated; use connect(). Removal: 3.0.0&quot;)
+def legacy_connect(self):
+    return self.connect()
+# pytest output: DeprecationWarning: legacy_connect() is deprecated; use connect(). Removal: 3.0.0</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Since PEP 565 (Python 3.7) the default filters display a <code>DeprecationWarning</code> only when it is triggered by code running in <code>__main__</code>; inside imported libraries it is silent unless a test runner or <code>-W</code>/<code>-X dev</code> re-enables it — and pytest surfaces warnings by default, which makes consumers&#x27; CI the one channel that reliably reaches people who read neither metadata nor type checkers. That channel carries nothing unless the warning is actually emitted: a deprecation recorded only in a docstring, changelog, or migration-guide.json gives the filters nothing to show. The PEP 702 decorator (<code>warnings.deprecated</code> on Python ≥3.13, <code>typing_extensions.deprecated</code> earlier) closes both routes at once — static call-site flagging plus the runtime <code>DeprecationWarning</code> (Lifecycle §6.1).</p>
+
+<h2>Definition</h2>
+<p>Agents working from frozen model weights cannot read changelogs; deprecation must be marked in code, inventoried in metadata, and never resolved by silent removal. This check verifies: Importing/calling deprecated interfaces emits <code>DeprecationWarning</code>.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>Calling or importing an interface listed in migration-guide.json <code>deprecations</code> under <code>warnings.catch_warnings(record=True)</code> with <code>simplefilter(&quot;always&quot;)</code> captures no warning</li><li>A warning is emitted but its category is not <code>DeprecationWarning</code> or a subclass (e.g. <code>UserWarning</code>, or a bare print to stderr)</li><li>The deprecation exists only as docstring or comment text, with no PEP 702 decorator and no <code>warnings.warn</code> call on the executable path</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Ensure the PEP 702 decorator (or warnings call) fires at runtime.</p>
+<ol class="plain">
+  <li>Decorate the interface with <code>warnings.deprecated(...)</code> (Python ≥3.13) or <code>typing_extensions.deprecated(...)</code>; the decorator emits <code>DeprecationWarning</code> at call time and marks call sites for type checkers</li><li>For deprecated module attributes, emit from a module-level <code>__getattr__</code> via <code>warnings.warn(msg, DeprecationWarning, stacklevel=2)</code></li><li>Pin the behavior in the test suite: <code>with pytest.warns(DeprecationWarning, match=&quot;legacy_connect&quot;): client.legacy_connect()</code></li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MINOR (numeric 2 of 5)</dd>
+  <dt>violation_unit</dt><dd>each silent deprecated interface</dd>
+  
+  <dt>population_unit</dt><dd>all PEP 702-marked interfaces in the package</dd>
+  
+  
+  <dt>requirements</dt><dd>execution</dd>
+  
+  <dt>category</dt><dd>Deprecation &amp; Lifecycle Coherence</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://peps.python.org/pep-0565/">PEP 565</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-035.yaml" class="mono">MIRI-PY-035.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-035.html" class="mono">MIRI-PY-035.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-034.html">← MIRI-PY-034</a>
+  <a href="MIRI-PY-036.html">MIRI-PY-036 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

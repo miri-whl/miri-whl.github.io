@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-029 — Inventory derived · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-029 — Inventory derived</h1>
+<p class="lede">Every PEP 702 marker appears in <code>migration-guide.json</code> <code>deprecations</code></p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity HIGH · 4</span>
+  <span class="tag">weight 4</span>
+  
+  
+  <span class="tag">Lifecycle §6.2/§6.4-1</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-029.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-029.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-029.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">code:  @deprecated(&quot;Use query() instead; removed in 3.0.0&quot;)
+       def old_query(sql: str): ...
+migration-guide.json:  &quot;deprecations&quot;: []
+# metadata consumers keep suggesting old_query() until 3.0.0 deletes it</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">&quot;deprecations&quot;: [{
+  &quot;deprecated&quot;: &quot;old_query&quot;, &quot;replacement&quot;: &quot;query&quot;,
+  &quot;removal_version&quot;: &quot;3.0.0&quot;, &quot;migration&quot;: &quot;query() accepts the same SQL string&quot;
+}]  # generated at build time from the PEP 702 marker</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>PEP 702 markers are discoverable only by importing or type-checking the code; agents and scanners read metadata (§6.2). A marker that never reaches <code>migration-guide.json</code> splits the audience: developers in IDEs see the strikethrough while every metadata-reading consumer keeps recommending the deprecated interface right up until the release that removes it. §6.2 therefore makes the decorators the single source of truth and requires the JSON inventory to be derived at build time — hand-maintained inventories drift in exactly this direction, because adding a decorator and updating a JSON file are two edits that nothing forces to happen together.</p>
+
+<h2>Definition</h2>
+<p>Agents working from frozen model weights cannot read changelogs; deprecation must be marked in code, inventoried in metadata, and never resolved by silent removal. This check verifies: Every PEP 702 marker appears in <code>migration-guide.json</code> <code>deprecations</code>.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>An interface carrying a PEP 702 marker has no matching entry in the <code>deprecations</code> array of <code>migration-guide.json</code></li><li>A matching entry exists but its <code>replacement</code> or <code>removal_version</code> contradicts the decorator message</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Derive the deprecations array from PEP 702 markers at build time.</p>
+<ol class="plain">
+  <li>Extract markers mechanically at build time — PEP 702 sets <code>__deprecated__</code> on decorated objects, so an import-time walk (or an AST scan for the decorator) yields the complete set</li><li>Emit the <code>deprecations</code> array (<code>deprecated</code>, <code>replacement</code>, <code>removal_version</code>, <code>migration</code>) from that extraction in the same build step that writes the other agent metadata</li><li>Fail the build on any marker/inventory mismatch; never hand-edit the generated file</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
+  <dt>violation_unit</dt><dd>each marker missing from the inventory</dd>
+  
+  <dt>population_unit</dt><dd>all PEP 702-marked interfaces in the package</dd>
+  
+  
+  <dt>category</dt><dd>Deprecation &amp; Lifecycle Coherence</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/lifecycle-security-metadata.md">Lifecycle §6.2/§6.4-1</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-029.yaml" class="mono">MIRI-PY-029.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-029.html" class="mono">MIRI-PY-029.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-028.html">← MIRI-PY-028</a>
+  <a href="MIRI-PY-030.html">MIRI-PY-030 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

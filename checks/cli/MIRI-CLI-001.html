@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-001 — POSIX option syntax · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-001 — POSIX option syntax</h1>
+<p class="lede"><code>-</code> short options, <code>--</code> terminator, options-before-operands accepted</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge maintenance">severity MEDIUM · 3</span>
+  <span class="tag">weight 2</span>
+  
+  
+  <span class="tag">POSIX XBD §12.2</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-001.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-001.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-001.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ tool -ab target/          # -a and -b are both valid no-arg flags
+error: unknown option &#x27;-ab&#x27;
+$ tool delete -- --force    # operand named &#x27;--force&#x27;
+error: unknown option &#x27;--force&#x27;</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ tool -ab target/          # equivalent to: tool -a -b target/
+$ tool -o out.json target/  # and: tool -oout.json target/
+$ tool delete -- --force    # deletes the entry literally named &#x27;--force&#x27;
+$ echo $?
+0</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>POSIX XBD §12.2 is the one option grammar every shell user, script, and agent already knows: Guideline 5 permits grouping no-argument options behind a single <code>-</code>, Guideline 9 has options precede operands, and Guideline 10 reserves <code>--</code> as the end-of-options delimiter. An agent composes invocations from that shared grammar, not from the tool&#x27;s private one, so a parser that rejects <code>-ab</code> bundling or ignores <code>--</code> makes conventionally correct commands fail — and a missing <code>--</code> terminator makes operands that begin with <code>-</code> (a file literally named <code>-rf</code>, a branch named <code>--force</code>) impossible to pass safely at all.</p>
+
+<h2>Definition</h2>
+<p>Agents drive CLIs through the same conventions humans and scripts rely on; a tool that breaks them is invisible or hangs silently in a non-interactive context. This check verifies: <code>-</code> short options, <code>--</code> terminator, options-before-operands accepted.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>A grouped invocation <code>-ab</code> is rejected while <code>-a -b</code> is accepted, for options taking no argument</li><li>An operand placed after <code>--</code> is parsed as an option (or <code>--</code> itself is reported as an unknown option)</li><li><code>-o value</code> and <code>-ovalue</code> are not treated as equivalent for an option that takes an argument</li><li>Options appearing before operands are rejected or silently treated as operands</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Follow POSIX XBD §12.2 option syntax, including the -- terminator.</p>
+<ol class="plain">
+  <li>Replace any hand-rolled argv loop with a getopt-family parser that implements POSIX XBD §12.2 (argparse, clap, cobra/pflag, getopt_long)</li><li>Add parser conformance tests covering the three §12.2 trouble spots: <code>-ab</code> bundling, the <code>--</code> terminator, and <code>-o value</code>/<code>-ovalue</code> equivalence</li><li>If the tool must deviate (single-dash long options, ordered operands), declare the deviation in <code>--describe</code> rather than leaving it discoverable only by failure</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
+  <dt>violation_unit</dt><dd>each violating option form</dd>
+  
+  
+  <dt>category</dt><dd>Baseline Conventions</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html">POSIX XBD §12.2</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-001.yaml" class="mono">MIRI-CLI-001.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-001.html" class="mono">MIRI-CLI-001.html</a></p>
+
+<div class="prevnext">
+  <span></span>
+  <a href="MIRI-CLI-002.html">MIRI-CLI-002 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

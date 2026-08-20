@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-PY-032 — Removal versions sane · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a class="active" href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-032 — Removal versions sane</h1>
+<p class="lede">Every <code>removal_version</code> is greater than the current release</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge neutral">severity MINOR · 2</span>
+  <span class="tag">weight 2</span>
+  
+  
+  <span class="tag">Lifecycle §6.4-3</span><span class="tag">PEP 440</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/python/checks/MIRI-PY-032.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-032.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/python/checks/MIRI-PY-032.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">weather-sdk 2.0.0 ships migration-guide.json:
+  {&quot;deprecated&quot;: &quot;WeatherClient.legacy_connect()&quot;, &quot;replacement&quot;: &quot;WeatherClient.connect()&quot;,
+   &quot;removal_version&quot;: &quot;1.9.0&quot;}
+# legacy_connect() still exists in 2.0.0 — the metadata claims a removal that never happened</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">weather-sdk 2.0.0 ships migration-guide.json:
+  {&quot;deprecated&quot;: &quot;WeatherClient.legacy_connect()&quot;, &quot;replacement&quot;: &quot;WeatherClient.connect()&quot;,
+   &quot;removal_version&quot;: &quot;3.0.0&quot;}
+# 2.0.0 &lt; 3.0.0 under PEP 440 — the interface still shipping is exactly what the schedule predicts</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p><code>removal_version</code> is the field an agent uses to decide urgency — migrate now, or at the next regeneration cycle. A value at or below the shipping version is self-refuting: the interface demonstrably still exists in a release that claims to postdate its removal, and the consumer cannot tell whether the schedule went stale or the deletion was forgotten, so the whole inventory loses its authority as a schedule. The usual cause is mechanical — the removal plan slips, the version rolls past the promised release, and a hand-maintained field is never touched — which is why Lifecycle §6.2 requires the inventory to be derived from the PEP 702 decorators at build time. Comparison uses PEP 440 ordering, the same total order pip resolves with.</p>
+
+<h2>Definition</h2>
+<p>Agents working from frozen model weights cannot read changelogs; deprecation must be marked in code, inventoried in metadata, and never resolved by silent removal. This check verifies: Every <code>removal_version</code> is greater than the current release.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>A <code>deprecations[].removal_version</code> in migration-guide.json compares less than or equal to the wheel&#x27;s own version from <code>dist-info/METADATA</code> under PEP 440 ordering (<code>packaging.version.Version</code>)</li><li>A <code>removal_version</code> does not parse as a valid PEP 440 version at all</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Set removal_version to a future release.</p>
+<ol class="plain">
+  <li>Derive <code>removal_version</code> from the <code>@deprecated</code> decorator message at build time (Lifecycle §6.2) so a slipped plan is corrected in one place</li><li>When a removal slips, update the decorator to the new target release before cutting the release; regeneration propagates the change to the JSON</li><li>Gate the release in CI: compare every <code>removal_version</code> against the version being built with <code>packaging.version.Version</code> and fail on <code>&lt;=</code></li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MINOR (numeric 2 of 5)</dd>
+  <dt>violation_unit</dt><dd>each invalid removal version</dd>
+  
+  <dt>population_unit</dt><dd>all deprecations entries in migration-guide.json</dd>
+  
+  
+  <dt>category</dt><dd>Deprecation &amp; Lifecycle Coherence</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/lifecycle-security-metadata.md">Lifecycle §6.4-3</a> <em>(spec)</em></li>
+  
+  <li><a href="https://peps.python.org/pep-0440/">PEP 440</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-032.yaml" class="mono">MIRI-PY-032.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-032.html" class="mono">MIRI-PY-032.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-PY-031.html">← MIRI-PY-031</a>
+  <a href="MIRI-PY-033.html">MIRI-PY-033 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

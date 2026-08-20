@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-043 — Graceful cancellation · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-043 — Graceful cancellation</h1>
+<p class="lede">SIGINT/SIGTERM cleans up partial state before exit</p>
+
+<div class="badgerow">
+  <span class="badge neutral">should</span>
+  <span class="badge neutral">severity MINOR · 2</span>
+  <span class="tag">weight 1</span>
+  
+  
+  <span class="tag">Landscape §2.1 P11</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-043.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-043.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-043.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ tool apply &amp;  # agent harness times out and sends SIGINT mid-write
+$ tool apply
+error: state.json: unexpected end of JSON input
+$ wc -c state.json
+4096 state.json — truncated at a buffer boundary; every cancellation is now a corruption incident</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ tool apply &amp;  # SIGINT arrives mid-run
+{&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CANCELLED&quot;, &quot;retryable&quot;: true}}   # on stderr channel, exit 130
+$ ls state.json*   # state.json.tmp was removed by the signal handler
+state.json — still the previous complete version; the re-run starts clean and succeeds</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Agent invocations are cancelled routinely — harness timeouts, user interrupts, scheduler preemption — so Agent-First CLI principle 11 demands cleanup over corruption. The failure class is real: Terraform 1.1.0–1.1.2 contained a condition where interrupting a run could write an empty state file (hashicorp/terraform #30266), turning a cancellation into loss of the record of all managed infrastructure. Git shows the long-standing correct pattern: refs are updated by writing a lockfile and atomically renaming it into place, so a killed process leaves at worst a stale <code>.lock</code> to remove — never a half-written ref.</p>
+
+<h2>Definition</h2>
+<p>Agents retry, parallelize, and act without human review between steps; mutations must be previewable, marked, and safe to repeat. This check verifies: SIGINT/SIGTERM cleans up partial state before exit.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>Sending SIGINT or SIGTERM during a mutation leaves a truncated or partially written file, temporary residue that blocks re-runs, or an unreleased lock</li><li>State files are rewritten in place (open, truncate, write) rather than written to a temporary and renamed atomically — static evidence that any interrupt window corrupts</li><li>A re-run after an interrupt fails or behaves differently because of leftovers from the cancelled run</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Clean up partial state on SIGINT/SIGTERM.</p>
+<ol class="plain">
+  <li>Write new state to a temporary file in the destination directory, <code>fsync</code>, then <code>rename(2)</code> into place, so the visible file is always the old version or the new one — never a mixture</li><li>Trap SIGINT/SIGTERM: complete or roll back the current atomic unit, remove temporaries, release locks, and exit via the structured error channel with a <code>CANCELLED</code> code (conventionally exit status 130 for SIGINT)</li><li>Test cancellation in CI: repeatedly <code>kill -INT</code> the tool at random points during a mutation against a fixture, then assert the resulting state is either fully old or fully new and that an immediate re-run succeeds</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MINOR (numeric 2 of 5)</dd>
+  <dt>violation_unit</dt><dd>each unclean cancellation</dd>
+  
+  
+  <dt>category</dt><dd>Safety</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/landscape-and-prior-art.md">Landscape §2.1 P11</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-043.yaml" class="mono">MIRI-CLI-043.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-043.html" class="mono">MIRI-CLI-043.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-042.html">← MIRI-CLI-042</a>
+  <span></span>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

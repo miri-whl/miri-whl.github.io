@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CLI-033 — Teaching errors · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-CLI-033 — Teaching errors</h1>
+<p class="lede">Invoking a removed surface yields the structured error (code, <code>retryable: false</code>, <code>suggestions</code>) — not a generic parse failure</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity HIGH · 4</span>
+  <span class="tag">weight 4</span>
+  
+  <span class="tag">requires previous-release</span>
+  <span class="tag">CLI Spec §6/§6.3-4</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/cli/checks/MIRI-CLI-033.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-033.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-033.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">$ acme-cli get --export
+Error: unknown flag: --export
+Usage: acme-cli get [flags]
+# dead end: nothing names --output archive; a stale agent retries blind</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">$ acme-cli get --export
+{&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;FLAG_REMOVED&quot;, &quot;flag&quot;: &quot;--export&quot;,
+  &quot;removed_in&quot;: &quot;1.18.0&quot;, &quot;retryable&quot;: false,
+  &quot;suggestions&quot;: [&quot;use --output archive instead&quot;]}}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>When kubectl v1.18 removed <code>get --export</code>, invocations answered with a bare unknown-flag parse error — a dead end that broke Helm template generation and backup pipelines with nothing pointing at the successor. For an agent working from stale weights, the dead end triggers the blind-retry loop of landscape §3.1: hallucinated variants, an eventual silent workaround, and no bug report ever filed. The structured tombstone — stable <code>code</code>, <code>retryable: false</code>, non-empty <code>suggestions</code> — converts that permanent failure into a one-turn recovery, which is why it is the single highest-value behavior for frozen-weights consumers.</p>
+
+<h2>Definition</h2>
+<p>Deprecation markers, the changelog, and actual removals must agree; a removed flag that answers with a dead-end error strands every consumer working from stale knowledge. This check verifies: Invoking a removed surface yields the structured error (code, <code>retryable: false</code>, <code>suggestions</code>) — not a generic parse failure.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>for a surface present in the previous release&#x27;s <code>--describe</code> but absent from the current one, invoking it yields a generic parse failure (usage dump, &quot;unrecognized arguments&quot;, &quot;unknown flag&quot;) instead of a JSON error on the machine channel</li><li>the error emitted lacks a stable <code>error.code</code>, <code>retryable: false</code>, or a non-empty <code>suggestions</code> array naming the replacement</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Serve the structured teaching error: code, retryable false, suggestions.</p>
+<ol class="plain">
+  <li>Keep removed surfaces registered in the schema-as-data source as tombstones (<code>status: &quot;removed&quot;</code>) rather than deleting their entries, so the parser still recognizes them</li><li>Route tombstone hits to the §6 structured error: <code>{&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;FLAG_REMOVED&quot;, &quot;flag&quot;: ..., &quot;removed_in&quot;: ..., &quot;retryable&quot;: false, &quot;suggestions&quot;: [...]}}</code></li><li>Derive <code>suggestions</code> from the tombstone&#x27;s <code>lifecycle.replacement</code> field so the guidance cannot drift from the surface that actually exists (§6.3-3)</li><li>Add the §6.3-4 verification to release CI: invoke every surface removed since the prior release and assert the structured error, not a usage dump</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
+  <dt>violation_unit</dt><dd>each removed surface with a dead-end error</dd>
+  
+  <dt>population_unit</dt><dd>all surfaces removed since the previous release</dd>
+  
+  
+  <dt>requirements</dt><dd>previous-release</dd>
+  
+  <dt>category</dt><dd>Deprecation Coherence</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.1-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §6/§6.3-4</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-033.yaml" class="mono">MIRI-CLI-033.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-033.html" class="mono">MIRI-CLI-033.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CLI-032.html">← MIRI-CLI-032</a>
+  <a href="MIRI-CLI-034.html">MIRI-CLI-034 →</a>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>
