@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://miri-whl.github.io/schemas/check-v1.json",
+  "title": "Miri Standard Check Definition",
+  "description": "Schema for the per-check definition files in standards/<target>/checks/ - the canonical, machine-readable source of truth for every check, consumed by linter implementations",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "target",
+    "status",
+    "added_in",
+    "level",
+    "category",
+    "weight",
+    "conditional",
+    "severity",
+    "short_description",
+    "long_description",
+    "examples",
+    "rationale",
+    "fires_when",
+    "remediation",
+    "suggested_fix",
+    "references",
+    "urls"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable check ID; never renumbered. Extension (health-only) checks use the MIRI-PYX-/MIRI-CLIX- namespaces.",
+      "pattern": "^MIRI-(PY|CLI|PYX|CLIX)-\\d{3}$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Short human-readable name of the check",
+      "maxLength": 80
+    },
+    "target": {
+      "type": "string",
+      "enum": [
+        "python-wheel",
+        "cli"
+      ],
+      "description": "Artifact type this alert applies to"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "withdrawn"
+      ],
+      "description": "Withdrawn checks keep their file and ID; their weight is redistributed in a minor version"
+    },
+    "added_in": {
+      "type": "string",
+      "description": "Checklist version that introduced this check"
+    },
+    "withdrawn_in": {
+      "type": "string",
+      "description": "Checklist version that withdrew this check; required when status is withdrawn"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "MUST",
+        "SHOULD"
+      ],
+      "description": "MUST failures make the artifact non-conforming (score capped at 74)"
+    },
+    "category": {
+      "type": "string",
+      "description": "Checklist category the check belongs to"
+    },
+    "weight": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Conformance-score weight; all active weights per target sum to exactly 100. Extension (X-namespace) checks carry weight 0."
+    },
+    "conditional": {
+      "type": "boolean",
+      "description": "Conditional checks score their full weight automatically when the condition does not apply"
+    },
+    "severity": {
+      "type": "object",
+      "description": "Canonical severity for health scoring; implementations MUST use these values, not their own",
+      "required": [
+        "default",
+        "violation_unit"
+      ],
+      "properties": {
+        "default": {
+          "type": "string",
+          "enum": [
+            "LOW",
+            "MINOR",
+            "MEDIUM",
+            "HIGH",
+            "CRITICAL"
+          ],
+          "description": "Severity of each violation of this check (numeric values 1-5 in the same order)"
+        },
+        "violation_unit": {
+          "type": "string",
+          "description": "What counts as one violation - the countable unit that feeds magnitude-aware health scoring"
+        },
+        "population_unit": {
+          "type": "string",
+          "description": "Canonical countable population for per-instance checks (the denominator for report-level violation_density). Defined only where a natural population exists; reports MUST carry the population count when this field is present, and MUST omit it otherwise. Never an input to any score."
+        }
+      },
+      "additionalProperties": false
+    },
+    "short_description": {
+      "type": "string",
+      "description": "One-line statement of what the check verifies"
+    },
+    "long_description": {
+      "type": "string",
+      "description": "Rationale and full definition"
+    },
+    "suggested_fix": {
+      "type": "string",
+      "description": "How to resolve a violation"
+    },
+    "references": {
+      "type": "array",
+      "description": "Standards trail: the specs and external standards this check derives from",
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "type"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "spec",
+              "external"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "examples": {
+      "type": "object",
+      "description": "Concrete examples of the check failing and passing",
+      "required": [
+        "violation",
+        "compliant"
+      ],
+      "properties": {
+        "violation": {
+          "type": "string",
+          "description": "A concrete example of a violation"
+        },
+        "compliant": {
+          "type": "string",
+          "description": "What the conforming state looks like"
+        }
+      },
+      "additionalProperties": false
+    },
+    "requirements": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "network",
+          "previous-release",
+          "execution"
+        ]
+      },
+      "description": "Operating capabilities beyond the target's baseline analysis mode (static inspection for wheels; local invocation for CLIs) that this check needs. A linter lacking a listed capability MUST skip the check (forfeited, reported) with the fixed reason: network -> network_unavailable, previous-release -> previous_release_unavailable, execution -> execution_disabled; a linter satisfying them MUST NOT skip. Absent or empty means computable from the artifact alone - skipping is non-conforming."
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 40,
+      "description": "Why violating this check is harmful and why the standard checks for it - the editorial case for the check's existence"
+    },
+    "fires_when": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "description": "Concrete trigger conditions: the situations in which a conforming linter raises this check"
+    },
+    "remediation": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "description": "Ordered steps to resolve violations; suggested_fix remains the one-line summary"
+    },
+    "urls": {
+      "type": "object",
+      "description": "Canonical locations of this check: the canonical YAML definition on GitHub and the published HTML page. Embedded so linter reports can link both without deriving them.",
+      "required": [
+        "definition",
+        "html"
+      ],
+      "properties": {
+        "definition": {
+          "type": "string",
+          "format": "uri",
+          "description": "GitHub URL of this YAML file on main"
+        },
+        "html": {
+          "type": "string",
+          "format": "uri",
+          "description": "Published page for this check"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "if": {
+    "properties": {
+      "status": {
+        "const": "withdrawn"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "withdrawn_in"
+    ]
+  }
+}

@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-012 — Version coherence</h1>
 <p class="lede"><code>sdk_version</code> in every metadata file equals the wheel version</p>
 
@@ -120,7 +120,7 @@
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>sdk_version in sdk-manifest.json differs from METADATA Version after PEP 440 canonicalization</li><li>any other agent-metadata file carrying the package version (the @version in lifecycle.json identity.purl, migration-guide.json to_version) disagrees with METADATA Version</li><li>version fields agree only textually but not canonically (e.g. 1.2.0 vs 1.2), indicating they were written by different tools</li>
+  <li>sdk_version in sdk-manifest.json is not exactly (byte-for-byte) equal to the wheel&#x27;s METADATA Version</li><li>any other agent-metadata file carrying the package version (the @version in lifecycle.json identity.purl, migration-guide.json to_version) is not exactly equal to METADATA Version</li><li>version strings are canonically equal but not textually identical (e.g. a 1.2.0 manifest in a 1.2 wheel); this check requires exact string equality — matching MIRI-PY-019 — so near-misses still fire</li>
 </ul>
 
 <h2>How to fix it</h2>
@@ -146,7 +146,7 @@
 <h2>References</h2>
 <ul class="plain">
   
-  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/agent-metadata-specification.md">Agent Metadata §4.1</a> <em>(spec)</em></li>
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-agent-metadata-specification.md">Agent Metadata §4.1</a> <em>(spec)</em></li>
   
 </ul>
 
@@ -161,7 +161,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-012.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-CLI-010 — schema_version stamped</h1>
 <p class="lede">Every JSON payload carries top-level <code>schema_version</code></p>
 
@@ -119,13 +119,13 @@
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>Any JSON document emitted on stdout lacks a top-level <code>schema_version</code> key</li><li><code>schema_version</code> is present but nested inside another object rather than top-level, or is empty/non-string</li><li><code>identity.schema_version</code> in <code>--describe</code> disagrees with the value stamped on command payloads</li>
+  <li>Any JSON document emitted on stdout lacks a top-level <code>schema_version</code> key</li><li><code>schema_version</code> is present but nested inside another object rather than top-level, or is empty/non-string</li><li>The top-level <code>schema_version</code> in <code>--describe</code> disagrees with the value stamped on command payloads</li>
 </ul>
 
 <h2>How to fix it</h2>
 <p>Stamp top-level schema_version on every JSON document.</p>
 <ol class="plain">
-  <li>Emit every payload through a shared response envelope that stamps <code>schema_version</code> — one code path, so no command can forget it</li><li>Source the value from the same constant as <code>identity.schema_version</code> in <code>--describe</code> (CLI Spec §3.1)</li><li>Bump it only on breaking payload changes, never in lockstep with the release version, and record bumps in <code>changelog --since</code> output (CLI Spec §5.2)</li><li>Assert in CI: <code>&lt;cmd&gt; --json | jq -e &#x27;.schema_version&#x27;</code> succeeds for every command</li>
+  <li>Emit every payload through a shared response envelope that stamps <code>schema_version</code> — one code path, so no command can forget it</li><li>Source the value from the same constant as the top-level <code>schema_version</code> in <code>--describe</code> (CLI Spec §3.1)</li><li>Bump it only on breaking payload changes, never in lockstep with the release version, and record bumps in <code>changelog --since</code> output (CLI Spec §5.2)</li><li>Assert in CI: <code>&lt;cmd&gt; --json | jq -e &#x27;.schema_version&#x27;</code> succeeds for every command</li>
 </ol>
 
 <h2>Fields</h2>
@@ -160,7 +160,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-010.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

@@ -85,7 +85,7 @@
 
 <p class="lede">Each requirement is verified by a check; each check failure instance is a violation.
 Conformance score = Σ weights of passing checks; any failing MUST caps the score at 74. Severity and violation
-units are committee-assigned and feed the magnitude-aware health score. The YAML definitions are authoritative;
+units are canonical and feed the magnitude-aware health score. The YAML definitions are authoritative;
 the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">checklist table</a> is the derived rendering.</p>
 
 <table>
@@ -320,7 +320,7 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/l
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge maintenance">MEDIUM</span></td>
   <td class="num">1</td>
-  <td><code>identity.schema_version</code> present, independent of release version</td>
+  <td>Top-level <code>schema_version</code> is independent of the release version</td>
 </tr>
 
 
@@ -675,7 +675,7 @@ document.querySelectorAll("tr.rowlink").forEach(function (row) {
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

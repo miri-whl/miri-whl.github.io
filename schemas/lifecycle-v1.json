@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://miri-whl.github.io/schemas/lifecycle-v1.json",
+  "title": "Miri Standard Lifecycle and Security Metadata",
+  "description": "Schema for lifecycle.json - package identity, advisory sources, update check, and support status",
+  "type": "object",
+  "required": ["miri_lifecycle_version", "generated_at", "identity", "advisory_sources", "update_check", "support"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "Reference to this schema"
+    },
+    "miri_lifecycle_version": {
+      "type": "string",
+      "description": "Version of this lifecycle metadata format",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Build-time generation timestamp (ISO 8601)"
+    },
+    "identity": {
+      "type": "object",
+      "required": ["purl", "distribution", "registry"],
+      "properties": {
+        "purl": {
+          "type": "string",
+          "description": "Package URL including version - the join key for all advisory lookups",
+          "pattern": "^pkg:[a-z][a-z0-9.+-]*/.+@.+"
+        },
+        "distribution": {
+          "type": "string",
+          "enum": ["open-source", "private"],
+          "description": "Which defaults apply: open source (public OSV, PyPI) or private/internal"
+        },
+        "registry": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "description": "The index this artifact is published to (HTTPS required); mismatch with installed origin is a dependency-confusion signal"
+        },
+        "source_repository": {
+          "type": "string",
+          "format": "uri",
+          "description": "Source repository URL"
+        }
+      },
+      "additionalProperties": false
+    },
+    "advisory_sources": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered list of OSV-compatible query endpoints authoritative for this package",
+      "items": {
+        "type": "object",
+        "required": ["type", "url"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["osv", "osv-internal", "osv-local"],
+            "description": "osv: public OSV.dev; osv-internal: private endpoint serving OSV-schema records; osv-local: offline OSV database archive"
+          },
+          "ecosystem": {
+            "type": "string",
+            "description": "OSV ecosystem name (e.g. PyPI); required when type is osv"
+          },
+          "url": {
+            "type": "string",
+            "description": "Query endpoint URL, or path/URL of an offline database archive"
+          },
+          "authoritative": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether this source is authoritative for advisories against the package itself (vs. its dependency tree only); defaults to true when omitted"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {"properties": {"type": {"const": "osv"}}},
+            "then": {"required": ["type", "url", "ecosystem"]}
+          },
+          {
+            "if": {"properties": {"type": {"enum": ["osv", "osv-internal"]}}},
+            "then": {"properties": {"url": {"pattern": "^https://"}}}
+          }
+        ]
+      }
+    },
+    "update_check": {
+      "type": "object",
+      "required": ["type", "url"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["pypi-json", "pep700-index"],
+          "description": "pypi-json: PyPI JSON API; pep700-index: PEP 691/700 JSON simple index (public or private)"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "description": "Where to learn the latest published version (HTTPS required)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "support": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["active", "maintenance", "deprecated", "eol"],
+          "description": "Current support status of this package"
+        },
+        "supported_versions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "PEP 440 version specifiers describing currently supported release lines"
+        },
+        "eol_date": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "End-of-life date, if scheduled"
+        },
+        "replacement": {
+          "type": ["string", "null"],
+          "description": "Purl of the successor package; required (a non-null purl) when status is deprecated or eol",
+          "pattern": "^pkg:[a-z][a-z0-9.+-]*/.+"
+        },
+        "security_policy": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "pattern": "^https://",
+          "description": "URL of the project's security policy / vulnerability reporting process (HTTPS required)"
+        }
+      },
+      "additionalProperties": false,
+      "if": {
+        "properties": {"status": {"enum": ["deprecated", "eol"]}}
+      },
+      "then": {
+        "required": ["status", "replacement"],
+        "properties": {
+          "replacement": {"type": "string"}
+        }
+      }
+    },
+    "vex": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "URL of an OpenVEX / CycloneDX VEX document with vendor exploitability statements (HTTPS required)"
+    }
+  },
+  "additionalProperties": false
+}

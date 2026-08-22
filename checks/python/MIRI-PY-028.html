@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-028 — PEP 702 markers</h1>
 <p class="lede">Every interface listed as deprecated carries <code>@deprecated</code>; decorator message names replacement + removal version</p>
 
@@ -118,7 +118,7 @@ def legacy_connect(host: str) -&gt; Connection:
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>An interface listed in <code>migration-guide.json</code> <code>deprecations</code> carries no <code>@deprecated</code> decorator (neither <code>warnings.deprecated</code> nor <code>typing_extensions.deprecated</code>)</li><li>A decorator message names no replacement interface</li><li>A decorator message names no planned removal version</li>
+  <li>A function, class, method, or overload listed in <code>migration-guide.json</code> <code>deprecations</code> carries no <code>@deprecated</code> decorator (neither <code>warnings.deprecated</code> nor <code>typing_extensions.deprecated</code>); module-level attributes and constants — which cannot carry the decorator — are exempt and are deprecated via a module <code>__getattr__</code> (MIRI-PY-035, Lifecycle §6.1)</li><li>A decorator message names no replacement interface</li><li>A decorator message names no planned removal version</li>
 </ul>
 
 <h2>How to fix it</h2>
@@ -161,7 +161,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-028.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

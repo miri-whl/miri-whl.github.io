@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-CLI-006 — Non-interactive default</h1>
 <p class="lede">No command blocks on a prompt when stdin is not a TTY</p>
 
@@ -107,8 +107,8 @@ This will create 3 resources. Continue? [y/N]
   <div class="card"><div class="card-title">Compliant</div>
     <span class="mono example-good">$ tool init &lt;/dev/null
 (stderr) confirmation required and stdin is not a TTY
-(stdout) {&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CONFIRMATION_REQUIRED&quot;,
-  &quot;retryable&quot;: true, &quot;suggestions&quot;: [&quot;re-run with --yes&quot;]}}
+(stdout) {&quot;schema_version&quot;: &quot;1&quot;, &quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CONFIRMATION_REQUIRED&quot;,
+  &quot;retryable&quot;: false, &quot;suggestions&quot;: [&quot;re-run with --yes&quot;]}}
 $ echo $?
 1            # immediate, structured, recoverable in one turn</span></div>
 </div>
@@ -127,7 +127,7 @@ $ echo $?
 <h2>How to fix it</h2>
 <p>Never prompt when stdin is not a TTY; fail fast or take flags.</p>
 <ol class="plain">
-  <li>Detect <code>!isatty(stdin)</code> and never prompt in that state — this must be the default, not opt-in via a <code>--non-interactive</code> flag</li><li>Where confirmation is required, fail fast with a structured error naming the answering flag, e.g. <code>{&quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CONFIRMATION_REQUIRED&quot;, &quot;retryable&quot;: true, &quot;suggestions&quot;: [&quot;re-run with --yes&quot;]}}</code> (CLI Spec §6)</li><li>Give every prompt a flag or environment equivalent (<code>--yes</code>, <code>--strategy &lt;v&gt;</code>) and record it in <code>--describe</code></li><li>Add a CI matrix running every command with <code>&lt;/dev/null</code> under a short timeout; any timeout expiry is a failure of this check</li>
+  <li>Detect <code>!isatty(stdin)</code> and never prompt in that state — this must be the default, not opt-in via a <code>--non-interactive</code> flag</li><li>Where confirmation is required, fail fast with a structured error naming the answering flag, e.g. <code>{&quot;schema_version&quot;: &quot;1&quot;, &quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CONFIRMATION_REQUIRED&quot;, &quot;retryable&quot;: false, &quot;suggestions&quot;: [&quot;re-run with --yes&quot;]}}</code> (CLI Spec §2.6)</li><li>Give every prompt a flag or environment equivalent (<code>--yes</code>, <code>--strategy &lt;v&gt;</code>) and record it in <code>--describe</code></li><li>Add a CI matrix running every command with <code>&lt;/dev/null</code> under a short timeout; any timeout expiry is a failure of this check</li>
 </ol>
 
 <h2>Fields</h2>
@@ -164,7 +164,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-006.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

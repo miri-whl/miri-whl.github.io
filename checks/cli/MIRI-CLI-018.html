@@ -80,9 +80,9 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-CLI-018 — Wire schema versioned</h1>
-<p class="lede"><code>identity.schema_version</code> present, independent of release version</p>
+<p class="lede">Top-level <code>schema_version</code> is independent of the release version</p>
 
 <div class="badgerow">
   <span class="badge deprecated">must</span>
@@ -100,34 +100,34 @@
 
 <div class="cardstack">
   <div class="card"><div class="card-title">Violation</div>
-    <span class="mono example-bad">&quot;identity&quot;: {&quot;version&quot;: &quot;3.4.1&quot;, &quot;schema_version&quot;: &quot;3.4.1&quot;}
+    <span class="mono example-bad">{&quot;schema_version&quot;: &quot;3.4.1&quot;, &quot;identity&quot;: {&quot;version&quot;: &quot;3.4.1&quot;}}
 # the contract version is the release number restated; pins are meaningless</span></div>
   <div class="card"><div class="card-title">Compliant</div>
-    <span class="mono example-good">&quot;identity&quot;: {&quot;version&quot;: &quot;3.4.1&quot;, &quot;schema_version&quot;: &quot;1&quot;}
+    <span class="mono example-good">{&quot;schema_version&quot;: &quot;1&quot;, &quot;identity&quot;: {&quot;version&quot;: &quot;3.4.1&quot;}}
 # payload contract unchanged across the 3.x series; a breaking change would make it &quot;2&quot;</span></div>
 </div>
 
 <h2>Why this matters</h2>
-<p>The wire schema and the product move on different clocks: Docker&#x27;s agent CLI stamps &quot;schema_version&quot;: &quot;1&quot; on every payload precisely so the product can reach 2.0 without the contract moving, and Terry Li&#x27;s envelope pattern versions the envelope because the envelope shape is the API (landscape §2.3, §3.3-1). A schema_version that merely mirrors the release version destroys the signal in both directions: a consumer pinning it must either treat every routine release as a contract break or learn nothing when the payload genuinely breaks mid-series.</p>
+<p>The wire schema and the product move on different clocks: Docker&#x27;s agent CLI stamps &quot;schema_version&quot;: &quot;1&quot; on every payload precisely so the product can reach 2.0 without the contract moving, and Terry Li&#x27;s envelope pattern versions the envelope because the envelope shape is the API (landscape §2.3, §3.3-1). A schema_version that merely mirrors the release version destroys the signal in both directions: a consumer pinning it must either treat every routine release as a contract break or learn nothing when the payload genuinely breaks mid-series. Per CLI Spec §3.1, schema_version is a top-level field, not nested in identity; MIRI-CLI-010 verifies its presence, this check verifies its independence.</p>
 
 <h2>Definition</h2>
-<p>A CLI must be able to say who it is and what it offers, so scanners can join it against advisory databases and agents can trust the surface they see. This check verifies: <code>identity.schema_version</code> present, independent of release version.</p>
+<p>A CLI must be able to say who it is and what it offers, so scanners can join it against advisory databases and agents can trust the surface they see. This check verifies: the top-level <code>schema_version</code> is a genuine wire-contract version, not a restatement of the release version.</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li><code>identity.schema_version</code> is absent from --describe</li><li>Its value is identical to <code>identity.version</code> and moves in lockstep with releases</li><li>No documented policy states which changes bump it</li>
+  <li>The top-level <code>schema_version</code> in <code>--describe</code> is identical to <code>identity.version</code> and moves in lockstep with releases</li><li>No documented policy states which changes bump the top-level <code>schema_version</code></li>
 </ul>
 
 <h2>How to fix it</h2>
-<p>Version the wire schema separately and declare it in identity.</p>
+<p>Version the wire schema separately from the release version and declare it top-level.</p>
 <ol class="plain">
-  <li>Declare a small independent contract version (e.g. &quot;1&quot;) in identity.schema_version and stamp the same value on every JSON payload (MIRI-CLI-010)</li><li>Document the bump policy: it increments only on breaking payload changes — removed or renamed fields, changed types or semantics — never on releases that leave the shape intact</li><li>Record each bump as a wire-schema change in <code>changelog --since</code> output (§5.2), and consider serving prior shapes via --schema-version pinning (landscape §3.3-6)</li>
+  <li>Declare a small independent contract version (e.g. &quot;1&quot;) as the top-level <code>schema_version</code>, separate from the release version in <code>identity.version</code>, and stamp the same value on every JSON payload (MIRI-CLI-010)</li><li>Document the bump policy: it increments only on breaking payload changes — removed or renamed fields, changed types or semantics — never on releases that leave the shape intact</li><li>Record each bump as a wire-schema change in <code>changelog --since</code> output (§5.2), and consider serving prior shapes via --schema-version pinning (landscape §3.3-6)</li>
 </ol>
 
 <h2>Fields</h2>
 <dl class="meta">
   <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
-  <dt>violation_unit</dt><dd>the identity declaration</dd>
+  <dt>violation_unit</dt><dd>the introspection document</dd>
   
   
   <dt>category</dt><dd>Identity &amp; Introspection</dd>
@@ -154,7 +154,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-018.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

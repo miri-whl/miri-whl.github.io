@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-038 — Templates coherent</h1>
 <p class="lede"><code>TEMPLATES.json</code> entries ↔ template files; placeholders documented</p>
 
@@ -127,7 +127,7 @@ templates/basic_client.py:
 <h2>How to fix it</h2>
 <p>Regenerate the template index; document every placeholder.</p>
 <ol class="plain">
-  <li>Generate TEMPLATES.json from the <code>templates/</code> directory at build time rather than maintaining the index by hand</li><li>Scan template bodies for placeholder tokens during the build and fail when any token is missing from the <code>placeholders</code> map</li><li>Validate the index against <code>templates-v1.json</code> in CI alongside the other schema checks</li>
+  <li>Generate TEMPLATES.json from the <code>templates/</code> directory at build time rather than maintaining the index by hand</li><li>Scan template bodies for placeholder tokens during the build and fail when any token is missing from the <code>placeholders</code> map</li><li>Validate the index against the §4.4 structure in CI (entries ↔ template files, placeholders documented)</li>
 </ol>
 
 <h2>Fields</h2>
@@ -147,7 +147,7 @@ templates/basic_client.py:
 <h2>References</h2>
 <ul class="plain">
   
-  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-wheel-extensions.md">Miri Wheel Ext. §4.4</a> <em>(spec)</em></li>
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-python-wheel-extensions.md">Miri Wheel Ext. §4.4</a> <em>(spec)</em></li>
   
 </ul>
 
@@ -162,7 +162,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-038.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

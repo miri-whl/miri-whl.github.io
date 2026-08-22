@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-039 — Prompt templates valid</h1>
 <p class="lede"><code>prompt-templates.md</code>, if present, follows the specified structure</p>
 
@@ -90,7 +90,7 @@
   <span class="tag">weight 1</span>
   
   
-  <span class="tag">Agent Metadata §4.4</span>
+  <span class="tag">Agent Metadata §4.4</span><span class="tag">Lifecycle §9.4</span>
 </div>
 
 <p class="deffile">Definition:
@@ -113,20 +113,20 @@ Use the &quot;{pattern_id}&quot; pattern from usage-patterns.json; follow signat
 </div>
 
 <h2>Why this matters</h2>
-<p>prompt-templates.md is the one metadata file agents ingest as operating instructions rather than as data: §4.4 defines its structure — Quick Start Prompts for code generation, debugging, and migration, each cross-referencing the shipped metadata files by name (usage-patterns.json pattern IDs, sdk-manifest.json signatures, migration-guide.json). An integration that loads it substitutes the <code>{placeholders}</code> and follows those references mechanically, so a file missing the expected sections, or citing metadata the wheel does not ship, degrades precisely the integrations that opted into it. The file is optional; the check applies only when it is present.</p>
+<p>prompt-templates.md provides prompt scaffolds an agent fills in and reads as data — never as operating instructions (Lifecycle §9.4). §4.4 defines its structure — Quick Start Prompts for code generation, debugging, and migration, each cross-referencing the shipped metadata files by name (usage-patterns.json pattern IDs, sdk-manifest.json signatures, migration-guide.json). An integration that loads it substitutes the <code>{placeholders}</code> and follows those references mechanically, so a file missing the expected sections, or citing metadata the wheel does not ship, degrades precisely the integrations that opted into it. The file is optional; the check applies only when it is present.</p>
 
 <h2>Definition</h2>
 <p>Miri metadata must be discoverable at runtime and must never make the package worse for non-Miri consumers. This check verifies: <code>prompt-templates.md</code>, if present, follows the specified structure.</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li><code>prompt-templates.md</code> is present but lacks the §4.4 section structure (Quick Start Prompts with code-generation, debugging, and migration templates)</li><li>A template references a metadata file the wheel does not ship (e.g. cites api-graph.json when none is present)</li><li>Placeholder syntax is inconsistent within the file, defeating mechanical substitution</li>
+  <li><code>prompt-templates.md</code> is present but lacks the §4.4 section structure (Quick Start Prompts with code-generation, debugging, and migration templates)</li><li>A template references a metadata file the wheel does not ship (e.g. cites api-graph.json when none is present)</li><li>Placeholder syntax is inconsistent within the file, defeating mechanical substitution</li><li>The file embeds executable commands or imperative instructions for the agent to run (e.g. <code>curl … | bash</code>, <code>rm -rf</code>, a <code>pip install</code> of an arbitrary URL) rather than declarative prompt templates</li>
 </ul>
 
 <h2>How to fix it</h2>
 <p>Follow the structure in the Agent Metadata Specification §4.4.</p>
 <ol class="plain">
-  <li>Structure the file per Agent Metadata Specification §4.4, keeping the three Quick Start template categories</li><li>Derive the metadata-file references from the wheel&#x27;s actual contents so a template never cites an absent file</li><li>Validate the heading structure and reference targets in CI alongside the JSON schema checks</li>
+  <li>Structure the file per Agent Metadata Specification §4.4, keeping the three Quick Start template categories</li><li>Derive the metadata-file references from the wheel&#x27;s actual contents so a template never cites an absent file</li><li>Validate the heading structure and reference targets in CI alongside the JSON schema checks</li><li>Keep templates declarative — placeholder-filled prompt text only, never shell commands or instructions the agent is expected to execute (Lifecycle §9.4)</li>
 </ol>
 
 <h2>Fields</h2>
@@ -144,7 +144,9 @@ Use the &quot;{pattern_id}&quot; pattern from usage-patterns.json; follow signat
 <h2>References</h2>
 <ul class="plain">
   
-  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/agent-metadata-specification.md">Agent Metadata §4.4</a> <em>(spec)</em></li>
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-agent-metadata-specification.md">Agent Metadata §4.4</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/lifecycle-security-metadata.md">Lifecycle §9.4</a> <em>(spec)</em></li>
   
 </ul>
 
@@ -159,7 +161,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-039.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MIRI-PY-036 — Discovery APIs work · miri-standard</title>
+<title>MIRI-PY-036 — Discovery and manifest verification · miri-standard</title>
 <link rel="icon" type="image/png" href="../../assets/miri-green.png">
 <link rel="stylesheet" href="../../style.css">
 </head>
@@ -80,9 +80,9 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
-<h1>MIRI-PY-036 — Discovery APIs work</h1>
-<p class="lede">Package-level discovery functions importable and return coherent data</p>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
+<h1>MIRI-PY-036 — Discovery and manifest verification</h1>
+<p class="lede">Discovery functions work and <code>sdk-manifest.json</code> api_index resolves against the installed API surface</p>
 
 <div class="badgerow">
   <span class="badge deprecated">must</span>
@@ -113,20 +113,20 @@ AttributeError: module &#x27;weather_sdk&#x27; has no attribute &#x27;show_quick
 </div>
 
 <h2>Why this matters</h2>
-<p>The §6.1 functions (<code>get_examples_dir</code>, <code>get_agent_metadata</code>, <code>show_quickstart</code>, …) are the runtime entry point to everything else the standard ships — the wheel-side equivalent of a CLI&#x27;s <code>--describe</code>; when they raise or return paths that do not exist, agents fall back to guessing file locations by convention, the exact behavior the standard exists to end. The characteristic failure is wheel-versus-source drift: the functions work in the developer&#x27;s checkout, but the data directories were never declared as package data, so the built wheel omits them and <code>get_examples_dir()</code> returns a path that exists nowhere after <code>pip install</code>. Only executing the functions against the installed wheel detects this class.</p>
+<p>The §6.1 functions (<code>get_examples_dir</code>, <code>get_agent_metadata</code>, <code>show_quickstart</code>, …) are the runtime entry point to everything else the standard ships — the wheel-side equivalent of a CLI&#x27;s <code>--describe</code>; when they raise or return paths that do not exist, agents fall back to guessing file locations by convention, the exact behavior the standard exists to end. The characteristic failure is wheel-versus-source drift: the functions work in the developer&#x27;s checkout, but the data directories were never declared as package data, so the built wheel omits them and <code>get_examples_dir()</code> returns a path that exists nowhere after <code>pip install</code>. Only executing the functions against the installed wheel detects this class. This check is also the one place the standard verifies that <code>sdk-manifest.json</code>&#x27;s api_index — the surface agents generate code from — actually matches the installed package; a manifest listing methods the code lacks sends agents straight to <code>AttributeError</code>, so the api_index must be checked against the real surface, not merely schema-valid.</p>
 
 <h2>Definition</h2>
-<p>Miri metadata must be discoverable at runtime and must never make the package worse for non-Miri consumers. This check verifies: Package-level discovery functions importable and return coherent data.</p>
+<p>Miri metadata must be discoverable at runtime and must never make the package worse for non-Miri consumers. This check verifies: package-level discovery functions are importable and return coherent data, and every <code>sdk-manifest.json</code> api_index entry resolves against the installed package.</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>Any §6.1 discovery function is absent from the package&#x27;s top-level namespace after installing the wheel into a clean venv</li><li>Calling a discovery function raises, or returns a path that does not exist in the installed distribution</li><li>Returned data contradicts the shipped files — e.g. <code>list_examples()</code> disagrees with <code>AGENT_EXAMPLES.json</code> or with the contents of <code>examples/</code>, or <code>get_agent_metadata()</code> disagrees with <code>agent-metadata/</code></li>
+  <li>Any §6.1 discovery function is absent from the package&#x27;s top-level namespace after installing the wheel into a clean venv</li><li>Calling a discovery function raises, or returns a path that does not exist in the installed distribution</li><li>Returned data contradicts the shipped files — e.g. <code>list_examples()</code> disagrees with <code>AGENT_EXAMPLES.json</code> or with the contents of <code>examples/</code>, or <code>get_agent_metadata()</code> disagrees with <code>agent-metadata/</code></li><li>An <code>sdk-manifest.json</code> api_index entry does not resolve against the installed package — the named class or function is absent, or a listed <code>key_methods</code> / <code>init_params</code> entry disagrees with the object&#x27;s actual <code>inspect.signature</code></li>
 </ul>
 
 <h2>How to fix it</h2>
 <p>Implement the package-level discovery functions over the generated metadata.</p>
 <ol class="plain">
-  <li>Implement each function as a thin reader over the installed files via <code>importlib.resources.files(...)</code>, never over remembered build-tree paths</li><li>Declare <code>examples/</code>, <code>docs/</code>, <code>templates/</code>, and <code>agent-metadata/</code> as package data (<code>[tool.setuptools.package-data]</code> or the build backend&#x27;s equivalent) so they actually enter the wheel</li><li>Test the artifact, not the source tree: <code>pip install dist/*.whl</code> into a fresh venv in CI, call every §6.1 function, and assert on the results</li>
+  <li>Implement each function as a thin reader over the installed files via <code>importlib.resources.files(...)</code>, never over remembered build-tree paths</li><li>Declare <code>examples/</code>, <code>docs/</code>, <code>templates/</code>, and <code>agent-metadata/</code> as package data (<code>[tool.setuptools.package-data]</code> or the build backend&#x27;s equivalent) so they actually enter the wheel</li><li>Test the artifact, not the source tree: <code>pip install dist/*.whl</code> into a fresh venv in CI, call every §6.1 function, and assert on the results</li><li>Generate api_index from the package&#x27;s actual importable surface (AST or introspection) at build time, and assert in CI that every entry resolves after install — the manifest agents generate code from must not be able to lie</li>
 </ol>
 
 <h2>Fields</h2>
@@ -146,7 +146,7 @@ AttributeError: module &#x27;weather_sdk&#x27; has no attribute &#x27;show_quick
 <h2>References</h2>
 <ul class="plain">
   
-  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-wheel-extensions.md">Miri Wheel Ext. §6</a> <em>(spec)</em></li>
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-python-wheel-extensions.md">Miri Wheel Ext. §6</a> <em>(spec)</em></li>
   
 </ul>
 
@@ -161,7 +161,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-036.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

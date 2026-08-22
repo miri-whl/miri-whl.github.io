@@ -80,9 +80,9 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-015 — Examples runnable</h1>
-<p class="lede">Every example compiles; executes in sandbox (except external credentials)</p>
+<p class="lede">Every example compiles; runs in a clean virtual environment (except external credentials)</p>
 
 <div class="badgerow">
   <span class="badge deprecated">must</span>
@@ -117,17 +117,17 @@
 <p>Miri Wheel Extensions §7.2.2 requires every example to run without modification (credentials excepted) because agents treat shipped examples as ground truth and reproduce them verbatim in generated code. Wrong-but-plausible instructions propagate at machine speed: Lasso Security&#x27;s 2023–2024 research showed LLMs repeatedly recommending the nonexistent huggingface-cli PyPI package, and the registered proof-of-concept drew tens of thousands of downloads — even landing in Alibaba&#x27;s GraphTranslator install instructions. A broken example inside the wheel seeds the same loop from a source agents are told to trust; it is strictly worse than no example.</p>
 
 <h2>Definition</h2>
-<p>Embedded examples are the primary learning path for agents; an example that does not run teaches a wrong lesson at machine speed. This check verifies: Every example compiles; executes in sandbox (except external credentials).</p>
+<p>Embedded examples are the primary learning path for agents; an example that does not run teaches a wrong lesson at machine speed. This check verifies: Every example compiles; runs in a clean virtual environment (except external credentials).</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>py_compile fails on any example listed in AGENT_EXAMPLES.json</li><li>an example exits nonzero or raises when executed in a clean venv containing only the built wheel plus the dependencies its index entry declares</li><li>an example imports a module provided neither by the package&#x27;s Requires-Dist nor by its AGENT_EXAMPLES.json dependencies entry</li><li>an example needs live credentials but carries no documented placeholder (e.g. YOUR_API_KEY) marking it exempt from sandbox execution</li>
+  <li>py_compile fails on any example listed in AGENT_EXAMPLES.json</li><li>an example exits nonzero or raises when executed in a clean venv containing only the built wheel plus the dependencies its index entry declares</li><li>an example imports a module provided neither by the package&#x27;s Requires-Dist nor by its AGENT_EXAMPLES.json dependencies entry</li><li>an example needs live credentials but carries no documented placeholder (e.g. YOUR_API_KEY) marking it exempt from clean-venv execution</li>
 </ul>
 
 <h2>How to fix it</h2>
 <p>Fix or guard the example; examples must run with only documented prerequisites.</p>
 <ol class="plain">
-  <li>Execute every indexed example in CI in a fresh venv: pip install dist/*.whl, install exactly the dependencies each index entry declares, run each file, fail on nonzero exit</li><li>Declare per-example extra dependencies in AGENT_EXAMPLES.json dependencies so the sandbox and the reader see the same prerequisites</li><li>Gate credential-dependent sections behind documented placeholders (api_key = &quot;YOUR_API_KEY&quot; with a header note) so the file still compiles and its offline portion still executes</li><li>Fix or remove any example the sandbox cannot run — do not mark it as an exception</li>
+  <li>Execute every indexed example in CI in a fresh venv: pip install dist/*.whl, install exactly the dependencies each index entry declares, run each file, fail on nonzero exit</li><li>Declare per-example extra dependencies in AGENT_EXAMPLES.json dependencies so the clean-venv run and the reader see the same prerequisites</li><li>Gate credential-dependent sections behind documented placeholders (api_key = &quot;YOUR_API_KEY&quot; with a header note) so the file still compiles and its offline portion still executes</li><li>Fix or remove any example the clean-venv run cannot execute — do not mark it as an exception</li>
 </ol>
 
 <h2>Fields</h2>
@@ -149,7 +149,7 @@
 <h2>References</h2>
 <ul class="plain">
   
-  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-wheel-extensions.md">Miri Wheel Ext. §7.2.2</a> <em>(spec)</em></li>
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-python-wheel-extensions.md">Miri Wheel Ext. §7.2.2</a> <em>(spec)</em></li>
   
 </ul>
 
@@ -164,7 +164,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-015.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

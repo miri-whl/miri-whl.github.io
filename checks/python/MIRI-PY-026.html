@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-026 — VEX well-formed</h1>
 <p class="lede"><code>vex</code> URL, if present, serves an OpenVEX/CycloneDX VEX document</p>
 
@@ -104,7 +104,7 @@
 $ curl -s -o /dev/null -w &#x27;%{http_code}&#x27; https://acme.example/security/vex/latest.json
 404</span></div>
   <div class="card"><div class="card-title">Compliant</div>
-    <span class="mono example-good">&quot;vex&quot;: &quot;https://acme.example/security/vex/acme-billing-3.2.0.openvex.json&quot;
+    <span class="mono example-good">&quot;vex&quot;: &quot;https://acme.example/security/vex/example-internal-3.2.0.openvex.json&quot;
 # serves: {&quot;@context&quot;: &quot;https://openvex.dev/ns/v0.2.0&quot;,
 #   &quot;statements&quot;: [{&quot;vulnerability&quot;: {&quot;name&quot;: &quot;CVE-2026-1234&quot;},
 #     &quot;status&quot;: &quot;not_affected&quot;, &quot;justification&quot;: &quot;vulnerable_code_not_present&quot;}]}</span></div>
@@ -159,7 +159,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-026.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

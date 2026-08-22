@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-020 — Distribution &amp; registry declared</h1>
 <p class="lede"><code>distribution</code> set; <code>registry</code> a well-formed index URL</p>
 
@@ -101,15 +101,15 @@
 <div class="cardstack">
   <div class="card"><div class="card-title">Violation</div>
     <span class="mono example-bad">lifecycle.json:
-  &quot;identity&quot;: {&quot;purl&quot;: &quot;pkg:pypi/acme-billing@3.2.0&quot;}
-  &lt;- distribution and registry absent: a consumer defaults to public OSV for acme-billing,
+  &quot;identity&quot;: {&quot;purl&quot;: &quot;pkg:pypi/example-internal@3.2.0&quot;}
+  &lt;- distribution and registry absent: a consumer defaults to public OSV for example-internal,
      an internal-only name, and the empty response reads as &quot;not vulnerable&quot;</span></div>
   <div class="card"><div class="card-title">Compliant</div>
     <span class="mono example-good">lifecycle.json:
   &quot;identity&quot;: {
-    &quot;purl&quot;: &quot;pkg:pypi/acme-billing@3.2.0?repository_url=https://pypi.internal.acme.example/simple/&quot;,
+    &quot;purl&quot;: &quot;pkg:pypi/example-internal@3.2.0?repository_url=https://pypi.internal.example/simple/&quot;,
     &quot;distribution&quot;: &quot;private&quot;,
-    &quot;registry&quot;: &quot;https://pypi.internal.acme.example/simple/&quot;
+    &quot;registry&quot;: &quot;https://pypi.internal.example/simple/&quot;
   }
   (consumers skip public OSV as authoritative and can flag any install not originating from the declared registry)</span></div>
 </div>
@@ -128,7 +128,7 @@
 <h2>How to fix it</h2>
 <p>Declare distribution (open-source or private) and the publishing registry URL.</p>
 <ol class="plain">
-  <li>Declare both fields in the Miri build configuration, e.g. [tool.miri.lifecycle] distribution = &quot;open-source&quot;, registry = &quot;https://pypi.org/simple/&quot;</li><li>For private packages set distribution = &quot;private&quot; and point registry at the internal index (e.g. https://pypi.internal.acme.example/simple/) — the same URL carried in the purl&#x27;s repository_url qualifier (§5.1)</li><li>Use the installable simple-index URL, not the project page, so consumers can compare it directly against pip&#x27;s actual install origin</li>
+  <li>Declare both fields in the Miri build configuration, e.g. [tool.miri.lifecycle] distribution = &quot;open-source&quot;, registry = &quot;https://pypi.org/simple/&quot;</li><li>For private packages set distribution = &quot;private&quot; and point registry at the internal index (e.g. https://pypi.internal.example/simple/) — the same URL carried in the purl&#x27;s repository_url qualifier (§5.1)</li><li>Use the installable simple-index URL, not the project page, so consumers can compare it directly against pip&#x27;s actual install origin</li>
 </ol>
 
 <h2>Fields</h2>
@@ -161,7 +161,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-020.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

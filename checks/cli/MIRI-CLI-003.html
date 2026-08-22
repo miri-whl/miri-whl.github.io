@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-CLI-003 — --version</h1>
 <p class="lede">Prints version to stdout, exits 0</p>
 
@@ -121,13 +121,13 @@ $ echo $?
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li><code>--version</code> writes its output to stderr, or exits non-zero</li><li>stdout contains no parseable version token, or buries it in multi-line prose or update advertisements</li><li><code>--version</code> performs a network call or blocks before printing</li>
+  <li><code>--version</code> writes its output to stderr, or exits non-zero</li><li>the first line of stdout is not a parseable version token — a bare version or <code>&lt;name&gt; &lt;version&gt;</code> (later lines such as copyright/license are allowed per GNU §4.7)</li><li><code>--version</code> performs a network call or blocks before printing</li>
 </ul>
 
 <h2>How to fix it</h2>
 <p>Print the version to stdout and exit 0.</p>
 <ol class="plain">
-  <li>Print a single line to stdout — the bare version or <code>&lt;name&gt; &lt;version&gt;</code> — and exit 0</li><li>Derive the string from the same source of truth as <code>identity.version</code> in <code>--describe</code>, so the two cannot drift (CLI Spec §2.3)</li><li>Keep the version path offline and side-effect free; update information belongs to <code>check-update --json</code>, not <code>--version</code></li>
+  <li>Print a parseable version as the first line of stdout — a bare version or <code>&lt;name&gt; &lt;version&gt;</code>; later lines (copyright, license) are allowed per GNU §4.7 — and exit 0</li><li>Derive the string from the same source of truth as <code>identity.version</code> in <code>--describe</code>, so the two cannot drift (CLI Spec §2.3)</li><li>Keep the version path offline and side-effect free; update information belongs to <code>check-update --json</code>, not <code>--version</code></li>
 </ol>
 
 <h2>Fields</h2>
@@ -160,7 +160,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-003.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

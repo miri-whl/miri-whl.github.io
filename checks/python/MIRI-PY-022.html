@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-022 — Private-source rule</h1>
 <p class="lede"><code>distribution: private</code> does not rely solely on public OSV</p>
 
@@ -101,15 +101,15 @@
 <div class="cardstack">
   <div class="card"><div class="card-title">Violation</div>
     <span class="mono example-bad">lifecycle.json:
-  &quot;identity&quot;: {&quot;purl&quot;: &quot;pkg:pypi/acme-billing@3.2.0?repository_url=https://pypi.internal.acme.example/simple/&quot;,
+  &quot;identity&quot;: {&quot;purl&quot;: &quot;pkg:pypi/example-internal@3.2.0?repository_url=https://pypi.internal.example/simple/&quot;,
                &quot;distribution&quot;: &quot;private&quot;, ...},
   &quot;advisory_sources&quot;: [
     {&quot;type&quot;: &quot;osv&quot;, &quot;ecosystem&quot;: &quot;PyPI&quot;, &quot;url&quot;: &quot;https://api.osv.dev/v1/query&quot;, &quot;authoritative&quot;: true}
   ]
-# api.osv.dev has never heard of acme-billing; every query returns {} — read as &#x27;not vulnerable&#x27;</span></div>
+# api.osv.dev has never heard of example-internal; every query returns {} — read as &#x27;not vulnerable&#x27;</span></div>
   <div class="card"><div class="card-title">Compliant</div>
     <span class="mono example-good">&quot;advisory_sources&quot;: [
-  {&quot;type&quot;: &quot;osv-internal&quot;, &quot;url&quot;: &quot;https://osv.internal.acme.example/v1/query&quot;, &quot;authoritative&quot;: true},
+  {&quot;type&quot;: &quot;osv-internal&quot;, &quot;url&quot;: &quot;https://osv.internal.example/v1/query&quot;, &quot;authoritative&quot;: true},
   {&quot;type&quot;: &quot;osv&quot;, &quot;ecosystem&quot;: &quot;PyPI&quot;, &quot;url&quot;: &quot;https://api.osv.dev/v1/query&quot;, &quot;authoritative&quot;: false}
 ]</span></div>
 </div>
@@ -161,7 +161,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-022.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

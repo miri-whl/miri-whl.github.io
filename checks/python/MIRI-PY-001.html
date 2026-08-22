@@ -80,7 +80,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>committee-owned</b></span><span>Added <b>0.1-draft</b></span></div>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
 <h1>MIRI-PY-001 — Wheel structure valid</h1>
 <p class="lede"><code>.dist-info/</code> with <code>METADATA</code>, <code>WHEEL</code>, <code>RECORD</code>; archive matches RECORD</p>
 
@@ -90,7 +90,7 @@
   <span class="tag">weight 2</span>
   
   
-  <span class="tag">PEP 427</span><span class="tag">PEP 491</span>
+  <span class="tag">PEP 427</span><span class="tag">Binary Distribution Format</span>
 </div>
 
 <p class="deffile">Definition:
@@ -125,7 +125,7 @@ and no file exists in the archive that RECORD omits</span></div>
 <h2>How to fix it</h2>
 <p>Rebuild the wheel with a standard build backend; do not hand-edit the archive.</p>
 <ol class="plain">
-  <li>Rebuild the wheel with a standard PEP 517 backend via <code>python -m build</code>; never modify the archive after the backend writes RECORD</li><li>If a build plugin injects files, make it re-emit a RECORD row (path, <code>sha256=&lt;urlsafe-b64&gt;</code>, size) for everything it adds</li><li>Gate publishing on <code>check-wheel-contents dist/*.whl</code> plus a RECORD audit that recomputes each archived file&#x27;s digest</li>
+  <li>Rebuild the wheel with a standard PEP 517 backend via <code>python -m build</code>; do not hand-edit the archive, and any tool that adds files after the backend writes RECORD MUST re-emit their RECORD rows (next step)</li><li>If a build plugin injects files, make it re-emit a RECORD row (path, <code>sha256=&lt;urlsafe-b64&gt;</code>, size) for everything it adds</li><li>Gate publishing on <code>check-wheel-contents dist/*.whl</code> plus a RECORD audit that recomputes each archived file&#x27;s digest</li>
 </ol>
 
 <h2>Fields</h2>
@@ -145,7 +145,7 @@ and no file exists in the archive that RECORD omits</span></div>
   
   <li><a href="https://peps.python.org/pep-0427/">PEP 427</a></li>
   
-  <li><a href="https://peps.python.org/pep-0491/">PEP 491</a></li>
+  <li><a href="https://packaging.python.org/en/latest/specifications/binary-distribution-format/">Binary Distribution Format</a></li>
   
 </ul>
 
@@ -160,7 +160,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-001.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

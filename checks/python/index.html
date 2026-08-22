@@ -85,7 +85,7 @@
 
 <p class="lede">Each requirement is verified by a check; each check failure instance is a violation.
 Conformance score = Σ weights of passing checks; any failing MUST caps the score at 74. Severity and violation
-units are committee-assigned and feed the magnitude-aware health score. The YAML definitions are authoritative;
+units are canonical and feed the magnitude-aware health score. The YAML definitions are authoritative;
 the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">checklist table</a> is the derived rendering.</p>
 
 <table>
@@ -284,7 +284,7 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge maintenance">MEDIUM</span></td>
   <td class="num">3</td>
-  <td>Every example compiles; executes in sandbox (except external credentials)</td>
+  <td>Every example compiles; runs in a clean virtual environment (except external credentials)</td>
 </tr>
 
 
@@ -544,11 +544,11 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 <tr class="rowlink" data-href="MIRI-PY-036.html" data-level="0" data-sev="3" data-weight="3">
   <td class="id"><a href="MIRI-PY-036.html">MIRI-PY-036</a></td>
-  <td><a class="rowname" href="MIRI-PY-036.html">Discovery APIs work</a> <span class="tag">execution</span></td>
+  <td><a class="rowname" href="MIRI-PY-036.html">Discovery and manifest verification</a> <span class="tag">execution</span></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge maintenance">MEDIUM</span></td>
   <td class="num">3</td>
-  <td>Package-level discovery functions importable and return coherent data</td>
+  <td>Discovery functions work and <code>sdk-manifest.json</code> api_index resolves against the installed API surface</td>
 </tr>
 
 
@@ -639,7 +639,7 @@ document.querySelectorAll("tr.rowlink").forEach(function (row) {
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the committee-owned check definitions</span>
+  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
