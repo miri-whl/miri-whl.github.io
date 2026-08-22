@@ -90,7 +90,7 @@
   <span class="tag">weight 2</span>
   
   
-  <span class="tag">Landscape §2.2 (anc.dev)</span>
+  <span class="tag">CLI Spec §6.4</span><span class="tag">Landscape §2.2 (anc.dev)</span>
 </div>
 
 <p class="deffile">Definition:
@@ -103,12 +103,12 @@
     <span class="mono example-bad">$ tool sync --help
 Synchronize the workspace.
 $ tool --describe | jq &#x27;.commands[] | select(.name==&quot;sync&quot;)&#x27;
-{&quot;name&quot;: &quot;sync&quot;, &quot;summary&quot;: &quot;Synchronize the workspace.&quot;}
+{&quot;name&quot;: &quot;sync&quot;, &quot;description&quot;: &quot;Synchronize the workspace.&quot;}
 Whether sync uploads, downloads, or both is undeterminable; the agent must assume it writes.</span></div>
   <div class="card"><div class="card-title">Compliant</div>
     <span class="mono example-good">$ tool --describe | jq &#x27;.commands[] | select(.name==&quot;sync&quot;)&#x27;
 {&quot;name&quot;: &quot;sync&quot;, &quot;mutating&quot;: true,
- &quot;summary&quot;: &quot;Upload local changes to the remote workspace.&quot;}
+ &quot;description&quot;: &quot;Upload local changes to the remote workspace.&quot;}
 Reads elsewhere in the same describe carry &quot;mutating&quot;: false and can be parallelized freely.</span></div>
 </div>
 
@@ -146,6 +146,8 @@ Reads elsewhere in the same describe carry &quot;mutating&quot;: false and can b
 <h2>References</h2>
 <ul class="plain">
   
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §6.4</a> <em>(spec)</em></li>
+  
   <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/landscape-and-prior-art.md">Landscape §2.2 (anc.dev)</a> <em>(spec)</em></li>
   
 </ul>
@@ -161,7 +163,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-041.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.2-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

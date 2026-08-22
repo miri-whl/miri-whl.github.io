@@ -90,7 +90,7 @@
   <span class="tag">weight 3</span>
   
   <span class="tag">requires execution</span>
-  <span class="tag">Miri Wheel Ext. §6</span>
+  <span class="tag">Miri Wheel Ext. §6</span><span class="tag">Agent Metadata Spec §5.4 (Generation Invariants)</span>
 </div>
 
 <p class="deffile">Definition:
@@ -120,13 +120,13 @@ AttributeError: module &#x27;weather_sdk&#x27; has no attribute &#x27;show_quick
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>Any §6.1 discovery function is absent from the package&#x27;s top-level namespace after installing the wheel into a clean venv</li><li>Calling a discovery function raises, or returns a path that does not exist in the installed distribution</li><li>Returned data contradicts the shipped files — e.g. <code>list_examples()</code> disagrees with <code>AGENT_EXAMPLES.json</code> or with the contents of <code>examples/</code>, or <code>get_agent_metadata()</code> disagrees with <code>agent-metadata/</code></li><li>An <code>sdk-manifest.json</code> api_index entry does not resolve against the installed package — the named class or function is absent, or a listed <code>key_methods</code> / <code>init_params</code> entry disagrees with the object&#x27;s actual <code>inspect.signature</code></li>
+  <li>Any §6.1 discovery function is absent from the package&#x27;s top-level namespace after installing the wheel into a clean venv</li><li>Calling a discovery function raises, or returns a path that does not exist in the installed distribution</li><li>Returned data contradicts the shipped files — e.g. <code>list_examples()</code> disagrees with <code>AGENT_EXAMPLES.json</code> or with the contents of <code>examples/</code>, or <code>get_agent_metadata()</code> disagrees with <code>agent-metadata/</code></li><li>An <code>sdk-manifest.json</code> api_index entry does not resolve against the installed package — the named class or function is absent, or a listed <code>key_methods</code> / <code>init_params</code> entry disagrees with the object&#x27;s actual <code>inspect.signature</code></li><li>An api_index entry names a console-script entry point declared in the wheel&#x27;s <code>entry_points</code> (<code>console_scripts</code>) — the CLI surface belongs in the CLI standard&#x27;s <code>--describe</code>, not api_index, and MUST be excluded from it (Generation Invariant §5.4)</li>
 </ul>
 
 <h2>How to fix it</h2>
 <p>Implement the package-level discovery functions over the generated metadata.</p>
 <ol class="plain">
-  <li>Implement each function as a thin reader over the installed files via <code>importlib.resources.files(...)</code>, never over remembered build-tree paths</li><li>Declare <code>examples/</code>, <code>docs/</code>, <code>templates/</code>, and <code>agent-metadata/</code> as package data (<code>[tool.setuptools.package-data]</code> or the build backend&#x27;s equivalent) so they actually enter the wheel</li><li>Test the artifact, not the source tree: <code>pip install dist/*.whl</code> into a fresh venv in CI, call every §6.1 function, and assert on the results</li><li>Generate api_index from the package&#x27;s actual importable surface (AST or introspection) at build time, and assert in CI that every entry resolves after install — the manifest agents generate code from must not be able to lie</li>
+  <li>Implement each function as a thin reader over the installed files via <code>importlib.resources.files(...)</code>, never over remembered build-tree paths</li><li>Declare <code>examples/</code>, <code>docs/</code>, <code>templates/</code>, and <code>agent-metadata/</code> as package data (<code>[tool.setuptools.package-data]</code> or the build backend&#x27;s equivalent) so they actually enter the wheel</li><li>Test the artifact, not the source tree: <code>pip install dist/*.whl</code> into a fresh venv in CI, call every §6.1 function, and assert on the results</li><li>Generate api_index from the package&#x27;s actual importable surface (AST or introspection) at build time, and assert in CI that every entry resolves after install — the manifest agents generate code from must not be able to lie</li><li>Exclude console-script entry points and the CLI command surface from api_index at generation time; the CLI is described by the CLI standard&#x27;s <code>--describe</code>, not this file (Generation Invariant §5.4)</li>
 </ol>
 
 <h2>Fields</h2>
@@ -148,6 +148,8 @@ AttributeError: module &#x27;weather_sdk&#x27; has no attribute &#x27;show_quick
   
   <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-python-wheel-extensions.md">Miri Wheel Ext. §6</a> <em>(spec)</em></li>
   
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-agent-metadata-specification.md">Agent Metadata Spec §5.4 (Generation Invariants)</a> <em>(spec)</em></li>
+  
 </ul>
 
 <p class="source-note">Source of truth:
@@ -161,7 +163,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-036.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.2-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

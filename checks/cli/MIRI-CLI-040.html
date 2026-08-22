@@ -90,7 +90,7 @@
   <span class="tag">weight 3</span>
   
   
-  <span class="tag">Landscape §2.1 P16</span>
+  <span class="tag">CLI Spec §6.4</span><span class="tag">Landscape §2.1 P16</span>
 </div>
 
 <p class="deffile">Definition:
@@ -101,11 +101,11 @@
 <div class="cardstack">
   <div class="card"><div class="card-title">Violation</div>
     <span class="mono example-bad">--describe:
-{&quot;name&quot;: &quot;purge&quot;, &quot;summary&quot;: &quot;Remove all cached artifacts&quot;, &quot;mutating&quot;: true}
+{&quot;name&quot;: &quot;purge&quot;, &quot;description&quot;: &quot;Remove all cached artifacts&quot;, &quot;mutating&quot;: true}
 Nothing distinguishes purge from an ordinary write; an agent&#x27;s guardrail layer has no field to branch on and invokes it like any other command.</span></div>
   <div class="card"><div class="card-title">Compliant</div>
     <span class="mono example-good">--describe:
-{&quot;name&quot;: &quot;purge&quot;, &quot;mutating&quot;: true, &quot;destructive&quot;: true, &quot;requires_force&quot;: true}
+{&quot;name&quot;: &quot;purge&quot;, &quot;description&quot;: &quot;Remove all cached artifacts&quot;, &quot;mutating&quot;: true, &quot;destructive&quot;: true}
 $ tool purge
 {&quot;schema_version&quot;: &quot;1&quot;, &quot;ok&quot;: false, &quot;error&quot;: {&quot;code&quot;: &quot;CONFIRMATION_REQUIRED&quot;, &quot;retryable&quot;: false,
   &quot;suggestions&quot;: [&quot;re-run with --force, or preview with --dry-run&quot;]}}</span></div>
@@ -145,6 +145,8 @@ $ tool purge
 <h2>References</h2>
 <ul class="plain">
   
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §6.4</a> <em>(spec)</em></li>
+  
   <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/landscape-and-prior-art.md">Landscape §2.1 P16</a> <em>(spec)</em></li>
   
 </ul>
@@ -160,7 +162,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-040.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.1-draft · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.2-draft · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
