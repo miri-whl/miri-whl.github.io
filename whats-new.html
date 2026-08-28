@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What&#39;s new in 0.3 · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="index.html">Overview</a>
+    
+    
+    
+    <a class="active" href="whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Document <b>docs/whats-new-0.3.md</b></span><span>Version <b>0.3-draft</b></span></div>
+<h1>What&#39;s new in 0.3</h1>
+
+<p class="lede">0.1 and 0.2 specified what an artifact ships. 0.3 specifies how an agent consumes it.</p>
+<div class="prose-layout">
+<article class="prose">
+<p>Versions 0.1 and 0.2 specified what an artifact <strong>ships</strong>. Version 0.3 specifies how an agent <strong>consumes</strong> it.</p>
+<p>That is the whole of it. A package could score Gold and help no agent, because nothing in the standard said how the metadata was supposed to reach a decision, what to read for a given task, or what it means to consume it correctly. 0.3 closes that loop with three documents, a fixture set, and fifteen numbered checks.</p>
+<h2 id="the-three-documents">The three documents</h2>
+<p><strong>Discovery Contract</strong> — how metadata reaches an agent at the moment it is deciding what to call. Eight read-only operations in three kinds: <em>retrieval</em> (<code>document</code>, with <code>lifecycle</code> and <code>migration-guide</code> shorthands), <em>derived views</em> (<code>api-index</code>, <code>patterns</code>, <code>graph</code>), and <em>determination</em> (<code>list</code>, <code>resolve</code>). MCP is the first binding, not the contract itself.</p>
+<p><strong>Consumption Map</strong> — what to read, per task, and in what order. Six tasks: first use, scaffolding an integration, upgrading a dependency, diagnosing a runtime failure, answering a security question, and writing tests. Each carries a read-order, prohibitions, and informative heuristics, and the three are deliberately graded differently.</p>
+<p><strong>Consumer Conformance</strong> — what a conformant consumer <em>is</em>: fifteen <code>MIRI-CONSUMER</code> checks weighted to 100.</p>
+<h2 id="the-idea-that-shaped-everything">The idea that shaped everything</h2>
+<p><strong>The surface owns the envelope; the publisher owns the payload.</strong></p>
+<p>Every response is a surface-authored envelope with the package&#x27;s bytes nested inside it. The two never share a namespace. That sounds like a formatting decision and is actually the security model: because a publisher cannot write to the top level, a publisher cannot forge the signals a consumer branches on.</p>
+<p>Those signals are two independent booleans — <code>ok</code> (did the surface serve the request?) and <code>present</code> (does the document exist?). Keeping them separate is what makes <strong>honest degradation</strong> checkable at all. Without it, &quot;this package ships no lifecycle metadata&quot; and &quot;the lookup failed&quot; are indistinguishable in a consumer&#x27;s output, and so is &quot;I did not look.&quot;</p>
+<h2 id="consuming-is-not-the-same-as-inspecting">Consuming is not the same as inspecting</h2>
+<p>A producer check reads an artifact: a wheel is a fixed object and a linter opens it. A consumer is a program with behavior and no file to inspect, so conformance here is established by <strong>driving</strong> it — install a fixture, run a task, assert on what the consumer says and emits.</p>
+<p>Two consequences are written into the profile rather than left implied. Only <strong>observable</strong> claims are checkable, so every check is phrased as something a consumer must or must not say. And a check needs a fixture that exercises it, because a check with no executable case passes vacuously.</p>
+<h2 id="the-fixtures">The fixtures</h2>
+<p>One trivial package built three ways — <strong>identical source, different metadata</strong>. The build script byte-compares every source file across the variants and fails if any differ, so source identity is a verified property rather than a convention: any difference a consumer shows between variants is attributable to metadata alone.</p>
+<ul><li><strong>bare</strong> — no metadata. The honest-degradation baseline.</li><li><strong>miri</strong> — conforming metadata. The comparison arm.</li><li><strong>adversarial</strong> — metadata that lies: forged envelope signals, symbols that do not exist, an index padded to hide a</li><li>  real method past the cap, injection text in fields the map routes a consumer to read, an empty advisory list posing</li><li>  as a clean bill of health, a link-local SSRF target, and a deprecation redirecting onto a package in a namespace</li><li>  the publisher does not own.</li></ul>
+<p>Two of those cases carry a <strong>paired control</strong>, which is the part worth borrowing. The redirect is paired with a legitimate same-namespace migration, and a dynamically-served symbol is paired with a statically-defined one. Without the controls, both checks are passable by a consumer that simply refuses to act — and refusing every migration is not detecting an attack, just as reporting everything unverified is not caution.</p>
+<h2 id="presence-absence-and-the-difference-between-them">Presence, absence, and the difference between them</h2>
+<p>Two operations return evidence that is deliberately asymmetric, in opposite directions:</p>
+<ul><li><code>api-index</code> can <strong>confirm a claim</strong> and never refute one. It is capped and filtered, so a symbol missing from a</li><li>  response may simply have been dropped — which is exactly how a hostile package can hide a surface by padding.</li><li><code>resolve</code> can <strong>confirm existence</strong> and never refute it. It parses source without importing, so a surface built at</li><li>  runtime is invisible to it — <code>not-in-source</code> means <em>not defined statically</em>, never <em>does not exist</em>.</li></ul>
+<p>A consumer that collapses either asymmetry is wrong in a specific, predictable way, and the standard names both.</p>
+<h2 id="what-this-version-does-not-claim">What this version does not claim</h2>
+<p>Nothing here asserts that consuming this metadata improves agent outcomes. That is an empirical question with a pre-registered experiment attached, and the specification deliberately stays on the mechanism side of it. 0.3 makes the experiment <em>possible</em> — it could not run without a defined consumption contract — but it does not anticipate the result.</p>
+<p>Two scope decisions are stated rather than left to be discovered: the contract answers only for the <strong>installed</strong> version, so choosing a package before installing it and asking what breaks on a future upgrade are both out of scope for 0.3; and several obligations bind the <strong>surface</strong> rather than the consumer, so the consumer profile does not score them and says which those are. A Surface Conformance profile does not exist yet, and the standard says so.</p>
+</article>
+
+</div>
+<script>
+// Scroll-spy: mark the section the reader is currently under, so the sidebar answers "where am I"
+// as well as "where can I go". A heading counts as passed once its top crosses the trigger line,
+// and the last passed heading is the active one — which keeps a section highlighted while the
+// reader is deep inside it, where the heading itself is far off-screen above.
+(function () {
+  var links = {}, order = [];
+  document.querySelectorAll(".toc a").forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    links[id] = a;
+    order.push(id);
+  });
+  var heads = order.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!heads.length) return;
+
+  var box = document.querySelector(".toc nav");
+  function paint() {
+    var active = null, line = 96;
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= line) { active = heads[i].id; } else { break; }
+    }
+    if (!active) { active = heads[0].id; }
+    for (var id in links) { links[id].classList.toggle("here", id === active); }
+    var el = links[active];
+    if (box && el && (el.offsetTop < box.scrollTop ||
+        el.offsetTop > box.scrollTop + box.clientHeight - 40)) {
+      box.scrollTop = Math.max(0, el.offsetTop - box.clientHeight / 2);
+    }
+  }
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.3-draft · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

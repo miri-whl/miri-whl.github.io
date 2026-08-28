@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-SURFACE-051 — Carries absence and error as tool results, never as protocol errors · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="../../checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a class="active" href="../../checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="../../discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="../../consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="../../consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="../../surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.3-draft</b></span></div>
+<h1>MIRI-SURFACE-051 — Carries absence and error as tool results, never as protocol errors</h1>
+<p class="lede">Carries absence and error as tool results, never as protocol errors</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge maintenance">severity MEDIUM · 3</span>
+  <span class="tag">weight 3</span>
+  
+  
+  <span class="tag">Discovery Contract</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/consumption/checks/MIRI-SURFACE-051.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumption/checks/MIRI-SURFACE-051.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/consumption/checks/MIRI-SURFACE-051.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;error&quot;: {&quot;code&quot;: -32602, &quot;message&quot;: &quot;no lifecycle.json&quot;}}</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">{&quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;{\&quot;schema_version\&quot;:\&quot;1\&quot;,\&quot;ok\&quot;:true,\&quot;present\&quot;:false,…}&quot;}]}</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>Absence and a coded error are both *served answers* — the surface did its job and is reporting a fact. Sending either as a JSON-RPC protocol error puts them in a channel that carries no envelope, so the consumer loses <code>present</code>, <code>purl</code>, and the error code, and must infer from transport machinery what the contract took care to state explicitly.</p>
+
+<h2>Definition</h2>
+<p>Surface obligation from the Discovery Contract. This check verifies: Carries absence and error as tool results, never as protocol errors.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>A §4.2 absence is returned as a JSON-RPC error</li><li>A §4.3 error envelope is returned as a JSON-RPC error rather than as a tool result</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Return absence and contract errors as ordinary tool results carrying the full envelope</p>
+<ol class="plain">
+  <li>Return absence and contract errors as ordinary tool results carrying the full envelope</li><li>Reserve protocol errors for malformed requests: unknown tool, schema-invalid input</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>MEDIUM (numeric 3 of 5)</dd>
+  <dt>violation_unit</dt><dd>each served answer signalled as a transport protocol error</dd>
+  
+  
+  <dt>category</dt><dd>Binding</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.3-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/surface/discovery-contract.md">Discovery Contract</a> <em>(spec)</em></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumption/checks/MIRI-SURFACE-051.yaml" class="mono">MIRI-SURFACE-051.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/miri-surface-051/" class="mono">MIRI-SURFACE-051.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-SURFACE-050.html">← MIRI-SURFACE-050</a>
+  <span></span>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.3-draft · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

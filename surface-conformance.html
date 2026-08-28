@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surface Conformance · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="index.html">Overview</a>
+    
+    
+    
+    <a href="whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a class="active" href="surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Document <b>standards/consumption/surface-conformance.md</b></span><span>Status <b>0.3-draft</b></span></div>
+<h1>Surface Conformance</h1>
+
+<p class="lede">What a conformant metadata-query surface is — the obligations a consumer cannot be held to.</p>
+<div class="prose-layout">
+<article class="prose">
+<p><em>Specification Version: 0.3-draft</em> <em>Status: Draft</em> <em>Created: 2026</em></p>
+<h2 id="abstract">Abstract</h2>
+<p>The <a href="discovery-contract.html">Discovery Contract</a> places obligations on two programs. The <a href="consumer-conformance.html">Consumer Conformance</a> profile numbers the ones that bind a <strong>consumer</strong> and states plainly that it does not score the rest. This document is that rest: <strong>eighteen</strong> checks — the IDs are sparse and grouped in tens by category, so the range below is an address space rather than a count — running from <code>MIRI-SURFACE-001</code> through <code>MIRI-SURFACE-051</code>, weighted to 100, defining what a conformant <strong>metadata-query surface</strong> is.</p>
+<p>Without it the contract&#x27;s most load-bearing guarantees — that the envelope cannot be forged, that absence is distinguishable from failure, that discovery never executes an unvetted package — are normative prose with nothing verifying them. A reference implementation could regress on every one and no check in this standard would fire.</p>
+<h2 id="1-what-this-document-is">1. What This Document Is</h2>
+<p>A <strong>surface</strong> is any program that answers the <a href="discovery-contract.html">Discovery Contract §3</a> operations: the MCP context server that is the contract&#x27;s first binding, and any future binding of the same operations over a different transport. It sits between an installed environment and a consumer, and its job is narrow — read metadata, wrap it, relay it, and never do anything else.</p>
+<p>That narrowness is the point. Most of what this profile checks is the surface <strong>not</strong> doing something: not executing the package it is describing, not fetching what the package&#x27;s metadata points at, not merging publisher bytes into its own namespace, not serving a document outside a closed set, not repairing what it could not parse.</p>
+<h2 id="2-the-verification-model">2. The Verification Model</h2>
+<p>A surface, unlike a consumer, has a <strong>specified output</strong>. Every operation&#x27;s response shape is fixed by §4 of the contract, so conformance can be checked by issuing a request and inspecting the envelope that comes back — no judgment about phrasing, no assertion on natural language.</p>
+<p>Verification is a <strong>driven suite</strong>, like the consumer profile, but the assertions are exact:</p>
+<ol><li>Install a fixture from <a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures"><code>examples/fixtures/</code></a> into the environment the surface serves.</li><li>Issue a request — including deliberately hostile ones, which is what a request-trace fixture is for.</li><li>Assert on the returned envelope against the golden in <code>examples/fixtures/expected/</code>.</li></ol>
+<p>This is the profile where goldens do the most work: a consumer assertion is necessarily partly about wording, while a surface assertion is a structural comparison. Where a check below says a field MUST be present or absent, that is mechanically decidable from one response.</p>
+<h2 id="3-scoring-model">3. Scoring Model</h2>
+<p>Identical to the sibling profiles, so one grading vocabulary spans the standard:</p>
+<ul><li><strong>Score</strong> = Σ weights of passing checks, over the <em>effective denominator</em> (see forfeits below).</li><li><strong>Level</strong>: <strong>M</strong> (MUST — required for conformance) or <strong>S</strong> (SHOULD — quality signal).</li><li><strong>Conformance is a gate, not a band.</strong> A program failing any <strong>M</strong> check is <strong>non-conforming</strong>, and a</li><li>  non-conforming result carries <strong>no grade</strong> — only the score, capped at 74, to show distance. Grades describe</li><li>  conforming programs only.</li><li><strong>Grade bands (conforming programs only)</strong>: 90–100 <strong>Gold</strong> · 75–89 <strong>Silver</strong> · 50–74 <strong>Bronze</strong>.</li></ul>
+<p><strong>In 0.3-draft every check in this profile is a MUST, so all 100 weight is MUST weight and the bands above are unreachable: a conforming surface scores exactly 100 and a non-conforming one gets no grade at all.</strong> The bands are stated anyway, and stated as unreachable rather than quietly listed, because the alternative is a reader computing a Silver that can never occur. They exist for vocabulary parity with the producer checklists and will become live the first time this profile gains a SHOULD.</p>
+<p>That every obligation here is a MUST is a fact about what a metadata-query surface <em>is</em>, not an oversight. A surface has one job — answer queries in the shape this contract specifies — and there is no partial version of that a consumer could safely rely on: a surface that forges an envelope field, serves outside the closed set, or paginates unstably is not a lower-quality surface but an unusable one. The two checks that briefly carried SHOULD (<code>031</code> ordering, <code>033</code> continuation) were raised to MUST when a review observed that the Discovery Contract states both as MUST and that cursor correctness is <em>defined</em> in terms of stable ordering — a SHOULD enforcing a MUST is a gap, and scoring cursor continuation while permitting the unstable ordering that makes continuation meaningless is a check that cannot fail honestly.</p>
+<p><strong>Forfeits.</strong> A check whose fixture cannot be driven is <strong>forfeited and reported, never silently passed</strong>. A forfeited check is <strong>excluded from both</strong> the numerator and the denominator — it is removed from the calculation entirely, not counted as a failure. The score is computed over what was actually exercised, so forfeiting cannot inflate or deflate it. The report MUST carry the forfeited count and the effective denominator beside the score, and a forfeited <strong>M</strong> check means <strong>conformance is undetermined</strong> — reported as such, never as conforming and never as a failure.</p>
+<h2 id="4-the-checks">4. The Checks</h2>
+<p>Eighteen checks, weights summing to 100. IDs are stable and are never renumbered. Six categories, which follow the path a request actually takes through a conformant surface:</p>
+<figure class="diagram"><svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 272px; background-color: transparent;" viewBox="0 0 272 1150" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;fill:#2F2E2D;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#F3F0E7;}#my-svg .error-text{fill:#0c0f18;stroke:#0c0f18;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#6B6A68;stroke:#6B6A68;}#my-svg .marker.cross{stroke:#6B6A68;}#my-svg svg{font-family:ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;}#my-svg p{margin:0;}#my-svg .label{font-family:ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2F2E2D;}#my-svg .cluster-label text{fill:#0c0f18;}#my-svg .cluster-label span{color:#0c0f18;}#my-svg .cluster-label span p{background-color:transparent;}#my-svg .label text,#my-svg span{fill:#2F2E2D;color:#2F2E2D;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#F5EFD5;stroke:#8A7420;stroke-width:1px;}#my-svg .rough-node .label text,#my-svg .node .label text,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .rough-node .label,#my-svg .node .label,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .root .anchor path{fill:#6B6A68!important;stroke-width:0;stroke:#6B6A68;}#my-svg .arrowheadPath{fill:#0b0b0b;}#my-svg .edgePath .path{stroke:#6B6A68;stroke-width:1px;}#my-svg .flowchart-link{stroke:#6B6A68;fill:none;}#my-svg .edgeLabel{background-color:#FBF9F2;text-align:center;}#my-svg .edgeLabel p{background-color:#FBF9F2;}#my-svg .edgeLabel rect{opacity:0.5;background-color:#FBF9F2;fill:#FBF9F2;}#my-svg .labelBkg{background-color:rgba(251, 249, 242, 0.5);}#my-svg .cluster rect{fill:#FBF9F2;stroke:#A7A49B;stroke-width:1px;}#my-svg .cluster text{fill:#0c0f18;}#my-svg .cluster span{color:#0c0f18;}#my-svg .node .collapsed-indicator{fill:#A7A49B;stroke:none;opacity:0.6;}#my-svg .node .collapsed-separator{stroke:#A7A49B;stroke-width:0.75px;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;background:#F3F0E7;border:1px solid hsl(45, 0%, 82.9411764706%);border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#2F2E2D;}#my-svg rect.text{fill:none;stroke-width:0;}#my-svg .icon-shape,#my-svg .image-shape{background-color:#FBF9F2;text-align:center;}#my-svg .icon-shape p,#my-svg .image-shape p{background-color:#FBF9F2;padding:2px;}#my-svg .icon-shape .label rect,#my-svg .image-shape .label rect{opacity:0.5;background-color:#FBF9F2;fill:#FBF9F2;}#my-svg .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#my-svg .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#my-svg .node .neo-node{stroke:#8A7420;}#my-svg [data-look="neo"].node rect,#my-svg [data-look="neo"].cluster rect,#my-svg [data-look="neo"].node polygon{stroke:url(#my-svg-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#my-svg [data-look="neo"].swimlane.cluster rect{filter:none;}#my-svg [data-look="neo"].node path{stroke:url(#my-svg-gradient);stroke-width:1px;}#my-svg [data-look="neo"].node .outer-path{filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#my-svg [data-look="neo"].node .neo-line path{stroke:#8A7420;filter:none;}#my-svg [data-look="neo"].node circle{stroke:url(#my-svg-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#my-svg [data-look="neo"].node circle .state-start{fill:#000000;}#my-svg [data-look="neo"].icon-shape .icon{fill:url(#my-svg-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#my-svg [data-look="neo"].icon-shape .icon-neo path{stroke:url(#my-svg-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="my-svg_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointEnd-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="11.5" refY="7" markerUnits="userSpaceOnUse" markerWidth="10.5" markerHeight="14" orient="auto"><path d="M 0 0 L 11.5 7 L 0 14 z" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="1" refY="7" markerUnits="userSpaceOnUse" markerWidth="11.5" markerHeight="14" orient="auto"><polygon points="0,7 11.5,14 11.5,0" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refY="5" refX="12.25" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-2" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="17.7" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5;"/></marker><marker id="my-svg_flowchart-v2-crossStart-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="-3.5" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5; stroke-dasharray: 1, 0;"/></marker><g class="root"><g class="clusters"/><g class="edgePaths"><path d="M136,57L136,61.583C136,66.167,136,75.333,136,83.833C136,92.333,136,100.167,136,104.083L136,108" id="my-svg-L_R_B_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_R_B_0" data-points="W3sieCI6MTM2LCJ5Ijo1N30seyJ4IjoxMzYsInkiOjg0LjV9LHsieCI6MTM2LCJ5IjoxMTJ9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M136,245L136,249.583C136,254.167,136,263.333,136,271.833C136,280.333,136,288.167,136,292.083L136,296" id="my-svg-L_B_D_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_B_D_0" data-points="W3sieCI6MTM2LCJ5IjoyNDV9LHsieCI6MTM2LCJ5IjoyNzIuNX0seyJ4IjoxMzYsInkiOjMwMH1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M136,433L136,437.583C136,442.167,136,451.333,136,459.833C136,468.333,136,476.167,136,480.083L136,484" id="my-svg-L_D_E_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_D_E_0" data-points="W3sieCI6MTM2LCJ5Ijo0MzN9LHsieCI6MTM2LCJ5Ijo0NjAuNX0seyJ4IjoxMzYsInkiOjQ4OH1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M136,600L136,604.583C136,609.167,136,618.333,136,626.833C136,635.333,136,643.167,136,647.083L136,651" id="my-svg-L_E_A_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_E_A_0" data-points="W3sieCI6MTM2LCJ5Ijo2MDB9LHsieCI6MTM2LCJ5Ijo2MjcuNX0seyJ4IjoxMzYsInkiOjY1NX1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M136,746L136,750.583C136,755.167,136,764.333,136,772.833C136,781.333,136,789.167,136,793.083L136,797" id="my-svg-L_A_AB_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_A_AB_0" data-points="W3sieCI6MTM2LCJ5Ijo3NDZ9LHsieCI6MTM2LCJ5Ijo3NzMuNX0seyJ4IjoxMzYsInkiOjgwMX1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M136,892L136,896.583C136,901.167,136,910.333,136,918.833C136,927.333,136,935.167,136,939.083L136,943" id="my-svg-L_AB_F_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_AB_F_0" data-points="W3sieCI6MTM2LCJ5Ijo4OTJ9LHsieCI6MTM2LCJ5Ijo5MTkuNX0seyJ4IjoxMzYsInkiOjk0N31d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M136,1038L136,1042.583C136,1047.167,136,1056.333,136,1064.833C136,1073.333,136,1081.167,136,1085.083L136,1089" id="my-svg-L_F_RESP_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_F_RESP_0" data-points="W3sieCI6MTM2LCJ5IjoxMDM4fSx7IngiOjEzNiwieSI6MTA2NS41fSx7IngiOjEzNiwieSI6MTA5M31d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_R_B_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_B_D_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_D_E_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_E_A_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_A_AB_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_AB_F_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_F_RESP_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="my-svg-flowchart-R-0" data-look="classic" transform="translate(136, 32.5)"><rect class="basic label-container" style="" x="-51.3515625" y="-24.5" width="102.703125" height="49"/><g class="label" style="" transform="translate(-23.3515625, -10.5)"><rect/><foreignObject width="46.703125" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>request</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-B-1" data-look="classic" transform="translate(136, 178.5)"><rect class="basic label-container" style="" x="-128" y="-66.5" width="256" height="133"/><g class="label" style="" transform="translate(-100, -52.5)"><rect/><foreignObject width="200" height="105"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p><b>C. Boundaries</b><br />name grammar · closed servable set<br />path confinement · import-free<br />020 021 022 023</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-D-3" data-look="classic" transform="translate(136, 366.5)"><rect class="basic label-container" style="" x="-128" y="-66.5" width="256" height="133"/><g class="label" style="" transform="translate(-100, -52.5)"><rect/><foreignObject width="200" height="105"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p><b>D. Bounded Answers</b><br />caps · stable order · continuation<br />absent vs empty<br />030 031 032 033</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-E-5" data-look="classic" transform="translate(136, 544)"><rect class="basic label-container" style="" x="-114.7734375" y="-56" width="229.546875" height="112"/><g class="label" style="" transform="translate(-86.7734375, -42)"><rect/><foreignObject width="173.546875" height="84"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p><b>E. Provenance</b><br />purl derived, never read<br />one row per import package<br />040 041</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-A-7" data-look="classic" transform="translate(136, 700.5)"><rect class="basic label-container" style="" x="-108.9375" y="-45.5" width="217.875" height="91"/><g class="label" style="" transform="translate(-80.9375, -31.5)"><rect/><foreignObject width="161.875" height="63"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p><b>A. Envelope Integrity</b><br />surface owns the top level<br />001 002 003</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-AB-9" data-look="classic" transform="translate(136, 846.5)"><rect class="basic label-container" style="" x="-109.7109375" y="-45.5" width="219.421875" height="91"/><g class="label" style="" transform="translate(-81.7109375, -31.5)"><rect/><foreignObject width="163.421875" height="63"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p><b>B. Absence and Error</b><br />ok · present · coded errors<br />010 011 012</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-F-11" data-look="classic" transform="translate(136, 992.5)"><rect class="basic label-container" style="" x="-113.59375" y="-45.5" width="227.1875" height="91"/><g class="label" style="" transform="translate(-85.59375, -31.5)"><rect/><foreignObject width="171.1875" height="63"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p><b>F. Binding</b><br />surface version · results not<br />protocol errors · 050 051</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-RESP-13" data-look="classic" transform="translate(136, 1117.5)"><rect class="basic label-container" style="" x="-56.796875" y="-24.5" width="113.59375" height="49"/><g class="label" style="" transform="translate(-28.796875, -10.5)"><rect/><foreignObject width="57.59375" height="21"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>response</p></span></div></foreignObject></g></g></g></g></g><defs><filter id="my-svg-drop-shadow" height="130%" width="130%"><feDropShadow dx="4" dy="4" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs><defs><filter id="my-svg-drop-shadow-small" height="150%" width="150%"><feDropShadow dx="2" dy="2" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs><linearGradient id="my-svg-gradient" gradientUnits="objectBoundingBox" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8A7420" stop-opacity="1"/><stop offset="100%" stop-color="hsl(42.3529411765, 0%, 77.2549019608%)" stop-opacity="1"/></linearGradient></svg></figure>
+<p>The ordering is not decorative. A boundary failure admits bytes the later categories then faithfully wrap and provenance-stamp — so a surface that serves a document outside the servable set has already lost, however impeccable its envelope is.</p>
+<h3 id="a-envelope-integrity-20-points">A. Envelope Integrity (20 points)</h3>
+<p>The surface owns the top level of every response. This is the category the whole anti-forgery argument rests on.</p>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Level</th><th>Check</th><th>Weight</th><th>Case</th></tr></thead><tbody><tr><td>MIRI-SURFACE-001</td><td>M</td><td>Stamps <code>schema_version</code> — the string <code>&quot;1&quot;</code> in 0.3-draft — on every response</td><td>6</td><td>any</td></tr><tr><td>MIRI-SURFACE-002</td><td>M</td><td>Nests the payload; never merges publisher bytes into the envelope</td><td>8</td><td><code>adversarial</code> (A1/A2)</td></tr><tr><td>MIRI-SURFACE-003</td><td>M</td><td>Emits only the keys reserved by Discovery Contract §4.1 at the top level</td><td>6</td><td>any</td></tr></tbody></table></div>
+<h3 id="b-absence-and-error-22-points">B. Absence and Error (22 points)</h3>
+<p>The discrimination the contract calls its single most consequential clause.</p>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Level</th><th>Check</th><th>Weight</th><th>Case</th></tr></thead><tbody><tr><td>MIRI-SURFACE-010</td><td>M</td><td>Reports absence as <code>ok: true, present: false</code> — never as an error</td><td>8</td><td><code>bare</code></td></tr><tr><td>MIRI-SURFACE-011</td><td>M</td><td>Reports failure as <code>ok: false</code> with a coded <code>error</code> object</td><td>7</td><td><code>expected/requests.json</code></td></tr><tr><td>MIRI-SURFACE-012</td><td>M</td><td>Reports a document it cannot read — unparsable <strong>or</strong> schema-invalid — as <code>METADATA_UNREADABLE</code>, never absent or repaired</td><td>7</td><td><code>malformed</code></td></tr></tbody></table></div>
+<h3 id="c-boundaries-24-points">C. Boundaries (24 points)</h3>
+<p>What the surface will and will not do. Every check here is a refusal.</p>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Level</th><th>Check</th><th>Weight</th><th>Case</th></tr></thead><tbody><tr><td>MIRI-SURFACE-020</td><td>M</td><td>Serves only the closed servable set; refuses anything else</td><td>8</td><td><code>expected/requests.json</code></td></tr><tr><td>MIRI-SURFACE-021</td><td>M</td><td>Confines the resolved path; rejects symlinks and traversal</td><td>8</td><td><code>symlinked</code></td></tr><tr><td>MIRI-SURFACE-022</td><td>M</td><td>Discovers import-free; executes nothing</td><td>5</td><td><code>hostile-import</code></td></tr><tr><td>MIRI-SURFACE-023</td><td>M</td><td>Fetches nothing: never resolves a URL found in a served document</td><td>3</td><td><code>adversarial</code> (A7)</td></tr></tbody></table></div>
+<h3 id="d-bounded-answers-16-points">D. Bounded Answers (16 points)</h3>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Level</th><th>Check</th><th>Weight</th><th>Case</th></tr></thead><tbody><tr><td>MIRI-SURFACE-030</td><td>M</td><td>Declares and enforces its caps, and sets <code>truncated</code> when it drops content</td><td>6</td><td><code>adversarial</code> (A4)</td></tr><tr><td>MIRI-SURFACE-031</td><td>M</td><td>Orders entries stably across repeated requests</td><td>2</td><td><code>adversarial</code> (A4)</td></tr><tr><td>MIRI-SURFACE-032</td><td>M</td><td>Distinguishes an absent <code>api-index</code> from an empty one</td><td>6</td><td><code>bare</code>, <code>miri</code></td></tr><tr><td>MIRI-SURFACE-033</td><td>M</td><td>Offers cursor continuation and rejects an out-of-scope cursor</td><td>2</td><td><code>expected/cursor.json</code></td></tr></tbody></table></div>
+<h3 id="e-provenance-and-identity-11-points">E. Provenance and Identity (11 points)</h3>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Level</th><th>Check</th><th>Weight</th><th>Case</th></tr></thead><tbody><tr><td>MIRI-SURFACE-040</td><td>M</td><td>Derives <code>purl</code> from the installed distribution; never reads it from a document</td><td>6</td><td><code>spoofed</code></td></tr><tr><td>MIRI-SURFACE-041</td><td>M</td><td>Emits one row per import package; errors rather than picking among ambiguous ones</td><td>5</td><td><code>ambiguous-a</code> + <code>ambiguous-b</code> (A12)</td></tr></tbody></table></div>
+<h3 id="f-binding-7-points">F. Binding (7 points)</h3>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Level</th><th>Check</th><th>Weight</th><th>Case</th></tr></thead><tbody><tr><td>MIRI-SURFACE-050</td><td>M</td><td>Advertises the surface version at its binding&#x27;s normative path — for MCP, <code>capabilities.miri.surface_version</code> in <code>initialize</code> (Discovery Contract §6.3)</td><td>4</td><td>any</td></tr><tr><td>MIRI-SURFACE-051</td><td>M</td><td>Carries absence and error as tool results, never as protocol errors</td><td>3</td><td><code>bare</code>, <code>expected/requests.json</code></td></tr></tbody></table></div>
+<h3 id="category-summary">Category Summary</h3>
+<div class="tablewrap"><table><thead><tr><th>Category</th><th>Checks</th><th>Points</th></tr></thead><tbody><tr><td>A. Envelope Integrity</td><td>3</td><td>20</td></tr><tr><td>B. Absence and Error</td><td>3</td><td>22</td></tr><tr><td>C. Boundaries</td><td>4</td><td>24</td></tr><tr><td>D. Bounded Answers</td><td>4</td><td>16</td></tr><tr><td>E. Provenance and Identity</td><td>2</td><td>11</td></tr><tr><td>F. Binding</td><td>2</td><td>7</td></tr><tr><td><strong>Total</strong></td><td><strong>18</strong></td><td><strong>100</strong></td></tr></tbody></table></div>
+<p><strong>All eighteen checks now have an executable case.</strong> The fixtures those cases name — the <code>malformed</code> variant, the <code>symlinked</code> document, the import canary, the <code>spoofed</code> identity document, the <code>consuming-project</code> declarations and the request-trace set — were built after this profile, precisely because the profile is what made clear which cases were missing. <code>tools/validate_fixtures.py</code> asserts each stays live.</p>
+<p>The last of them was <strong>multi-distribution</strong> (<code>MIRI-SURFACE-041</code>, one row per import package and <code>AMBIGUOUS_PACKAGE</code>), which needs two distributions providing one import name and so could not be a variant of a fixture set built from a single template. It was carried as defined-but-not-scorable until a review pointed out what that actually cost: <code>041</code> is a <strong>MUST</strong>, so by §3&#x27;s rule every run forfeiting it reported conformance <strong>undetermined</strong> and emitted no grade — the profile could never grade anything, permanently, on paper. The answer was to build the case (<code>ambiguous-a</code> and <code>ambiguous-b</code>, two distributions both providing <code>greet_ambiguous</code>, sharing the template source so the collision is the only variable) rather than to write more prose about the gap. <strong>Every check in this profile now has a case a suite can drive.</strong></p>
+<h2 id="5-why-these-are-not-consumer-checks">5. Why These Are Not Consumer Checks</h2>
+<p>It would be simpler to keep one profile. The split exists because the two programs fail differently, and a single score would obscure which one is broken.</p>
+<p>A consumer emits no responses, so it cannot be held to the shape of one. A surface makes no decisions about what to call, so it cannot be held to the judgment a consumer exercises. Scoring them together would produce a number that answers neither &quot;can I trust this server&quot; nor &quot;can I trust this agent&quot; — and when it dropped, would not say which.</p>
+<p>The division follows the actor table in <a href="consumer-conformance.html">Consumer Conformance §4</a>: every obligation marked there as binding the <strong>Surface</strong> is numbered here, and every category in §4 appears in that table. The one obligation named on both sides is absence — a surface must <em>signal</em> it correctly and a consumer must <em>report</em> it correctly, which are different failures that can occur independently. That table was written as a declared gap; this document closes it.</p>
+<h2 id="6-check-definitions">6. Check Definitions</h2>
+<p>The authoritative definition of each check is its YAML file in <code>standards/consumption/checks/</code>, governed by <code>schemas/check-v1.json</code> with <code>target: surface</code>. The tables in §4 are the derived rendering: where the two disagree, the YAML is correct.</p>
+<p>Surface and consumer checks share a directory because they share a suite and a contract; they are separated by <code>target</code>, and their weights sum to 100 independently.</p>
+</article>
+
+<aside class="toc" aria-label="On this page">
+  <p class="toc-title">On this page</p>
+  <nav>
+    <ol>
+    
+      <li class="lvl2"><a href="#abstract">Abstract</a></li>
+    
+      <li class="lvl2"><a href="#1-what-this-document-is">1. What This Document Is</a></li>
+    
+      <li class="lvl2"><a href="#2-the-verification-model">2. The Verification Model</a></li>
+    
+      <li class="lvl2"><a href="#3-scoring-model">3. Scoring Model</a></li>
+    
+      <li class="lvl2"><a href="#4-the-checks">4. The Checks</a></li>
+    
+      <li class="lvl3"><a href="#a-envelope-integrity-20-points">A. Envelope Integrity (20 points)</a></li>
+    
+      <li class="lvl3"><a href="#b-absence-and-error-22-points">B. Absence and Error (22 points)</a></li>
+    
+      <li class="lvl3"><a href="#c-boundaries-24-points">C. Boundaries (24 points)</a></li>
+    
+      <li class="lvl3"><a href="#d-bounded-answers-16-points">D. Bounded Answers (16 points)</a></li>
+    
+      <li class="lvl3"><a href="#e-provenance-and-identity-11-points">E. Provenance and Identity (11 points)</a></li>
+    
+      <li class="lvl3"><a href="#f-binding-7-points">F. Binding (7 points)</a></li>
+    
+      <li class="lvl3"><a href="#category-summary">Category Summary</a></li>
+    
+      <li class="lvl2"><a href="#5-why-these-are-not-consumer-checks">5. Why These Are Not Consumer Checks</a></li>
+    
+      <li class="lvl2"><a href="#6-check-definitions">6. Check Definitions</a></li>
+    
+    </ol>
+  </nav>
+</aside>
+
+</div>
+<script>
+// Scroll-spy: mark the section the reader is currently under, so the sidebar answers "where am I"
+// as well as "where can I go". A heading counts as passed once its top crosses the trigger line,
+// and the last passed heading is the active one — which keeps a section highlighted while the
+// reader is deep inside it, where the heading itself is far off-screen above.
+(function () {
+  var links = {}, order = [];
+  document.querySelectorAll(".toc a").forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    links[id] = a;
+    order.push(id);
+  });
+  var heads = order.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!heads.length) return;
+
+  var box = document.querySelector(".toc nav");
+  function paint() {
+    var active = null, line = 96;
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= line) { active = heads[i].id; } else { break; }
+    }
+    if (!active) { active = heads[0].id; }
+    for (var id in links) { links[id].classList.toggle("here", id === active); }
+    var el = links[active];
+    if (box && el && (el.offsetTop < box.scrollTop ||
+        el.offsetTop > box.scrollTop + box.clientHeight - 40)) {
+      box.scrollTop = Math.max(0, el.offsetTop - box.clientHeight / 2);
+    }
+  }
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.3-draft · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

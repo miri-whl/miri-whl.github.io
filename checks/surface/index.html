@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metadata surfaces checks · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="../../checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a class="active" href="../../checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="../../discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="../../consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="../../consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="../../surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Checks <b>18</b></span><span>Levels <b>18 MUST · 0 SHOULD</b></span><span>Weights <b>Σ = 100</b></span></div>
+<h1>Metadata surfaces — check definitions</h1>
+
+<p class="lede">Each requirement is verified by a check; each check failure instance is a violation.
+Conformance score = Σ weights of passing checks; any failing MUST caps the score at 74. Severity and violation
+units are canonical and feed the magnitude-aware health score. The YAML definitions are authoritative;
+the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumption/surface-conformance.md">checklist table</a> is the derived rendering.</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>ID</th><th>Check</th>
+<th class="sortable" data-key="level">Level</th>
+<th class="sortable" data-key="sev">Severity</th>
+<th class="sortable" data-key="weight">Wt</th>
+<th>Verifies</th></tr></thead>
+<tbody>
+
+
+<tr class="cat"><td colspan="6">Envelope Integrity · 20 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-001.html" data-level="0" data-sev="3" data-weight="6">
+  <td class="id"><a href="MIRI-SURFACE-001.html">MIRI-SURFACE-001</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-001.html">Stamps `schema_version` on every response</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">6</td>
+  <td>Stamps <code>schema_version</code> on every response</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-002.html" data-level="0" data-sev="5" data-weight="8">
+  <td class="id"><a href="MIRI-SURFACE-002.html">MIRI-SURFACE-002</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-002.html">Nests the payload; never merges publisher bytes into the envelope</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">8</td>
+  <td>Nests the payload; never merges publisher bytes into the envelope</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-003.html" data-level="0" data-sev="4" data-weight="6">
+  <td class="id"><a href="MIRI-SURFACE-003.html">MIRI-SURFACE-003</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-003.html">Emits only reserved keys at the top level</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">6</td>
+  <td>Emits only reserved keys at the top level</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Absence and Error · 22 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-010.html" data-level="0" data-sev="5" data-weight="8">
+  <td class="id"><a href="MIRI-SURFACE-010.html">MIRI-SURFACE-010</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-010.html">Reports absence as `ok: true, present: false` — never as an error</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">8</td>
+  <td>Reports absence as <code>ok: true, present: false</code> — never as an error</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-011.html" data-level="0" data-sev="4" data-weight="7">
+  <td class="id"><a href="MIRI-SURFACE-011.html">MIRI-SURFACE-011</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-011.html">Reports failure as `ok: false` with a coded `error` object</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">7</td>
+  <td>Reports failure as <code>ok: false</code> with a coded <code>error</code> object</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-012.html" data-level="0" data-sev="4" data-weight="7">
+  <td class="id"><a href="MIRI-SURFACE-012.html">MIRI-SURFACE-012</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-012.html">Reports an unreadable document as METADATA_UNREADABLE, never absent or repaired</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">7</td>
+  <td>Reports a document it cannot read — unparsable OR schema-invalid — as <code>METADATA_UNREADABLE</code>, never absent or repaired</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Boundaries · 24 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-020.html" data-level="0" data-sev="5" data-weight="8">
+  <td class="id"><a href="MIRI-SURFACE-020.html">MIRI-SURFACE-020</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-020.html">Serves only the closed servable set; refuses anything else</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">8</td>
+  <td>Serves only the closed servable set; refuses anything else</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-021.html" data-level="0" data-sev="5" data-weight="8">
+  <td class="id"><a href="MIRI-SURFACE-021.html">MIRI-SURFACE-021</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-021.html">Confines the resolved path; rejects symlinks and traversal</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">8</td>
+  <td>Confines the resolved path; rejects symlinks and traversal</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-022.html" data-level="0" data-sev="5" data-weight="5">
+  <td class="id"><a href="MIRI-SURFACE-022.html">MIRI-SURFACE-022</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-022.html">Discovers import-free; executes nothing</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">5</td>
+  <td>Discovers import-free; executes nothing</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-023.html" data-level="0" data-sev="5" data-weight="3">
+  <td class="id"><a href="MIRI-SURFACE-023.html">MIRI-SURFACE-023</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-023.html">Fetches nothing</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">3</td>
+  <td>Fetches nothing: never resolves a URL found in a served document</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Bounded Answers · 16 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-030.html" data-level="0" data-sev="3" data-weight="6">
+  <td class="id"><a href="MIRI-SURFACE-030.html">MIRI-SURFACE-030</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-030.html">Declares and enforces its caps, and sets `truncated` when it drops content</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">6</td>
+  <td>Declares and enforces its caps, and sets <code>truncated</code> when it drops content</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-031.html" data-level="0" data-sev="1" data-weight="2">
+  <td class="id"><a href="MIRI-SURFACE-031.html">MIRI-SURFACE-031</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-031.html">Orders entries stably across repeated requests</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">2</td>
+  <td>Orders entries stably across repeated requests</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-032.html" data-level="0" data-sev="3" data-weight="6">
+  <td class="id"><a href="MIRI-SURFACE-032.html">MIRI-SURFACE-032</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-032.html">Distinguishes an absent `api-index` from an empty one</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">6</td>
+  <td>Distinguishes an absent <code>api-index</code> from an empty one</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-033.html" data-level="0" data-sev="1" data-weight="2">
+  <td class="id"><a href="MIRI-SURFACE-033.html">MIRI-SURFACE-033</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-033.html">Offers and scopes cursor continuation</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">2</td>
+  <td>Offers cursor continuation and rejects an out-of-scope cursor</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Provenance and Identity · 11 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-040.html" data-level="0" data-sev="5" data-weight="6">
+  <td class="id"><a href="MIRI-SURFACE-040.html">MIRI-SURFACE-040</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-040.html">Derives `purl` from the installed distribution; never reads it from a document</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">CRITICAL</span></td>
+  <td class="num">6</td>
+  <td>Derives <code>purl</code> from the installed distribution; never reads it from a document</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-041.html" data-level="0" data-sev="3" data-weight="5">
+  <td class="id"><a href="MIRI-SURFACE-041.html">MIRI-SURFACE-041</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-041.html">Emits one row per import package; errors rather than picking among ambiguous one</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">5</td>
+  <td>Emits one row per import package; errors rather than picking among ambiguous ones</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Binding · 7 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-050.html" data-level="0" data-sev="3" data-weight="4">
+  <td class="id"><a href="MIRI-SURFACE-050.html">MIRI-SURFACE-050</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-050.html">Advertises the surface version at the normative path</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">4</td>
+  <td>Advertises the surface version at the normative path</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-SURFACE-051.html" data-level="0" data-sev="3" data-weight="3">
+  <td class="id"><a href="MIRI-SURFACE-051.html">MIRI-SURFACE-051</a></td>
+  <td><a class="rowname" href="MIRI-SURFACE-051.html">Carries absence and error as tool results, never as protocol errors</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge maintenance">MEDIUM</span></td>
+  <td class="num">3</td>
+  <td>Carries absence and error as tool results, never as protocol errors</td>
+</tr>
+
+
+</tbody>
+</table>
+</div>
+<script>
+document.querySelectorAll("tr.rowlink").forEach(function (row) {
+  row.addEventListener("click", function (e) {
+    if (e.target.closest("a")) return;
+    window.location = row.dataset.href;
+  });
+});
+
+// Column sorting: click cycles ascending -> descending -> original (category-grouped) order.
+(function () {
+  var tbody = document.querySelector("tbody");
+  var original = Array.from(tbody.children);
+  var state = { key: null, dir: 0 };
+  document.querySelectorAll("th.sortable").forEach(function (th) {
+    th.addEventListener("click", function () {
+      var key = th.dataset.key;
+      state.dir = state.key === key ? (state.dir + 1) % 3 : 1;
+      state.key = key;
+      document.querySelectorAll("th.sortable").forEach(function (h) { h.removeAttribute("data-dir"); });
+      if (state.dir === 0) {
+        original.forEach(function (r) { tbody.appendChild(r); });
+        return;
+      }
+      th.setAttribute("data-dir", state.dir === 1 ? "asc" : "desc");
+      var rows = original.filter(function (r) { return r.classList.contains("rowlink"); });
+      rows.sort(function (a, b) {
+        var d = Number(a.dataset[key]) - Number(b.dataset[key]);
+        return state.dir === 1 ? d : -d;
+      });
+      tbody.innerHTML = "";
+      rows.forEach(function (r) { tbody.appendChild(r); });
+    });
+  });
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.3-draft · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>
