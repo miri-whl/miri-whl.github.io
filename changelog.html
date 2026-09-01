@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="index.html">Overview</a>
+    
+    
+    
+    <a href="whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a class="active" href="changelog.html">Changelog</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.3.1</b></span></div>
+<h1>Changelog</h1>
+
+<p class="lede">What each release delivered, and what a version number promises. A patch release contains bug fixes and clarifications only.</p>
+<div class="prose-layout">
+<article class="prose">
+<p>All notable changes to the Miri Standard are recorded here.</p>
+<p>Versions follow the policy in <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/README.md#versioning">standards/README.md</a>: a <strong>major</strong> version marks a breaking change, a <strong>minor</strong> version a backward-compatible addition, and a <strong>patch</strong> version bug fixes and clarifications only. That policy is a contract with implementers, and it is worth keeping strictly: a reader should be able to see <code>0.3.1</code> and know it contains no additions without having to check.</p>
+<h2 id="031-2026-09-01">0.3.1 — 2026-09-01</h2>
+<p>Bug fixes and clarifications. <strong>No additions to the standard.</strong> Every change either corrects something that was wrong or makes an existing rule mechanically checkable.</p>
+<p>Four of the six defects below were found by the miri-py team building an implementation against the text, and one by scoring a real CLI. None was reachable by re-reading our own documents, which is the point worth recording.</p>
+<h3 id="fixed">Fixed</h3>
+<ul><li><strong><code>MIRI-SURFACE-012</code> required surfaces to refuse documents that six goldens require them to serve.</strong> A clause</li><li>  added during 0.3&#x27;s review demanded <code>METADATA_UNREADABLE</code> for any document that parses but fails its schema,</li><li>  while the adversarial fixtures expect those same documents served. Ten of the fifteen consumer checks are</li><li>  driven <em>through</em> the surface, so enforcing it would have disabled most of the consumer profile. The check is</li><li>  now scoped to readability, which is what its own examples, its rationale, and §3.2&#x27;s verbatim rule already</li><li>  said. Reported by the miri-py team.</li><li><strong>All 33 consumption checks advertised a <code>urls.html</code> that returns 404.</strong> Linter reports link findings to that</li><li>  address, so every consumption finding pointed at a missing page. The 83 producer checks were correct; the</li><li>  consumption suite copied the wrong pattern when it was authored.</li><li><strong><code>cli-describe-v1.json</code> forbade <code>advisory_coverage</code>, which <code>MIRI-CLI-022</code> requires.</strong> The schema closes</li><li>  <code>additionalProperties</code> and never declared the field, so a CLI doing what the standard tells it failed the</li><li>  standard&#x27;s own schema. Not hypothetical: arghos had been failing validation since adopting it.</li><li><strong><code>schema_version</code> was unconstrained in three schemas, and three surfaces had diverged.</strong> Two emitted <code>&quot;1.0&quot;</code>,</li><li>  one <code>&quot;1&quot;</code>, and all three validated. The integer-string convention lived only in prose and examples. Now pinned</li><li>  to <code>^[0-9]+$</code> in <code>cli-describe-v1</code>, <code>lint-report-v1</code> and <code>discovery-envelope-v1</code>. The <code>lint-report</code> pin matters</li><li>  most: it governs the report every <code>miri score</code> emits.</li><li><strong>Five check citations pointed at sections that do not exist, or at the wrong one.</strong> <code>MIRI-CLI-014</code> and</li><li>  <code>MIRI-CLI-034</code> cited a section with no such number; <code>MIRI-PY-019</code> used a notation that reads as a subsection;</li><li>  and <code>MIRI-CLI-013</code>, a check about the general error envelope, cited only §6 <em>Deprecation Metadata</em>.</li><li><strong>The <code>MIRI-CONSUMER-032</code> namespace rule failed to detect the attack it exists to catch.</strong> PyPI has no</li><li>  namespace component, so <code>pkg:pypi/a</code> redirecting to <code>pkg:pypi/b</code> compared as the same namespace. The</li><li>  comparison now falls back to the PEP 503-normalized package name where the type has no namespace.</li></ul>
+<h3 id="verification-made-mechanical">Verification made mechanical</h3>
+<p>Every gate below is new, and each exists because a defect of its exact shape shipped. The standard has four kinds of normative artifact — check <code>fires_when</code>, spec prose, schemas, and goldens — and each pair that can disagree now has a cross-check.</p>
+<ul><li><strong><code>tools/check_consistency.py</code></strong> — count claims against what is enumerated, sets declared complete against every</li><li>  member used, local section references, list numbering, table integrity, and check-demanded fields against every</li><li>  schema property. That last sweep is what found <code>advisory_coverage</code>.</li><li><strong><code>tools/check_references.py</code></strong> — gates that every check&#x27;s spec citation resolves to a real document and</li><li>  section; <strong>reports</strong> the semantic half as a check-to-section list for a person. The split is deliberate: a</li><li>  falsely confident gate is worse than none, because nobody looks behind a green tick.</li><li><strong><code>tools/validate_fixtures.py</code></strong> — gains a check-versus-golden cross-check, so no check can demand refusing a</li><li>  document the goldens require served.</li><li><strong>These validators had never run in CI.</strong> All of them, plus the fixture invariants, gated nothing until this</li><li>  release. That was worth more than any single defect they now catch.</li></ul>
+<h3 id="contributed">Contributed</h3>
+<ul><li><strong><code>schemas/discovery-envelope-v1.json</code></strong> and <strong><code>tools/validate_envelope_schema.py</code></strong>, from the miri-py</li><li>  implementation team, derived from a working surface rather than from this specification a second time. The</li><li>  envelope was the one normative wire format with no schema: every <code>MIRI-SURFACE</code> check validated a shape that</li><li>  existed only in prose.</li></ul>
+<p><em>Present on <code>main</code> but <strong>not</strong> part of the 0.3.1 release surface.</em> A schema is a backward-compatible addition, which makes it 0.4 material by the policy above, and the policy is kept rather than bent.</p>
+<h2 id="030-2026-08-28">0.3.0 — 2026-08-28</h2>
+<p>The consumption suite: the half of the standard that says how an artifact is <strong>read</strong>. Versions 0.1 and 0.2 specified what an artifact ships; this specifies how an agent consumes it, and what a conformant consumer and a conformant metadata surface are.</p>
+<h3 id="added">Added</h3>
+<ul><li><strong><a href="discovery-contract.html">Discovery Contract</a></strong> — the transport-agnostic wire contract.</li><li>  Eight operations in three kinds, the surface-owned envelope, absence-versus-error, caps and continuation, and</li><li>  MCP and loopback bindings.</li></ul>
+<p>The central mechanism is that publisher bytes nest under a payload key, so a hostile package writing <code>ok: false</code> into its own document cannot forge a served, absent or failed signal. The bytes are still relayed intact — the surface does not edit what a publisher wrote. They are one level down, where they are data rather than signal.</p>
+<ul><li><strong><a href="consumption-map.html">Consumption Map</a></strong> — six tasks, each a read-order plus a set of</li><li>  prohibitions, with a vehicle label recording what a consumer must possess to perform each step.</li><li><strong><a href="consumer-conformance.html">Consumer Conformance</a></strong> — 15 <code>MIRI-CONSUMER</code> checks. A</li><li>  consumer is <em>driven</em>, not inspected, so every check is written against observable output.</li><li><strong><a href="surface-conformance.html">Surface Conformance</a></strong> — 18 <code>MIRI-SURFACE</code> checks in six</li><li>  categories, ordered as the path a request takes through a surface.</li><li><strong>Fixtures</strong> — ten variants built from one template, with every <code>.py</code> verified byte-identical across the</li><li>  source-sharing ones, so any difference in a consumer&#x27;s behavior is attributable to the metadata and nothing</li><li>  else. Fifteen goldens covering attacks A1–A12.</li><li><strong>The site renders the specifications</strong>, with diagrams, sticky outlines, and per-target check pages for all</li><li>  four targets.</li></ul>
+<h3 id="changed">Changed</h3>
+<ul><li><strong>Not-applicable is not a pass.</strong> A conditional check whose condition does not apply is excluded from both the</li><li>  numerator and the denominator, rather than credited. Under the old model a CLI could earn 20 points for never</li><li>  deprecating anything.</li><li><strong>Conformance is a gate, not a band.</strong> A failing MUST makes an artifact non-conforming and no grade is</li><li>  reported — only the score, capped, to show distance.</li></ul>
+</article>
+
+<aside class="toc" aria-label="On this page">
+  <p class="toc-title">On this page</p>
+  <nav>
+    <ol>
+    
+      <li class="lvl2"><a href="#031-2026-09-01">0.3.1 — 2026-09-01</a></li>
+    
+      <li class="lvl2"><a href="#030-2026-08-28">0.3.0 — 2026-08-28</a></li>
+    
+    </ol>
+  </nav>
+</aside>
+
+</div>
+<script>
+// Scroll-spy: mark the section the reader is currently under, so the sidebar answers "where am I"
+// as well as "where can I go". A heading counts as passed once its top crosses the trigger line,
+// and the last passed heading is the active one — which keeps a section highlighted while the
+// reader is deep inside it, where the heading itself is far off-screen above.
+(function () {
+  var links = {}, order = [];
+  document.querySelectorAll(".toc a").forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    links[id] = a;
+    order.push(id);
+  });
+  var heads = order.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!heads.length) return;
+
+  var box = document.querySelector(".toc nav");
+  function paint() {
+    var active = null, line = 96;
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= line) { active = heads[i].id; } else { break; }
+    }
+    if (!active) { active = heads[0].id; }
+    for (var id in links) { links[id].classList.toggle("here", id === active); }
+    var el = links[active];
+    if (box && el && (el.offsetTop < box.scrollTop ||
+        el.offsetTop > box.scrollTop + box.clientHeight - 40)) {
+      box.scrollTop = Math.max(0, el.offsetTop - box.clientHeight / 2);
+    }
+  }
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.3.1 · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>
