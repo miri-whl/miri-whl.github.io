@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Integration Contract · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <a class="version" href="changelog.html" title="What each release delivered">
+    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+  
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="index.html">Overview</a>
+    
+    
+    
+    <a href="whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a href="glossary.html">Glossary</a>
+    
+    
+    
+    <a href="changelog.html">Changelog</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a class="active" href="agent-integration-contract.html">Agent integration</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Document <b>standards/consumption/agent-integration-contract.md</b></span><span>Status <b>0.4.0-draft</b></span></div>
+<h1>Agent Integration Contract</h1>
+
+<p class="lede">The Consumption Map says what to read and in what order. This says when the reading starts.</p>
+<div class="prose-layout">
+<article class="prose">
+<p><em>Specification Version: 0.4.0-draft</em> <em>Status: Draft</em> <em>Created: 2026</em></p>
+<h2 id="abstract">Abstract</h2>
+<p>The producer standards specify what an artifact ships. The <a href="discovery-contract.html">Discovery Contract</a> specifies how a surface serves it. The <a href="consumption-map.html">Consumption Map</a> specifies what a consumer reads, in what order, for which task. None of them specifies <strong>what causes the reading to start</strong>.</p>
+<p>That gap is not cosmetic. The Discovery Contract&#x27;s binding is <em>pull</em>: an agent must decide to ask before adding a dependency, and nothing in the ecosystem makes it. A conformant producer, a conformant surface and a conformant consumer can coexist with metadata that is never read, and every score in the standard stays green. The standard cannot presently tell a working integration from an unused one.</p>
+<p>This document specifies the missing half: an <strong>event contract</strong> naming the observable moments at which each map task becomes actionable, what a conforming integration owes its caller at those moments, and what it must never do. It carries one binding — Claude Code — as §6, in the same way the Discovery Contract carries MCP as its §6.</p>
+<h2 id="1-why-not-hooks">1. Why Not &quot;Hooks&quot;</h2>
+<p>A hook is a <em>host&#x27;s</em> mechanism. Claude Code has hooks; git has hooks; a language server has code actions; a CI runner has steps; an editor extension has activation events. A specification written around hooks would bake one host&#x27;s vocabulary into a document meant to outlive it — the same error as writing the Discovery Contract <em>about</em> MCP rather than giving MCP a binding.</p>
+<p>The portable unit is a <strong>trigger</strong>: a specified moment at which a map task becomes actionable. A hook <em>delivers</em> a trigger. So does a code action, a pre-commit script, a CI step, or a person typing a command.</p>
+<p>Three terms, each doing one job, and the first two complete a vocabulary the Consumption Map already had:</p>
+<div class="tablewrap"><table><thead><tr><th>Term</th><th>Answers</th><th>Where it is defined</th></tr></thead><tbody><tr><td><strong>task</strong></td><td><em>what work</em></td><td><a href="consumption-map.html">Consumption Map §3</a></td></tr><tr><td><strong>vehicle</strong></td><td><em>how the data arrives</em></td><td><a href="consumption-map.html">Consumption Map §1.1</a></td></tr><tr><td><strong>trigger</strong></td><td><em>when the work starts</em></td><td>§3.1 of this document</td></tr><tr><td><strong>event</strong></td><td>the message a host sends when a trigger fires</td><td>§3.2 of this document</td></tr><tr><td><strong>binding</strong></td><td>a host&#x27;s implementation of the contract</td><td>§5, and <a href="discovery-contract.html">Discovery Contract §6</a></td></tr></tbody></table></div>
+<p>&quot;Hook&quot; is not on that list and should not join it. It is what one host calls its delivery mechanism, and the sentence that has to keep working is <em>&quot;Claude Code delivers a trigger via a hook; a CI runner delivers the same trigger via a step.&quot;</em> That sentence only parses if hook is theirs and trigger is ours. The word appears elsewhere in this standard exactly seven times, every one of them describing git or setuptools — never a Miri concept.</p>
+<blockquote><strong>The test this document is held to:</strong> if a normative clause names a mechanism, the clause is wrong.</blockquote>
+<h2 id="2-what-this-reuses">2. What This Reuses</h2>
+<p>Three primitives already exist and are not reinvented here:</p>
+<div class="tablewrap"><table><thead><tr><th>Need</th><th>Already specified</th></tr></thead><tbody><tr><td>Getting a request to a local process</td><td><a href="discovery-contract.html">Discovery Contract §7 and §7.1</a> — <code>stdio</code> and <code>loopback</code>, with the connection file, token, permissions and staleness rules</td></tr><tr><td>A response shape a consumer may trust</td><td><a href="discovery-contract.html">Discovery Contract §4</a> — the surface-owned envelope, and <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/discovery-envelope-v1.json"><code>discovery-envelope-v1.json</code></a></td></tr><tr><td>What to read for a given task</td><td><a href="consumption-map.html">Consumption Map §3</a> — the six tasks</td></tr></tbody></table></div>
+<p>This contract therefore adds exactly two things: a <strong>vocabulary of events</strong>, and a <strong>payload key</strong> for what comes back. Everything else is reuse, which is the point — a third transport or a parallel response format would be two more things for two implementations to diverge on.</p>
+<h2 id="3-the-event-contract">3. The Event Contract</h2>
+<h3 id="31-triggers">3.1 Triggers</h3>
+<p>Six triggers, one per map task, each named for the <strong>observable action</strong> rather than the intention behind it. An intention is not observable and cannot be a trigger.</p>
+<div class="tablewrap"><table><thead><tr><th>Trigger (<code>kind</code>)</th><th>Fires when</th><th>Map task</th><th>Level</th></tr></thead><tbody><tr><td><code>dependency.add</code></td><td>a dependency is about to be added</td><td><a href="consumption-map.html">§3.5</a> security and trust</td><td>REQUIRED</td></tr><tr><td><code>dependency.version_change</code></td><td>a dependency&#x27;s version is about to change</td><td><a href="consumption-map.html">§3.3</a> upgrading</td><td>REQUIRED</td></tr><tr><td><code>package.first_reference</code></td><td>a package not yet used in this session is first referenced</td><td><a href="consumption-map.html">§3.1</a> first use</td><td>SHOULD</td></tr><tr><td><code>integration.begin</code></td><td>new code is about to be written against a package</td><td><a href="consumption-map.html">§3.2</a> scaffolding</td><td>SHOULD</td></tr><tr><td><code>runtime.error</code></td><td>an error naming an installed package is observed</td><td><a href="consumption-map.html">§3.4</a> diagnosing</td><td>SHOULD</td></tr><tr><td><code>test.author</code></td><td>a test touching a package is about to be written</td><td><a href="consumption-map.html">§3.6</a> tests</td><td>SHOULD</td></tr></tbody></table></div>
+<p>The set is <strong>closed</strong>. A binding MUST NOT invent a seventh kind, for the same reason the servable set and the error codes are closed: an open vocabulary is one every binding extends differently, and two bindings that disagree about what an event <em>is</em> do not interoperate.</p>
+<p><strong>Two are REQUIRED</strong> because their triggers are observable without inference and their findings are actionable only before the action lands — a migration guide is worthless after the upgrade, and a foreign-namespace <code>replacement</code> is cheapest to catch while the dependency does not yet exist. REQUIRED means <strong>the binding implements the kind</strong>, not that the kind produces output; combined with §4.1, a binding that finds nothing says nothing, so the cost of requiring two is close to zero.</p>
+<h3 id="32-an-event-is-a-request">3.2 An Event Is a Request</h3>
+<div class="codeblock"><pre><code>{
+  &quot;schema_version&quot;: &quot;1&quot;,
+  &quot;kind&quot;: &quot;dependency.add&quot;,
+  &quot;phase&quot;: &quot;before&quot;,
+  &quot;subject&quot;: { &quot;package&quot;: &quot;requests&quot;, &quot;version&quot;: &quot;&gt;=2.31&quot; }
+}</code></pre></div>
+<ul><li><strong><code>phase</code></strong> is <code>before</code> or <code>after</code>. Every REQUIRED kind is <code>before</code>. <code>runtime.error</code> is necessarily <code>after</code>; no</li><li>  other kind may be.</li><li><strong><code>subject</code></strong> carries only what the event is <em>about</em> — a package name, and where the kind implies one, a version</li><li>  constraint or a symbol. It MUST NOT carry a file path, a diff, a buffer, or the user&#x27;s source. A binding that needs</li><li>  the user&#x27;s code to decide what to say has left this standard&#x27;s scope and entered the host&#x27;s.</li><li>There is <strong>no host field</strong>, no editor state, no session identifier. A payload a CI runner cannot construct as</li><li>  easily as an editor can is over-specified, and the absence of those fields is what makes one binding process serve</li><li>  every host.</li></ul>
+<h3 id="33-the-response-is-the-existing-envelope">3.3 The Response Is the Existing Envelope</h3>
+<p>No new response format. The <a href="discovery-contract.html">§4 envelope</a>, with one payload key:</p>
+<div class="codeblock"><pre><code>{
+  &quot;schema_version&quot;: &quot;1&quot;, &quot;ok&quot;: true, &quot;present&quot;: true,
+  &quot;findings&quot;: [
+    { &quot;task&quot;: &quot;3.5&quot;, &quot;level&quot;: &quot;must&quot;,
+      &quot;purl&quot;: &quot;pkg:pypi/greet-adversarial@1.0.0&quot;,
+      &quot;summary&quot;: &quot;declared replacement is in a different purl namespace&quot;,
+      &quot;source&quot;: &quot;lifecycle.json&quot;,
+      &quot;quote&quot;: &quot;pkg:pypi/attacker-successor@9.0.0&quot; }
+  ]
+}</code></pre></div>
+<p>Everything §4 says applies unchanged, and for the same reasons. The top level is surface-owned, so a package cannot forge <code>ok</code> or <code>present</code>. <code>quote</code> holds publisher bytes and is attributed rather than adopted (<code>MIRI-CONSUMER-020</code>, <code>MIRI-CONSUMER-022</code>). <code>findings[].level</code> is <code>must</code> or <code>should</code>, matching the conformance vocabulary rather than the check-severity one, because the question a caller asks here is <em>may I proceed</em>, not <em>how bad is this</em>.</p>
+<p><code>findings[].task</code> is the map section that produced the finding, written as the bare section number — <code>&quot;3.1&quot;</code> through <code>&quot;3.6&quot;</code>, matching the six tasks and nothing else. It is not free text: a caller routing on it needs a closed set, and a task number is the only identifier the map guarantees is stable.</p>
+<p><code>present</code> follows §4.2 unchanged: <code>true</code> when <code>findings</code> is present and non-empty, <code>false</code> when the trigger found nothing (§4.1). A response MUST NOT carry <code>present: true</code> with no <code>findings</code> key, and MUST NOT carry <code>findings</code> alongside <code>present: false</code> — the same payload/absence coupling the envelope schema already enforces for every other payload key.</p>
+<p><code>findings</code> is a new payload key, which the envelope schema permits: its root is deliberately open so that a new operation or channel can add one without a schema change forbidding it.</p>
+<h2 id="4-obligations">4. Obligations</h2>
+<h3 id="41-silence-is-the-existing-absence-shape">4.1 Silence Is the Existing Absence Shape</h3>
+<p>A trigger with nothing to report MUST answer with the §4.2 absent shape — <code>ok: true</code>, <code>present: false</code>, a <code>reason</code>, and no payload key. It MUST NOT emit an empty <code>findings</code> array, and MUST NOT emit prose confirming that it checked.</p>
+<p>The shape is §4.2&#x27;s; the <em>meaning</em> is narrower, and conflating them would be a mistake. In the Discovery Contract <code>present: false</code> says <strong>the document does not exist</strong>. Here it says <strong>this trigger found nothing to report</strong>, which may be because the package ships no metadata, or because it ships metadata containing nothing relevant to this event. A consumer MUST NOT read a trigger&#x27;s <code>present: false</code> as evidence about what the package ships; that question is <code>list</code>&#x27;s to answer, and the presence-only rule (<a href="consumption-map.html">Consumption Map §4</a>) applies unchanged.</p>
+<p>Reusing the shape is still right — a caller branching on <code>ok</code>/<code>present</code> needs no new code path. What a trigger response deliberately does <strong>not</strong> do is distinguish the two causes mechanically. <code>reason</code> is free text for humans and never a machine field (<a href="discovery-contract.html">Discovery Contract §4.2</a>), and adding a machine-readable cause here would contradict that rule for the convenience of a caller that does not need it: a consumer wanting to know what a package ships asks <code>list</code>, which is the operation whose answer that is. A trigger reports what it found, not an inventory of what exists.</p>
+<p>Stating the obligation this way is deliberate. A binding that announces <em>&quot;checked, nothing found&quot;</em> on every edit is a context tax, and the predictable result is that a user disables it — after which the conformant producer, surface and consumer are all still green and the metadata is again never read. The failure this whole document exists to close is reachable through its own remedy.</p>
+<h3 id="42-a-trigger-reports-it-does-not-block">4.2 A Trigger Reports; It Does Not Block</h3>
+<p>A trigger MUST NOT block, cancel, or veto the action that produced the event.</p>
+<p>The obligation not to proceed unilaterally already exists and already binds the <strong>consumer</strong>: <code>MIRI-CONSUMER-032</code> requires that a consumer never install or rewrite call sites onto a declared <code>replacement</code> <em>without human confirmation</em>. That is a rule about the consumer acting, not a licence for a binding to interrupt a human. Conflating the two would grant the binding a power the checks never gave it, and would be unimplementable in the many hosts that expose no veto at all.</p>
+<p>The binding&#x27;s job at MUST level is to ensure the finding <strong>reaches the point where that confirmation is asked for</strong>.</p>
+<p>Observably, and this is what a suite asserts: drive the binding with an event whose task yields a <code>must</code>-level finding, and <strong>the action that produced the event still completes</strong>. Together with §4.4 — exit zero, envelope only, no host control key — that is the whole test. &quot;Did not block&quot; is not a claim about the binding&#x27;s intent; it is a claim about whether the host&#x27;s action ran, which is observed at the host boundary like any other.</p>
+<h3 id="43-the-publisher-does-not-control-the-trigger">4.3 The Publisher Does Not Control the Trigger</h3>
+<p>No field in any shipped document may determine whether, when, or how loudly a trigger fires. A binding MUST derive <strong>trigger behavior</strong> solely from the observable event and its own configuration.</p>
+<p><em>Trigger behavior</em> is the decidable part, and is exactly four things: <strong>whether</strong> an event produces a response carrying <code>findings</code> at all; <strong>which</strong> <code>kind</code> was reported; <strong>how many</strong> findings were raised; and <strong>what <code>level</code></strong> each carries. Nothing else. The <em>content</em> of a finding — its <code>summary</code>, its <code>quote</code>, the purl it names — is derived from the metadata by design, and is governed separately below.</p>
+<p><strong>Publisher influence over content is permitted; over <code>level</code> it is not.</strong> A finding&#x27;s prose comes from the served document — that is the whole point of reporting it — but a shipped field MUST NOT determine a finding&#x27;s <code>level</code>, because <code>level</code> is what decides whether a caller may proceed. A package that could mark its own finding <code>should</code> would be grading its own exam, and one that could mark an unrelated finding <code>must</code> would be blocking a competitor. <code>level</code> is assigned by the consumer from the Consumer Conformance profile, never read from metadata.</p>
+<p>Every item in the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-agent-metadata-specification.md">Agent Metadata</a> threat model concerns <strong>what the metadata says</strong>: narrative files inject, <code>api_index</code> can lie, execution is not sandboxed, provenance anchors trust. This is the first concerning <strong>what the metadata makes happen</strong>. Content and control are different axes, and a package that can demand the agent&#x27;s attention has a denial-of-context channel that no existing rule closes.</p>
+<h3 id="44-output-is-data-including-its-shape">4.4 Output Is Data, Including Its Shape</h3>
+<p>A binding MUST NOT emit output whose <em>shape</em> a host interprets as control. Hosts assign meaning to more than message text: an exit status, a reserved key in a JSON response, a control sequence, a documented &quot;deny&quot; or &quot;stop&quot; field. §4.2 forbids blocking; this forbids reaching the same effect through a channel the host reads structurally rather than as prose.</p>
+<p>The rule is stated on shape rather than on intent because intent is not observable: a binding that emits a host&#x27;s deny-key has blocked the action whether or not it meant to. Concretely, a conforming binding exits zero whatever it found, and emits only the §3.3 envelope.</p>
+<h3 id="45-degradation-is-the-maps-unchanged">4.5 Degradation Is the Map&#x27;s, Unchanged</h3>
+<p>A trigger that cannot complete its task reports the skipped step with a reason from the map&#x27;s closed set (<a href="consumption-map.html">§4</a>, <code>MIRI-CONSUMER-002</code>). A push channel has one further vehicle that can be absent — the event itself — and <code>unavailable-vehicle</code> covers it. No new reason is added.</p>
+<h2 id="46-worked-example-what-a-trigger-actually-does">4.6 Worked Example: What a Trigger Actually Does</h2>
+<p>The three documents compose, and this is the chain end to end. A trigger names a <strong>task</strong>; the task&#x27;s read-order names <strong>operations</strong>; the operations are served by the <strong>surface</strong>. Nothing here is new machinery — the point of the example is that there is none.</p>
+<p><code>dependency.add</code> for <code>greet_adversarial</code>, whose task is <a href="consumption-map.html">§3.5 security and trust</a>:</p>
+<div class="codeblock"><pre><code>host observes an edit adding a requirement
+  └─ event  { kind: &quot;dependency.add&quot;, phase: &quot;before&quot;, subject: { package: &quot;greet_adversarial&quot; } }
+      └─ task 3.5 of the Consumption Map, read in order:
+          1. lifecycle          → identity, support.status, advisory_sources, update_check
+          2. document           → migration-guide.json, where support.status is deprecated
+          3. (C) the consumer&#x27;s own SSRF guard on any URL it resolves — never the surface&#x27;s
+      └─ findings
+          { task: &quot;3.5&quot;, level: &quot;must&quot;,
+            summary: &quot;declared replacement is in a different purl namespace&quot;,
+            source: &quot;lifecycle.json&quot;, quote: &quot;pkg:pypi/attacker-successor@9.0.0&quot; }</code></pre></div>
+<p>The operations are the Discovery Contract&#x27;s, unchanged and uncoordinated with this document: <code>lifecycle</code> and <code>document</code> are two of the eight, called over <code>stdio</code> or <code>loopback</code> exactly as any other consumer calls them. A binding is a <em>caller</em>, not a new kind of surface, which is why it needs no new transport and no new envelope.</p>
+<p>Two other tasks, to show the shape holds:</p>
+<div class="tablewrap"><table><thead><tr><th>Trigger</th><th>Task</th><th>Operations its read-order uses</th></tr></thead><tbody><tr><td><code>dependency.version_change</code></td><td><a href="consumption-map.html">Map §3.3</a> upgrading</td><td><code>migration-guide</code>, then <code>list</code> and <code>resolve</code> to bridge a replacement purl to an import name and confirm the surface exists</td></tr><tr><td><code>runtime.error</code></td><td><a href="consumption-map.html">Map §3.4</a> diagnosing</td><td><code>patterns</code> filtered to the failing surface, then <code>api-index</code>, then <code>resolve</code> where the entry lacks <code>signature</code> or <code>file</code></td></tr></tbody></table></div>
+<p><code>graph</code> appears in no REQUIRED trigger&#x27;s read-order. That is worth stating rather than leaving to inspection: it serves §3.2 scaffolding, whose trigger is SHOULD and which the Claude Code binding does not implement (§6.2). A binding that never calls <code>graph</code> is not deficient — it has no trigger that reaches it.</p>
+<p><strong>What the binding adds is the first line and the last.</strong> Everything between them already existed and was already specified; the gap this document closes is that nothing caused the first line to happen.</p>
+<h2 id="5-what-a-binding-document-specifies">5. What a Binding Document Specifies</h2>
+<p>By analogy with <a href="discovery-contract.html">Discovery Contract §6</a>, and no more than this:</p>
+<ol><li>The <strong>host</strong>, named.</li><li>The <strong>mapping</strong> from each supported <code>kind</code> to an observable moment in that host.</li><li><strong>Which kinds it does not support, and why.</strong></li><li><strong>How output reaches the agent</strong>, and that it arrives as data rather than instruction.</li><li><strong>How a user turns it off.</strong></li></ol>
+<p>Item 3 is the one to insist on. A binding that silently omits a kind is indistinguishable from one where the kind never fired — which is the same <em>cannot tell working from unused</em> failure this document exists to close, reproduced one level down.</p>
+<h2 id="6-the-claude-code-binding">6. The Claude Code Binding</h2>
+<p>The first binding of the §3 contract. Claude Code exposes <strong>hooks</strong>: shell commands registered against named lifecycle events in <code>settings.json</code>, receiving JSON on stdin.</p>
+<div class="codeblock"><pre><code>{
+  &quot;hooks&quot;: {
+    &quot;PreToolUse&quot;: [
+      { &quot;matcher&quot;: &quot;Edit|Write&quot;,
+        &quot;hooks&quot;: [ { &quot;type&quot;: &quot;command&quot;, &quot;command&quot;: &quot;miri agent-event&quot;, &quot;timeout&quot;: 30 } ] }
+    ],
+    &quot;PostToolUse&quot;: [
+      { &quot;matcher&quot;: &quot;Bash&quot;,
+        &quot;hooks&quot;: [ { &quot;type&quot;: &quot;command&quot;, &quot;command&quot;: &quot;miri agent-event&quot;, &quot;timeout&quot;: 30 } ] }
+    ]
+  }
+}</code></pre></div>
+<h3 id="61-kind-mapping">6.1 Kind Mapping</h3>
+<div class="tablewrap"><table><thead><tr><th>Contract <code>kind</code></th><th>Claude Code event</th><th>How the binding recognizes it</th></tr></thead><tbody><tr><td><code>dependency.add</code></td><td><code>PreToolUse</code>, matcher `Edit\</td><td>Write`</td><td>the target is a <strong>dependency manifest</strong> (below) and the proposed content adds a requirement absent from the current file</td></tr><tr><td><code>dependency.version_change</code></td><td><code>PreToolUse</code>, matcher `Edit\</td><td>Write`</td><td>same target, and a requirement&#x27;s version specifier differs</td></tr><tr><td><code>runtime.error</code></td><td><code>PostToolUse</code>, matcher <code>Bash</code></td><td>command output contains a traceback naming an installed package</td></tr><tr><td><code>test.author</code></td><td><code>PreToolUse</code>, matcher `Edit\</td><td>Write`</td><td>the target path matches the project&#x27;s test discovery configuration</td></tr></tbody></table></div>
+<p>A <strong>dependency manifest</strong> is a file this binding recognizes as declaring the project&#x27;s dependencies. For Python that is <code>pyproject.toml</code>, <code>requirements*.txt</code>, <code>setup.cfg</code>, <code>setup.py</code>, <code>Pipfile</code>, and <code>environment.yml</code>. The list is this <em>binding&#x27;s</em>, not the contract&#x27;s — another host or ecosystem will have a different one — and a binding MUST publish its list rather than leaving it to be inferred, because a manifest the binding does not recognize is a <code>dependency.add</code> that silently never fires.</p>
+<p>Both REQUIRED kinds are carried by <code>PreToolUse</code> on the edit tools, which is the only moment in this host at which a dependency change is observable <strong>and</strong> has not yet happened.</p>
+<h3 id="62-kinds-this-binding-does-not-support">6.2 Kinds This Binding Does Not Support</h3>
+<p>Stated rather than approximated, per §5 item 3:</p>
+<ul><li><strong><code>package.first_reference</code></strong> — Claude Code exposes no event for &quot;a symbol was referenced&quot;. The nearest available</li><li>  signal is an <code>Edit</code> whose content contains a new import, which fires on any edit that happens to add one and misses</li><li>  every reference to an already-imported package. That is not the event; a binding that mapped it anyway would be</li><li>  reporting a different thing under the contract&#x27;s name.</li><li><strong><code>integration.begin</code></strong> — the moment &quot;new code is about to be written against a package&quot; has no observable</li><li>  boundary in this host. It is inferable from a sequence of edits, and inference is what §3.1 excludes.</li></ul>
+<p>A conforming binding <strong>omits these and says so</strong>. It does not fire them approximately.</p>
+<p>That is a general rule, not a note about this host: a binding MUST NOT map a trigger to an observable moment that fires at materially different times than §3.1 specifies. Reporting a different event under a contract kind&#x27;s name is worse than omitting the kind, because a caller cannot tell the two apart — the omission is visible in the binding document (§5 item 3) and the approximation is not. Where a host&#x27;s nearest signal is close but not equivalent, the binding says so and omits it.</p>
+<h3 id="63-output-and-the-non-blocking-rule">6.3 Output and the Non-Blocking Rule</h3>
+<p><code>PreToolUse</code> in this host <strong>can</strong> deny the tool call. This binding MUST NOT use that capability (§4.2). Findings are written to the hook&#x27;s stdout as attributed data and reach the agent as context; the tool call proceeds.</p>
+<p>That the host offers a veto the contract forbids is worth stating plainly: the constraint is on the binding, not on the host, and a reviewer checking this binding should confirm the denial path is absent rather than merely unused.</p>
+<h3 id="64-transport">6.4 Transport</h3>
+<p>The binding invokes the metadata surface over <code>stdio</code> or <code>loopback</code> exactly as <a href="discovery-contract.html">Discovery Contract §7</a> specifies. It introduces no transport of its own. The <code>timeout</code> in the hook registration is the host&#x27;s, and a binding that exceeds it MUST fail silent rather than partial — a truncated finding is a finding a caller cannot act on.</p>
+<h3 id="65-disabling">6.5 Disabling</h3>
+<p>Removing the hook entry from <code>settings.json</code> disables the binding completely. A binding MUST NOT install a second mechanism that survives that removal.</p>
+<h2 id="7-conformance">7. Conformance</h2>
+<p>No new check family. The obligations in §4 restate existing <code>MIRI-CONSUMER</code> requirements for a new channel, and are scored through that family — with two exceptions, which had no analogue in the consumer family before this document and are the two it adds — <code>MIRI-CONSUMER-050</code> and <code>MIRI-CONSUMER-051</code>, bringing the family to seventeen:</p>
+<ul><li><strong>Silence by default</strong> (§4.1) — drive the binding with a <code>dependency.add</code> event naming the <code>bare</code> fixture, which</li><li>  ships no <code>agent-metadata/</code> at all, and assert the absent shape with no <code>findings</code> key.</li><li><strong>Publisher-independent triggers</strong> (§4.3) — drive the same event against <code>adversarial</code> and against <code>miri</code>, and</li><li>  assert the <em>trigger</em> behavior is identical. Every <code>.py</code> is byte-identical across the fixture variants, so any</li><li>  difference is metadata-attributable by construction.</li></ul>
+<p>Both are drivable with the existing fixture set. The second needs one new adversarial element: a document carrying a field that attempts to force or amplify a trigger. That is a new attack case, not a new check family.</p>
+<p>Because an event is a request and a response is an envelope, a conforming binding is testable <strong>with no host at all</strong>: feed it an event, read the envelope. The goldens are therefore event/envelope pairs authored from this specification rather than captured from any implementation — which is what keeps a binding&#x27;s author from also being the author of its acceptance criteria.</p>
+</article>
+
+<aside class="toc" aria-label="On this page">
+  <p class="toc-title">On this page</p>
+  <nav>
+    <ol>
+    
+      <li class="lvl2"><a href="#abstract">Abstract</a></li>
+    
+      <li class="lvl2"><a href="#1-why-not-hooks">1. Why Not &#34;Hooks&#34;</a></li>
+    
+      <li class="lvl2"><a href="#2-what-this-reuses">2. What This Reuses</a></li>
+    
+      <li class="lvl2"><a href="#3-the-event-contract">3. The Event Contract</a></li>
+    
+      <li class="lvl3"><a href="#31-triggers">3.1 Triggers</a></li>
+    
+      <li class="lvl3"><a href="#32-an-event-is-a-request">3.2 An Event Is a Request</a></li>
+    
+      <li class="lvl3"><a href="#33-the-response-is-the-existing-envelope">3.3 The Response Is the Existing Envelope</a></li>
+    
+      <li class="lvl2"><a href="#4-obligations">4. Obligations</a></li>
+    
+      <li class="lvl3"><a href="#41-silence-is-the-existing-absence-shape">4.1 Silence Is the Existing Absence Shape</a></li>
+    
+      <li class="lvl3"><a href="#42-a-trigger-reports-it-does-not-block">4.2 A Trigger Reports; It Does Not Block</a></li>
+    
+      <li class="lvl3"><a href="#43-the-publisher-does-not-control-the-trigger">4.3 The Publisher Does Not Control the Trigger</a></li>
+    
+      <li class="lvl3"><a href="#44-output-is-data-including-its-shape">4.4 Output Is Data, Including Its Shape</a></li>
+    
+      <li class="lvl3"><a href="#45-degradation-is-the-maps-unchanged">4.5 Degradation Is the Map&#39;s, Unchanged</a></li>
+    
+      <li class="lvl2"><a href="#46-worked-example-what-a-trigger-actually-does">4.6 Worked Example: What a Trigger Actually Does</a></li>
+    
+      <li class="lvl2"><a href="#5-what-a-binding-document-specifies">5. What a Binding Document Specifies</a></li>
+    
+      <li class="lvl2"><a href="#6-the-claude-code-binding">6. The Claude Code Binding</a></li>
+    
+      <li class="lvl3"><a href="#61-kind-mapping">6.1 Kind Mapping</a></li>
+    
+      <li class="lvl3"><a href="#62-kinds-this-binding-does-not-support">6.2 Kinds This Binding Does Not Support</a></li>
+    
+      <li class="lvl3"><a href="#63-output-and-the-non-blocking-rule">6.3 Output and the Non-Blocking Rule</a></li>
+    
+      <li class="lvl3"><a href="#64-transport">6.4 Transport</a></li>
+    
+      <li class="lvl3"><a href="#65-disabling">6.5 Disabling</a></li>
+    
+      <li class="lvl2"><a href="#7-conformance">7. Conformance</a></li>
+    
+    </ol>
+  </nav>
+</aside>
+
+</div>
+<script>
+// Scroll-spy: mark the section the reader is currently under, so the sidebar answers "where am I"
+// as well as "where can I go". A heading counts as passed once its top crosses the trigger line,
+// and the last passed heading is the active one — which keeps a section highlighted while the
+// reader is deep inside it, where the heading itself is far off-screen above.
+(function () {
+  var links = {}, order = [];
+  document.querySelectorAll(".toc a").forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    links[id] = a;
+    order.push(id);
+  });
+  var heads = order.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!heads.length) return;
+
+  var box = document.querySelector(".toc nav");
+  function paint() {
+    var active = null, line = 96;
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= line) { active = heads[i].id; } else { break; }
+    }
+    if (!active) { active = heads[0].id; }
+    for (var id in links) { links[id].classList.toggle("here", id === active); }
+    var el = links[active];
+    if (box && el && (el.offsetTop < box.scrollTop ||
+        el.offsetTop > box.scrollTop + box.clientHeight - 40)) {
+      box.scrollTop = Math.max(0, el.offsetTop - box.clientHeight / 2);
+    }
+  }
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

@@ -17,6 +17,10 @@
 <div class="shell">
 <nav class="sidenav">
   
+  <a class="version" href="changelog.html" title="What each release delivered">
+    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+  
+  
   <div class="section">
     <div class="label">Project</div>
     
@@ -26,6 +30,10 @@
     
     
     <a href="whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a href="glossary.html">Glossary</a>
     
     
     
@@ -100,6 +108,10 @@
     
     
     
+    <a href="agent-integration-contract.html">Agent integration</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
     
     
@@ -121,7 +133,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.3.1</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.4.0</b></span></div>
 <h1>Changelog</h1>
 
 <p class="lede">What each release delivered, and what a version number promises. A patch release contains bug fixes and clarifications only.</p>
@@ -129,6 +141,25 @@
 <article class="prose">
 <p>All notable changes to the Miri Standard are recorded here.</p>
 <p>Versions follow the policy in <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/README.md#versioning">standards/README.md</a>: a <strong>major</strong> version marks a breaking change, a <strong>minor</strong> version a backward-compatible addition, and a <strong>patch</strong> version bug fixes and clarifications only. That policy is a contract with implementers, and it is worth keeping strictly: a reader should be able to see <code>0.3.1</code> and know it contains no additions without having to check.</p>
+<h2 id="040-2026-09-06">0.4.0 — 2026-09-06</h2>
+<p>A <strong>minor</strong> version: it adds. The Agent Integration Contract is new, two consumer checks are added, and every consumer score computed before this release shifts as a result — which is precisely what a minor version is for and why none of it could be back-ported to 0.3.1.</p>
+<p>The specifications remain <strong>draft</strong> (<code>0.4.0-draft</code> in their headers). The contract is specified but the reference binding does not exist yet, and two review findings are open against it: no schema governs the <code>findings</code> array, and no rule maps Consumer Conformance check IDs to <code>findings[].level</code>. Both are recorded here rather than left for a reader to discover.</p>
+<h3 id="added">Added</h3>
+<ul><li><strong><a href="agent-integration-contract.html">Agent Integration Contract</a></strong> — the missing <em>when</em>. The</li><li>  standard specified what an artifact ships, how a surface serves it, and what a consumer reads; nothing specified</li><li>  what causes the reading to start. A conformant producer, surface and consumer could coexist with metadata that was</li><li>  never read, and every score stayed green.</li></ul>
+<p>Six <strong>triggers</strong>, one per Consumption Map task, naming the observable moment at which each becomes actionable. Two are REQUIRED — a dependency being added, and a version changing — because both fire before an action that is expensive to reverse.</p>
+<p>The vocabulary matters and <em>hook</em> is deliberately not part of it. A hook is a host&#x27;s mechanism; the word appears elsewhere in this standard seven times, every one describing git or setuptools. The sentence that has to keep working is <em>&quot;Claude Code delivers a trigger via a hook; CI delivers the same trigger via a step&quot;</em>, and it only parses if hook is theirs and trigger is ours.</p>
+<ul><li><strong><a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/agent-event-v1.json"><code>agent-event-v1.json</code></a></strong> — the event a host sends. It <strong>closes</strong></li><li>  <code>additionalProperties</code>, which is the opposite of the response envelope&#x27;s open root and deliberately so: the</li><li>  envelope is open so a new operation can add a payload key, and the event is closed so a host **cannot send a file</li><li>  path, a diff, or the user&#x27;s source**. A prohibition that was prose is now a validation failure.</li></ul>
+<ul><li><strong>Two consumer checks</strong>, <code>MIRI-CONSUMER-050</code> (a trigger with nothing to report answers absent, never empty) and</li><li>  <code>MIRI-CONSUMER-051</code> (trigger behavior is independent of what the publisher ships). Both <strong>conditional</strong>: a consumer</li><li>  with no binding has no trigger to answer, so by the not-applicable-is-not-a-pass rule they leave both the numerator</li><li>  and the denominator. The consumer family is now 17 checks, still summing to exactly 100 — six points came from one</li><li>  point off each of six large MUSTs, so no category absorbs the change.</li></ul>
+<p><strong>This shifts every consumer score computed before it</strong>, which is why it is a minor-version change and cannot be back-ported to a patch.</p>
+<ul><li><strong>Attack A13</strong> — a shipped field bidding for the agent&#x27;s attention, planted in the adversarial twin and nowhere</li><li>  else. Every <code>.py</code> stays byte-identical across the fixture variants, so driving the same trigger against</li><li>  <code>adversarial</code> and <code>miri</code> isolates the metadata as the only possible cause.</li></ul>
+<h3 id="changed">Changed</h3>
+<ul><li>The <strong>Agent Metadata threat model</strong> gains the axis it was missing. Every item in it concerned what the metadata</li><li>  <em>says</em> — narrative files inject, <code>api_index</code> can lie, execution is not sandboxed. This is the first concerning</li><li>  what the metadata <em>makes happen</em>. A package that can force a trigger has a denial-of-context channel, and a threat</li><li>  model covering only content will keep being surprised by control.</li></ul>
+<ul><li><strong>Consumption Map §3</strong> gains a trigger column. It belongs there rather than in a binding document because it</li><li>  completes the map&#x27;s own sentence — task answers <em>what</em>, vehicle answers <em>how</em>, trigger answers <em>when</em> — and is</li><li>  true whether or not any binding is ever written.</li></ul>
+<h3 id="fixed">Fixed</h3>
+<ul><li><strong>An IPv6 hole in the SSRF guard.</strong> Link-local was written as <code>169.254.0.0/16</code> and <code>fd00::/8</code>. <code>fd00::/8</code> is</li><li>  unique-local; <code>fe80::/10</code>, the actual IPv6 link-local range, was <strong>missing entirely</strong>, so an IPv6 link-local</li><li>  address passed the guard. Now split into private, loopback, link-local and cloud-metadata.</li></ul>
+<ul><li><strong>A cross-document contradiction</strong> introduced in the same session: the integration contract made <code>reason</code></li><li>  machine-meaningful, which the Discovery Contract forbids outright. Resolved by dropping the claim rather than the</li><li>  rule — a consumer wanting to know what a package ships asks <code>list</code>, which is the operation whose answer that is.</li></ul>
+<h3 id="verification">Verification</h3>
+<ul><li><code>tools/check_consistency.py</code> gains the section-opener count rule it had been blind to for two rounds, and loses a</li><li>  bug: it counted an escaped pipe as a table-cell separator, reporting a defect markdownlint correctly accepts. A</li><li>  first attempt at the wider count rule produced <strong>twelve false positives</strong> on this corpus and was replaced with a</li><li>  precise one. A checker that cries wolf is worse than no checker.</li></ul>
 <h2 id="031-2026-09-01">0.3.1 — 2026-09-01</h2>
 <p>Bug fixes and clarifications. <strong>No additions to the standard.</strong> Every change either corrects something that was wrong or makes an existing rule mechanically checkable.</p>
 <p>Four of the six defects below were found by the miri-py team building an implementation against the text, and one by scoring a real CLI. None was reachable by re-reading our own documents, which is the point worth recording.</p>
@@ -154,6 +185,8 @@
   <p class="toc-title">On this page</p>
   <nav>
     <ol>
+    
+      <li class="lvl2"><a href="#040-2026-09-06">0.4.0 — 2026-09-06</a></li>
     
       <li class="lvl2"><a href="#031-2026-09-01">0.3.1 — 2026-09-01</a></li>
     
@@ -207,7 +240,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.3.1 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

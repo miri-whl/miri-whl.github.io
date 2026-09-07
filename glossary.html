@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <a class="version" href="changelog.html" title="What each release delivered">
+    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+  
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="index.html">Overview</a>
+    
+    
+    
+    <a href="whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a class="active" href="glossary.html">Glossary</a>
+    
+    
+    
+    <a href="changelog.html">Changelog</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="agent-integration-contract.html">Agent integration</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Document <b>docs/glossary.md</b></span><span>Version <b>0.4.0</b></span></div>
+<h1>Glossary</h1>
+
+<p class="lede">Every term this standard defines, and a few it deliberately does not.</p>
+<div class="prose-layout">
+<article class="prose">
+<p>Every term this standard defines, and a few it deliberately does not. Where a term has a normative definition, the entry says where that definition lives — this page explains, it does not define, and a disagreement between the two is a defect in this page.</p>
+<p>The vocabulary grew across four documents and two years, so several terms have close neighbors that mean different things. Those pairs are the ones worth reading: <strong>absent and error</strong>, <strong>task and trigger</strong>, <strong>binding and hook</strong>, <strong>level and severity</strong>, <strong>not-applicable and forfeited</strong>.</p>
+<h2 id="the-three-actors">The three actors</h2>
+<p><strong>Producer</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Python checklist</a>; <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">CLI checklist</a>) — whatever builds the artifact and ships its metadata. A wheel&#x27;s build backend, a CLI&#x27;s release process. Scored by <code>MIRI-PY</code> and <code>MIRI-CLI</code>.</p>
+<p><strong>Surface</strong> — a program that <em>serves</em> metadata in answer to queries, without deciding anything about it. It reads in-wheel bytes and relays them; it never fetches, never executes, and never repairs. Scored by <code>MIRI-SURFACE</code>. Defined in <a href="discovery-contract.html">Discovery Contract §3</a>.</p>
+<p><strong>Consumer</strong> (<a href="consumer-conformance.html">Consumer Conformance</a>) — a program that <em>asks</em> and then decides what to believe. An agent, a linter, a CLI. Scored by <code>MIRI-CONSUMER</code>, and driven rather than inspected, because a consumer&#x27;s conformance is a property of what it does.</p>
+<p>A fourth actor exists and is currently unscored: the <strong>generator</strong>, which reads a project&#x27;s <code>[tool.miri.consume]</code> declaration and emits harness configuration. Four rules bind it and no profile checks them; that gap is recorded in <a href="consumer-conformance.html">Consumer Conformance §4</a> rather than left to be discovered.</p>
+<h2 id="asking-and-answering">Asking and answering</h2>
+<p><strong>Operation</strong> — one of the eight things a surface can be asked (<a href="discovery-contract.html">Discovery Contract §3</a>). <code>list</code>, <code>document</code>, <code>lifecycle</code>, <code>migration-guide</code>, <code>api-index</code>, <code>resolve</code>, <code>patterns</code>, <code>graph</code>. The set is closed; a surface exposing a ninth is non-conforming.</p>
+<p>They fall into three kinds, and the kind decides what an <em>absent</em> answer licenses:</p>
+<ul><li><strong>Retrieval</strong> — <code>document</code> and its two shorthands. Serves a named document verbatim. Absence means the package</li><li>  does not ship that file.</li><li><strong>Derived view</strong> — <code>api-index</code>, <code>patterns</code>, <code>graph</code>. A bounded selection from a larger document. Absence means</li><li>  <strong>nothing</strong>, because the answer is capped and the thing may be past the cap.</li><li><strong>Determination</strong> — <code>list</code>, <code>resolve</code>. Answers a question rather than serving a document. Absence <em>is</em> the answer.</li></ul>
+<p><strong>Envelope</strong> (<a href="discovery-contract.html">Discovery Contract §4</a>; <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/discovery-envelope-v1.json"><code>discovery-envelope-v1.json</code></a>) — the JSON object wrapping every response. Its top level is owned entirely by the <strong>surface</strong>; the publisher&#x27;s bytes appear only nested under a payload key. That is the whole anti-forgery mechanism: a package can write <code>&quot;ok&quot;: false</code> into its own <code>lifecycle.json</code>, and those bytes are still served intact — one level down, where they are data rather than signal. The standard does not sanitize the payload; it denies the payload the position from which it could be believed. Governed by <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/discovery-envelope-v1.json"><code>discovery-envelope-v1.json</code></a>.</p>
+<p><strong>Payload key</strong> — the field carrying the answer (<a href="discovery-contract.html">Discovery Contract §4.1</a>): <code>packages</code>, <code>document</code>, <code>entries</code>, <code>resolution</code>, <code>patterns</code>, <code>graph</code>, and <code>findings</code> for a trigger response. Exactly one appears, and only when <code>present</code> is true.</p>
+<p><strong>Absent versus error</strong> (<a href="discovery-contract.html">Discovery Contract §4.2</a>) — two independent booleans, and the distinction the whole contract rests on.</p>
+<div class="tablewrap"><table><thead><tr><th></th><th><code>ok</code></th><th><code>present</code></th><th>Means</th></tr></thead><tbody><tr><td><strong>served</strong></td><td><code>true</code></td><td><code>true</code></td><td>here it is</td></tr><tr><td><strong>absent</strong></td><td><code>true</code></td><td><code>false</code></td><td>the surface answered; the thing does not exist</td></tr><tr><td><strong>error</strong></td><td><code>false</code></td><td><em>omitted</em></td><td>the surface could not answer</td></tr></tbody></table></div>
+<p>Collapsing absent into error makes a consumer retry something that will never succeed. Collapsing it into served with an empty payload makes a consumer report &quot;no advisories&quot; when it means &quot;no advisory file&quot;. Three outcomes, never two.</p>
+<p><strong><code>reason</code></strong> (<a href="discovery-contract.html">Discovery Contract §4.1</a>) — free text explaining an absence, <strong>for humans only</strong>. A consumer branches on <code>ok</code> and <code>present</code> and never on <code>reason</code>; a surface never copies publisher bytes into it. It is omitted entirely when <code>ok</code> is <code>false</code>, because a failure is the response a consumer scrutinizes least and free text there is an injection channel wearing a helpful label.</p>
+<p><strong>Cap, <code>truncated</code>, cursor</strong> (<a href="discovery-contract.html">Discovery Contract §3.5.1</a>) — a derived view is bounded. <code>cap</code> is the bound in force, <code>truncated</code> says whether anything was dropped, and a cursor continues the same ordering. <code>truncated: true</code> with <strong>no</strong> <code>next_cursor</code> is valid and means <em>there is more and I cannot reach it</em> — the honest answer from a surface that keeps no cursor state.</p>
+<h2 id="reading">Reading</h2>
+<p><strong>Task</strong> — one of six jobs a consumer does: first use, scaffolding, upgrading, diagnosing, security, writing tests. Each is a read-order plus a set of prohibitions. Defined in <a href="consumption-map.html">Consumption Map §3</a>.</p>
+<p><strong>Vehicle</strong> (<a href="consumption-map.html">Consumption Map §1.1</a>) — <em>how</em> a read-step&#x27;s data arrives, and therefore what a consumer must possess to perform it.</p>
+<div class="tablewrap"><table><thead><tr><th></th><th>Vehicle</th><th>Needs</th></tr></thead><tbody><tr><td><strong>(S)</strong></td><td>Served by an operation</td><td>only a connection</td></tr><tr><td><strong>(S?)</strong></td><td>Served, but the surface may decline — the document is provisional</td><td>only a connection; absence is expected</td></tr><tr><td><strong>(F)</strong></td><td>Filesystem, read from the installed tree</td><td>read access to site-packages</td></tr><tr><td><strong>(X)</strong></td><td>External, obtained by executing something</td><td>the ability to run installed code</td></tr><tr><td><strong>(C)</strong></td><td>The consumer&#x27;s own workspace</td><td>nothing; it already has it</td></tr></tbody></table></div>
+<p><strong>Trigger</strong> (<a href="agent-integration-contract.html">Agent Integration §3.1</a>) — <em>when</em> a task becomes actionable. The third column of a table that already had <em>what</em> (task) and <em>how</em> (vehicle), and the one this standard was missing until 0.4. Six of them, named for observable actions: <code>dependency.add</code>, <code>dependency.version_change</code>, <code>package.first_reference</code>, <code>integration.begin</code>, <code>runtime.error</code>, <code>test.author</code>.</p>
+<p><strong>Event</strong> — the message a host sends when a trigger fires. Governed by <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/agent-event-v1.json"><code>agent-event-v1.json</code></a>, whose root is <strong>closed</strong> so a host cannot smuggle a file path, a diff, or the user&#x27;s source into it.</p>
+<p><strong>Binding</strong> — one host&#x27;s implementation of a contract (<a href="discovery-contract.html">Discovery Contract §6</a> binds MCP; <a href="agent-integration-contract.html">Agent Integration §5–6</a> binds Claude Code). MCP is a binding of the Discovery Contract; a Claude Code plugin is a binding of the Agent Integration Contract. A binding names its host, maps the contract&#x27;s vocabulary onto that host&#x27;s mechanisms, and <strong>says which parts it cannot support</strong> rather than approximating them.</p>
+<p><strong>Hook</strong> — <em>not a term of this standard</em> (the reasoning is <a href="agent-integration-contract.html">Agent Integration §1</a>). It is what one host calls its delivery mechanism, and it appears in these documents only when describing git or setuptools. The sentence that has to keep working is <em>&quot;Claude Code delivers a trigger via a hook; CI delivers the same trigger via a step&quot;</em> — which only parses if hook is theirs and trigger is ours. Naming the mechanism in a specification is how a standard acquires one vendor&#x27;s vocabulary permanently.</p>
+<p><strong>Skip reason</strong> (<a href="consumption-map.html">Consumption Map §4</a>) — why a read-step produced no answer. A closed set of four, and the distinctions matter: <code>absent</code> (the vehicle worked; the artifact does not exist), <code>unavailable-vehicle</code> (the consumer lacks the vehicle), <code>error</code> (the vehicle was available and failed), <code>not-applicable</code> (the step&#x27;s stated condition does not hold). <code>absent</code> and <code>error</code> are kept apart because one is a fact about the package and the other a fact about the attempt.</p>
+<h2 id="checking">Checking</h2>
+<p><strong>Check</strong> — one numbered, mechanically decidable requirement, governed by <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json"><code>check-v1.json</code></a>. Its authoritative form is a YAML file under <code>standards/&lt;target&gt;/checks/</code>; the tables in the profiles are a derived rendering. IDs are <strong>never renumbered</strong>, and the numbering is <strong>sparse</strong> — <code>MIRI-CONSUMER</code> runs 001–051 across seventeen checks, so an ID range is an address space and never a count.</p>
+<p><strong><code>fires_when</code></strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json"><code>check-v1.json</code></a>) — the operative content of a check: the concrete conditions under which a conforming linter raises it. Everything else in a check file is explanation; this is the part an implementer implements.</p>
+<p><strong>Level</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — <code>MUST</code> or <code>SHOULD</code>. A failing MUST makes an artifact <strong>non-conforming</strong>, and a non-conforming result carries no grade at all — only the score, capped, to show distance. Distinct from <strong>severity</strong> (<code>LOW</code> … <code>CRITICAL</code>), which is about how bad one violation is for health scoring. Level answers <em>may I proceed</em>; severity answers <em>how bad is this</em>.</p>
+<p><strong>Weight</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — a check&#x27;s share of 100. Every target&#x27;s active weights sum to exactly 100, which is why adding a check means redistributing rather than appending.</p>
+<p><strong>Conditional</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — a check whose obligation only applies in some circumstances. <strong>Not-applicable is not a pass</strong>: a conditional check whose condition does not hold is removed from <em>both</em> the numerator and the denominator, never credited. The earlier model awarded a CLI twenty points for never deprecating anything.</p>
+<p><strong>Forfeited</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — a check the suite could not drive. Also excluded from both sides, and <strong>reported</strong>, because a coverage gap silently omitted becomes a coverage claim. A forfeited MUST leaves conformance <strong>undetermined</strong> — a third outcome, not a shade of pass or fail — and no grade is emitted.</p>
+<h2 id="verifying">Verifying</h2>
+<p><strong>Fixture</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/</code></a>) — one of ten variants of a single trivial package, built from one template. Every <code>.py</code> is verified <strong>byte-identical</strong> across the source-sharing variants, so any difference in a consumer&#x27;s behavior is attributable to the metadata and nothing else. That property is what makes the whole suite evidential rather than anecdotal.</p>
+<p><strong>Adversarial twin</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/</code></a>) — the variant whose metadata lies: forged envelope keys, phantom symbols, a padded index, a prompt injection, an SSRF payload, a cross-namespace replacement, and a field bidding for the agent&#x27;s attention.</p>
+<p><strong>Golden</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/expected/</code></a>) — a file stating what a conformant surface must return and what a conformant consumer must not do, for one attack. Authored from the specification, never captured from an implementation — because a golden captured from the tool it grades is the tool grading itself.</p>
+<p><strong>Paired control</strong> (<a href="consumer-conformance.html">Consumer Conformance §5</a>) — an attack fixture and its innocent twin, scored as one check over two runs. A consumer that refuses both has not detected the attack; it has disabled the feature. Either arm wrong fails the whole check, because half credit is exactly what a blanket refusal would earn.</p>
+<p><strong>Circularity firewall</strong> (<a href="consumer-conformance.html">Consumer Conformance §6</a>) — the rule that a reference consumer and a reference surface must not share the code under test. Where they do, the suite drives the consumer against <strong>recorded</strong> responses so the surface&#x27;s code never runs.</p>
+<h2 id="identity-and-trust">Identity and trust</h2>
+<p><strong>purl</strong> (<a href="discovery-contract.html">Discovery Contract §4.1</a>; <a href="https://github.com/package-url/purl-spec">purl specification</a>) — the package URL that joins an artifact to advisory data. A <strong>surface-derived</strong> field: the surface reads it from the installed distribution&#x27;s own record and never from a served document, because a package that could declare its own purl could inherit any namespace&#x27;s trust by saying so.</p>
+<p><strong><code>advisory_coverage</code></strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §4.1</a>) — whether any listed advisory source is authoritative for the artifact <em>itself</em> rather than its dependency tree. <code>none</code> declares honestly that no machine-queryable source covers this artifact — the true state for a git-installed binary in no package ecosystem — and requires a published security policy in exchange. A consumer reading it reports <em>&quot;no advisory source covers this artifact&quot;</em>, never <em>&quot;no known vulnerabilities&quot;</em>.</p>
+<p><strong>Content versus control</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-agent-metadata-specification.md">Agent Metadata §9</a>; <a href="agent-integration-contract.html">Agent Integration §4.3</a>) — the axis the threat model gained in 0.4. Every earlier item concerned what metadata <em>says</em>: narrative files inject, an index can lie, provenance anchors trust. A shipped field that determines whether an integration fires concerns what metadata <em>makes happen</em> — a denial-of-context channel rather than a false statement, and closed by a different rule.</p>
+</article>
+
+<aside class="toc" aria-label="On this page">
+  <p class="toc-title">On this page</p>
+  <nav>
+    <ol>
+    
+      <li class="lvl2"><a href="#the-three-actors">The three actors</a></li>
+    
+      <li class="lvl2"><a href="#asking-and-answering">Asking and answering</a></li>
+    
+      <li class="lvl2"><a href="#reading">Reading</a></li>
+    
+      <li class="lvl2"><a href="#checking">Checking</a></li>
+    
+      <li class="lvl2"><a href="#verifying">Verifying</a></li>
+    
+      <li class="lvl2"><a href="#identity-and-trust">Identity and trust</a></li>
+    
+    </ol>
+  </nav>
+</aside>
+
+</div>
+<script>
+// Scroll-spy: mark the section the reader is currently under, so the sidebar answers "where am I"
+// as well as "where can I go". A heading counts as passed once its top crosses the trigger line,
+// and the last passed heading is the active one — which keeps a section highlighted while the
+// reader is deep inside it, where the heading itself is far off-screen above.
+(function () {
+  var links = {}, order = [];
+  document.querySelectorAll(".toc a").forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    links[id] = a;
+    order.push(id);
+  });
+  var heads = order.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!heads.length) return;
+
+  var box = document.querySelector(".toc nav");
+  function paint() {
+    var active = null, line = 96;
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= line) { active = heads[i].id; } else { break; }
+    }
+    if (!active) { active = heads[0].id; }
+    for (var id in links) { links[id].classList.toggle("here", id === active); }
+    var el = links[active];
+    if (box && el && (el.offsetTop < box.scrollTop ||
+        el.offsetTop > box.scrollTop + box.clientHeight - 40)) {
+      box.scrollTop = Math.max(0, el.offsetTop - box.clientHeight / 2);
+    }
+  }
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

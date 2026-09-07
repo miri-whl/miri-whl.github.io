@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MIRI-CLI-011 — Clean payload channel · miri-standard</title>
+<title>MIRI-CONSUMER-051 — Trigger behavior is independent of what the publisher ships · miri-standard</title>
 <link rel="icon" type="image/png" href="../../assets/miri-green.png">
 <link rel="stylesheet" href="../../style.css">
 </head>
@@ -67,7 +67,7 @@
     <div class="label">CLI</div>
     
     
-    <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    <a href="../../checks/cli/index.html">Check definitions</a>
     
     
     
@@ -84,7 +84,7 @@
     <div class="label">Consumption</div>
     
     
-    <a href="../../checks/consumer/index.html">Consumer checks</a>
+    <a class="active" href="../../checks/consumer/index.html">Consumer checks</a>
     
     
     
@@ -133,86 +133,77 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.1-draft</b></span></div>
-<h1>MIRI-CLI-011 — Clean payload channel</h1>
-<p class="lede">No ANSI codes, prose, or warnings mixed into stdout JSON</p>
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.4.0-draft</b></span></div>
+<h1>MIRI-CONSUMER-051 — Trigger behavior is independent of what the publisher ships</h1>
+<p class="lede">No shipped field determines whether, when, or how loudly a trigger fires</p>
 
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge deprecated">severity HIGH · 4</span>
-  <span class="tag">weight 2</span>
+  <span class="tag">weight 4</span>
+  <span class="tag">conditional</span>
   
-  
-  <span class="tag">CLI Spec §2.5</span>
+  <span class="tag">Agent Integration Contract §4</span><span class="tag">Consumption Map §3</span>
 </div>
 
 <p class="deffile">Definition:
-<span class="mono">standards/cli/checks/MIRI-CLI-011.yaml</span> ·
-<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-011.yaml">view</a> ·
-<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/cli/checks/MIRI-CLI-011.yaml">raw</a></p>
+<span class="mono">standards/consumption/checks/MIRI-CONSUMER-051.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumption/checks/MIRI-CONSUMER-051.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/consumption/checks/MIRI-CONSUMER-051.yaml">raw</a></p>
 
 <div class="cardstack">
   <div class="card"><div class="card-title">Violation</div>
-    <span class="mono example-bad">$ tool list --json
-WARNING: --legacy-ids is deprecated, use --ids
-{&quot;schema_version&quot;: &quot;1&quot;, &quot;items&quot;: []}
-$ tool list --json | jq .
-jq: error (at &lt;stdin&gt;:1): Invalid literal at line 1, column 8
-# every consumer broke the day the warning shipped</span></div>
+    <span class="mono example-bad">the same dependency.add fires differently for <code>adversarial</code> than for <code>miri</code></span></div>
   <div class="card"><div class="card-title">Compliant</div>
-    <span class="mono example-good">$ tool list --json 2&gt;warnings.txt
-{&quot;schema_version&quot;: &quot;1&quot;, &quot;items&quot;: []}
-$ cat warnings.txt
-WARNING: --legacy-ids is deprecated, use --ids
-# payload parses; the notice survives on its own channel</span></div>
+    <span class="mono example-good">identical trigger behavior across byte-identical fixtures; only the findings differ</span></div>
 </div>
 
 <h2>Why this matters</h2>
-<p>CLI Spec §2.5 reserves stdout for the JSON payload and sends all warnings to stderr, because the channels fail differently: a warning on stderr is ignorable, but one stray notice printed into stdout makes the document unparseable — <code>jq</code> aborts with <code>Invalid literal</code>, and every downstream consumer fails simultaneously the day the notice ships, not the day the schema changes. This is the highest-blast-radius mistake available to a machine-output CLI precisely because the trigger is routine (a deprecation notice, an update banner, a stray <code>print</code> in a logging path) while the failure is total.</p>
+<p>Every item in the Agent Metadata threat model concerns what the metadata SAYS. This is the first concerning what the metadata MAKES HAPPEN. A package that can force or amplify a trigger has a denial-of-context channel: it consumes the agent&#x27;s attention on demand, and no existing rule closes it. Content and control are different axes, and a threat model covering only the first keeps being surprised by the second.</p>
 
 <h2>Definition</h2>
-<p>Agents parse stdout; anything unstructured, inconsistent, or polluted forces guesswork and burns recovery turns. This check verifies: No ANSI codes, prose, or warnings mixed into stdout JSON.</p>
+<p>Consumer obligation from Agent Integration Contract 4.3. Conditional: it applies only to a consumer that implements an integration binding.</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>stdout of any JSON-mode invocation fails a strict JSON parse (<code>jq -e .</code> non-zero)</li><li>Prose lines — update banners, deprecation notices, progress text — precede, follow, or interleave the JSON document on stdout</li><li>ESC bytes (0x1b) appear inside stdout in JSON mode</li>
+  <li>Driven with the same trigger against the <code>adversarial</code> and <code>miri</code> fixtures, the consumer&#x27;s TRIGGER behavior differs — it fires for one and not the other, fires at a different level, or fires more than once. Every .py is byte-identical across the variants, so any difference is metadata-attributable by construction</li><li>The consumer reads any shipped field to decide whether a trigger fires</li><li>The consumer reads any shipped field to decide the level or prominence of a finding</li>
 </ul>
 
 <h2>How to fix it</h2>
-<p>Keep stdout pure JSON; warnings go to stderr.</p>
+<p>Derive trigger behavior solely from the observable event and the consumer&#x27;s own configuration</p>
 <ol class="plain">
-  <li>Route every diagnostic through a channel that writes to stderr; audit logging configuration — many logging frameworks default handlers to stdout</li><li>In JSON mode, write stdout exactly once, from the shared response envelope (one serialized document, then exit)</li><li>Keep decoration out of JSON mode entirely, independent of TTY state (see MIRI-CLI-005)</li><li>Parse your own stdout in CI: for every command, <code>&lt;cmd&gt; --json | jq -e . &gt;/dev/null</code> and assert the byte stream contains no 0x1b</li>
+  <li>Derive trigger behavior solely from the observable event and the consumer&#x27;s own configuration</li><li>Let shipped metadata determine the CONTENT of a finding, never whether or how loudly one is raised</li>
 </ol>
 
 <h2>Fields</h2>
 <dl class="meta">
   <dt>severity.default</dt><dd>HIGH (numeric 4 of 5)</dd>
-  <dt>violation_unit</dt><dd>each polluted payload</dd>
-  
-  <dt>population_unit</dt><dd>all commands emitting JSON</dd>
+  <dt>violation_unit</dt><dd>each trigger firing that violates the rule</dd>
   
   
-  <dt>category</dt><dd>Machine Output</dd>
+  <dt>category</dt><dd>Integration Channel</dd>
   <dt>status</dt><dd>active</dd>
-  <dt>added_in</dt><dd>0.1-draft</dd>
+  <dt>added_in</dt><dd>0.4.0-draft</dd>
   
 </dl>
 
 <h2>References</h2>
 <ul class="plain">
   
-  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §2.5</a> <em>(spec)</em></li>
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumer/agent-integration-contract.md">Agent Integration Contract §4</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumer/consumption-map.md">Consumption Map §3</a> <em>(spec)</em></li>
   
 </ul>
 
 <p class="source-note">Source of truth:
-<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/checks/MIRI-CLI-011.yaml" class="mono">MIRI-CLI-011.yaml</a> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumption/checks/MIRI-CONSUMER-051.yaml" class="mono">MIRI-CONSUMER-051.yaml</a> ·
 schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
-canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-011.html" class="mono">MIRI-CLI-011.html</a></p>
+canonical <a href="https://miri-whl.github.io/checks/consumer/MIRI-CONSUMER-051.html" class="mono">MIRI-CONSUMER-051.html</a></p>
 
 <div class="prevnext">
-  <a href="MIRI-CLI-010.html">← MIRI-CLI-010</a>
-  <a href="MIRI-CLI-012.html">MIRI-CLI-012 →</a>
+  <a href="MIRI-CONSUMER-050.html">← MIRI-CONSUMER-050</a>
+  <span></span>
 </div>
 
 <div class="footer">

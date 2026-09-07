@@ -17,6 +17,10 @@
 <div class="shell">
 <nav class="sidenav">
   
+  <a class="version" href="../../changelog.html" title="What each release delivered">
+    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+  
+  
   <div class="section">
     <div class="label">Project</div>
     
@@ -26,6 +30,10 @@
     
     
     <a href="../../whats-new.html">What&#39;s new in 0.3</a>
+    
+    
+    
+    <a href="../../glossary.html">Glossary</a>
     
     
     
@@ -100,6 +108,10 @@
     
     
     
+    <a href="../../agent-integration-contract.html">Agent integration</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
     
     
@@ -121,7 +133,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Checks <b>15</b></span><span>Levels <b>14 MUST · 1 SHOULD</b></span><span>Weights <b>Σ = 100</b></span></div>
+<div class="spec-eyebrow"><span>Checks <b>17</b></span><span>Levels <b>16 MUST · 1 SHOULD</b></span><span>Weights <b>Σ = 100</b></span></div>
 <h1>Metadata consumers — check definitions</h1>
 
 <p class="lede">Each requirement is verified by a check; each check failure instance is a violation.
@@ -139,29 +151,29 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consu
 <tbody>
 
 
-<tr class="cat"><td colspan="6">Honest Degradation · 24 points</td></tr>
+<tr class="cat"><td colspan="6">Honest Degradation · 22 points</td></tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-CONSUMER-001.html" data-level="0" data-sev="4" data-weight="8">
+<tr class="rowlink" data-href="MIRI-CONSUMER-001.html" data-level="0" data-sev="4" data-weight="7">
   <td class="id"><a href="MIRI-CONSUMER-001.html">MIRI-CONSUMER-001</a></td>
   <td><a class="rowname" href="MIRI-CONSUMER-001.html">Reports an absent document as absent</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">HIGH</span></td>
-  <td class="num">8</td>
+  <td class="num">7</td>
   <td>Reports an absent document as absent</td>
 </tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-CONSUMER-002.html" data-level="0" data-sev="5" data-weight="8">
+<tr class="rowlink" data-href="MIRI-CONSUMER-002.html" data-level="0" data-sev="5" data-weight="7">
   <td class="id"><a href="MIRI-CONSUMER-002.html">MIRI-CONSUMER-002</a></td>
   <td><a class="rowname" href="MIRI-CONSUMER-002.html">Never synthesizes content for an absent document</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">CRITICAL</span></td>
-  <td class="num">8</td>
+  <td class="num">7</td>
   <td>Never synthesizes content for an absent document</td>
 </tr>
 
@@ -179,17 +191,17 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consu
 
 
 
-<tr class="cat"><td colspan="6">Surface Verification · 24 points</td></tr>
+<tr class="cat"><td colspan="6">Surface Verification · 22 points</td></tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-CONSUMER-010.html" data-level="0" data-sev="4" data-weight="9">
+<tr class="rowlink" data-href="MIRI-CONSUMER-010.html" data-level="0" data-sev="4" data-weight="8">
   <td class="id"><a href="MIRI-CONSUMER-010.html">MIRI-CONSUMER-010</a></td>
   <td><a class="rowname" href="MIRI-CONSUMER-010.html">Settles symbol existence with `resolve`, not index membership</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">HIGH</span></td>
-  <td class="num">9</td>
+  <td class="num">8</td>
   <td>Settles symbol existence with <code>resolve</code>, not index membership</td>
 </tr>
 
@@ -208,28 +220,28 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consu
 
 
 
-<tr class="rowlink" data-href="MIRI-CONSUMER-012.html" data-level="0" data-sev="3" data-weight="8">
+<tr class="rowlink" data-href="MIRI-CONSUMER-012.html" data-level="0" data-sev="3" data-weight="7">
   <td class="id"><a href="MIRI-CONSUMER-012.html">MIRI-CONSUMER-012</a></td>
   <td><a class="rowname" href="MIRI-CONSUMER-012.html">Never treats a truncated `api-index` as the complete surface</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge maintenance">MEDIUM</span></td>
-  <td class="num">8</td>
+  <td class="num">7</td>
   <td>Never treats a truncated <code>api-index</code> as the complete surface</td>
 </tr>
 
 
 
-<tr class="cat"><td colspan="6">Untrusted Data · 24 points</td></tr>
+<tr class="cat"><td colspan="6">Untrusted Data · 23 points</td></tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-CONSUMER-020.html" data-level="0" data-sev="5" data-weight="10">
+<tr class="rowlink" data-href="MIRI-CONSUMER-020.html" data-level="0" data-sev="5" data-weight="9">
   <td class="id"><a href="MIRI-CONSUMER-020.html">MIRI-CONSUMER-020</a></td>
   <td><a class="rowname" href="MIRI-CONSUMER-020.html">Never acts on directive text found in metadata</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">CRITICAL</span></td>
-  <td class="num">10</td>
+  <td class="num">9</td>
   <td>Never acts on directive text found in metadata</td>
 </tr>
 
@@ -259,17 +271,17 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consu
 
 
 
-<tr class="cat"><td colspan="6">Trust and Verdicts · 24 points</td></tr>
+<tr class="cat"><td colspan="6">Trust and Verdicts · 23 points</td></tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-CONSUMER-030.html" data-level="0" data-sev="5" data-weight="8">
+<tr class="rowlink" data-href="MIRI-CONSUMER-030.html" data-level="0" data-sev="5" data-weight="7">
   <td class="id"><a href="MIRI-CONSUMER-030.html">MIRI-CONSUMER-030</a></td>
   <td><a class="rowname" href="MIRI-CONSUMER-030.html">Never reports a clean security verdict from shipped metadata</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">CRITICAL</span></td>
-  <td class="num">8</td>
+  <td class="num">7</td>
   <td>Never reports a clean security verdict from shipped metadata</td>
 </tr>
 
@@ -338,6 +350,34 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consu
 </tr>
 
 
+
+<tr class="cat"><td colspan="6">Integration Channel · 6 points</td></tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CONSUMER-050.html" data-level="0" data-sev="4" data-weight="2">
+  <td class="id"><a href="MIRI-CONSUMER-050.html">MIRI-CONSUMER-050</a></td>
+  <td><a class="rowname" href="MIRI-CONSUMER-050.html">Answers a trigger with nothing to report as absent, never as empty</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">2</td>
+  <td>A trigger with no findings answers with the absent shape, never an empty result or a confirmation</td>
+</tr>
+
+
+
+
+<tr class="rowlink" data-href="MIRI-CONSUMER-051.html" data-level="0" data-sev="4" data-weight="4">
+  <td class="id"><a href="MIRI-CONSUMER-051.html">MIRI-CONSUMER-051</a></td>
+  <td><a class="rowname" href="MIRI-CONSUMER-051.html">Trigger behavior is independent of what the publisher ships</a></td>
+  <td><span class="badge deprecated">must</span></td>
+  <td><span class="badge deprecated">HIGH</span></td>
+  <td class="num">4</td>
+  <td>No shipped field determines whether, when, or how loudly a trigger fires</td>
+</tr>
+
+
 </tbody>
 </table>
 </div>
@@ -378,7 +418,7 @@ document.querySelectorAll("tr.rowlink").forEach(function (row) {
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.3.1 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
