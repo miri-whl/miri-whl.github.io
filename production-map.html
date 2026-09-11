@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Production Map (Python) · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <a class="version" href="changelog.html" title="What each release delivered">
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+  
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="index.html">Overview</a>
+    
+    
+    
+    <a href="why-consumption.html">Why consumption</a>
+    
+    
+    
+    <a href="glossary.html">Glossary</a>
+    
+    
+    
+    <a href="changelog.html">Changelog</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a class="active" href="production-map.html">Production map</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="cli-production-map.html">Production map</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="agent-integration-contract.html">Agent integration</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Document <b>standards/python/production-map.md</b></span><span>Status <b>0.5.0-draft</b></span></div>
+<h1>Production Map (Python)</h1>
+
+<p class="lede">The Consumption Map says what a consumer reads and in what order. This says what a wheel author builds, and in what order.</p>
+<div class="prose-layout">
+<article class="prose">
+<p><em>Specification Version: 0.5.0-draft</em> <em>Status: Draft</em> <em>Created: 2026</em></p>
+<h2 id="abstract">Abstract</h2>
+<p>The <a href="consumption-map.html">Consumption Map</a> gives a consumer an ordered model: six tasks, each a sequence of read-steps, each step labelled with the vehicle that supplies it. The producer side has a <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">checklist</a> — forty numbered checks in six categories, scored additively — and no ordered model at all. Nothing says what an author does first, what depends on what, or which obligations cannot be evaluated yet.</p>
+<p>That asymmetry was reported by an implementation team building both halves: <em>&quot;the consumer side was straightforward because the Map told us the order; the author side we had to invent an order for, and nothing checks whether we invented a good one.&quot;</em></p>
+<p>This document is the minimal counterpart they asked for — <strong>the dependency order among the documents, and which must exist before which can be verified</strong>. It is not a second checklist. Every ordering below is <em>derived from an existing check</em>, and each stage names the checks that impose it; a stage with no check behind it would be advice, and advice does not belong in a specification.</p>
+<h2 id="1-what-this-is-not">1. What This Is Not</h2>
+<p><strong>It is not a new conformance surface.</strong> No check scores an author on following this order. Two authors who arrive at the same artifact by different routes are equally conformant, because the checklist grades the artifact and not the process. What this map removes is the need to <em>discover</em> the order by hitting a check that cannot pass yet.</p>
+<p><strong>It is not the checklist reordered.</strong> The checklist is organized by category — identity, metadata, deprecation — which is the right shape for scoring and the wrong shape for building. A category groups obligations that are <em>similar</em>; a stage groups obligations that are <em>ready at the same time</em>.</p>
+<h2 id="2-the-stages">2. The Stages</h2>
+<p>Each stage lists what must be settled, and the checks that make it a dependency rather than a preference.</p>
+<h3 id="stage-0-the-distribution-decides-its-own-identity">Stage 0 — The distribution decides its own identity</h3>
+<p><strong>Settled:</strong> the distribution name and version in <code>.dist-info/METADATA</code>.</p>
+<p>Every document that carries a version or an identity is checked against this file, so nothing downstream can be correct until it is. <code>MIRI-PY-019</code> requires <code>identity.purl</code> to match <code>METADATA</code> exactly; <code>MIRI-PY-012</code> requires <code>sdk_version</code> in <em>every</em> metadata file to equal the wheel version; <code>MIRI-PY-003</code> requires that version to parse under the canonical scheme.</p>
+<p>An author who generates metadata before the version is settled generates metadata that is wrong in a way three separate checks will report.</p>
+<h3 id="stage-1-source-level-declarations">Stage 1 — Source-level declarations</h3>
+<p><strong>Settled:</strong> PEP 702 <code>@deprecated</code> markers on any interface being retired.</p>
+<p>These live in the source and are the <em>input</em> to a later document, not an output of one. <code>MIRI-PY-028</code> requires every interface listed as deprecated to carry a marker, and <code>MIRI-PY-029</code> requires every marker to appear in the migration guide — a two-way obligation that can only be satisfied if the markers exist first.</p>
+<h3 id="stage-2-the-surface">Stage 2 — The surface</h3>
+<p><strong>Settled:</strong> <code>sdk-manifest.json</code>, the public API index.</p>
+<p>It depends only on the source and Stage 0&#x27;s version (<code>MIRI-PY-007</code>, <code>MIRI-PY-012</code>), and <strong>the migration guide depends on it</strong>: <code>MIRI-PY-031</code> requires every <code>deprecations[].replacement</code> to name an interface present in the <em>new</em> manifest. Generating the guide first means writing replacements that cannot yet be checked.</p>
+<h3 id="stage-3-identity-and-history">Stage 3 — Identity and history</h3>
+<p><strong>Settled:</strong> <code>lifecycle.json</code>, then <code>migration-guide.json</code>.</p>
+<p><code>lifecycle.json</code> needs Stage 0 only (<code>MIRI-PY-018</code>, <code>MIRI-PY-019</code>, <code>MIRI-PY-021</code>).</p>
+<p><code>migration-guide.json</code> is the most constrained document in the standard, and is last for that reason. It needs Stage 1&#x27;s markers (<code>MIRI-PY-028</code>, <code>MIRI-PY-029</code>), Stage 2&#x27;s manifest (<code>MIRI-PY-031</code>), Stage 0&#x27;s version (<code>MIRI-PY-032</code>, which requires every <code>removal_version</code> to exceed it) — and, for two of its obligations, a previous release that may not exist (§3).</p>
+<h3 id="stage-4-views-over-the-surface">Stage 4 — Views over the surface</h3>
+<p><strong>Settled:</strong> <code>usage-patterns.json</code>, <code>api-graph.json</code>.</p>
+<p>Both describe the surface Stage 2 declared. They are last in dependency order and may be generated in either order, or in parallel, and no <em>metadata document</em> is generated from either.</p>
+<p>They are not, however, unread. <code>MIRI-PY-039</code> fires when a prompt template &quot;references a metadata file the wheel does not ship (e.g. cites <code>api-graph.json</code> when none is present)&quot;, and <code>MIRI-PY-036</code> checks the discovery functions against the whole of <code>agent-metadata/</code>. An author who ships a template or a discovery function naming a Stage 4 document, and then does not generate it, fails both. An earlier draft claimed &quot;neither is depended upon by any other document — no check couples them to one&quot;; a single counterexample kills a universal, and there are two.</p>
+<h2 id="3-what-cannot-be-verified-yet">3. What Cannot Be Verified Yet</h2>
+<p>Two checks require a <strong>previous release</strong> and are therefore not evaluable on a project&#x27;s first one: <code>MIRI-PY-030</code> (every public interface removed since the prior release was listed as deprecated in an earlier one) and <code>MIRI-PY-034</code> (deprecated interfaces survive at least two releases before removal).</p>
+<p>A linter without access to a prior release <strong>MUST skip these and report the skip</strong> with the reason <code>previous_release_unavailable</code>, never pass them. Under the scoring model a forfeited check leaves both the numerator and the denominator, so a first release is scored over what could actually be evaluated. <strong>A first release cannot score 100 on a suite that includes them and should not appear to.</strong></p>
+<p>Four further checks require <code>execution</code> (<code>MIRI-PY-015</code>, <code>035</code>, <code>036</code>, <code>040</code>) and four require <code>network</code> (<code>MIRI-PY-005</code>, <code>009</code>, <code>026</code>, <code>027</code>). Those are capability gates rather than ordering constraints — they do not change what an author builds first — but an author choosing when to run a linter should know that a sandbox with neither capability evaluates thirty-two of the forty checks — and on a first release, where the two <code>previous-release</code> checks are also forfeited, thirty.</p>
+<h2 id="4-the-provisional-document">4. The Provisional Document</h2>
+<p><code>test-patterns.json</code> appears in no stage above, because <strong>no producer check requires it, gates it, or reads it</strong>. It has a schema and nothing else, and the Discovery Contract marks it provisional for exactly that reason.</p>
+<p>It is named here rather than omitted, because its absence from this map is the fact worth knowing: an author has no obligation to produce it, and a consumer nevertheless has obligations that reference it (<a href="consumer-conformance.html">Consumer Conformance</a> <code>MIRI-CONSUMER-020</code>, <code>MIRI-CONSUMER-041</code>). That asymmetry is recorded in those checks — <code>041</code> is conditional and scores only where a double is declared — but the underlying gap is a producer specification that does not exist yet, and this document is where a reader should expect to find it once it does.</p>
+</article>
+
+<aside class="toc" aria-label="On this page">
+  <p class="toc-title">On this page</p>
+  <nav>
+    <ol>
+    
+      <li class="lvl2"><a href="#abstract">Abstract</a></li>
+    
+      <li class="lvl2"><a href="#1-what-this-is-not">1. What This Is Not</a></li>
+    
+      <li class="lvl2"><a href="#2-the-stages">2. The Stages</a></li>
+    
+      <li class="lvl3"><a href="#stage-0-the-distribution-decides-its-own-identity">Stage 0 — The distribution decides its own identity</a></li>
+    
+      <li class="lvl3"><a href="#stage-1-source-level-declarations">Stage 1 — Source-level declarations</a></li>
+    
+      <li class="lvl3"><a href="#stage-2-the-surface">Stage 2 — The surface</a></li>
+    
+      <li class="lvl3"><a href="#stage-3-identity-and-history">Stage 3 — Identity and history</a></li>
+    
+      <li class="lvl3"><a href="#stage-4-views-over-the-surface">Stage 4 — Views over the surface</a></li>
+    
+      <li class="lvl2"><a href="#3-what-cannot-be-verified-yet">3. What Cannot Be Verified Yet</a></li>
+    
+      <li class="lvl2"><a href="#4-the-provisional-document">4. The Provisional Document</a></li>
+    
+    </ol>
+  </nav>
+</aside>
+
+</div>
+<script>
+// Scroll-spy: mark the section the reader is currently under, so the sidebar answers "where am I"
+// as well as "where can I go". A heading counts as passed once its top crosses the trigger line,
+// and the last passed heading is the active one — which keeps a section highlighted while the
+// reader is deep inside it, where the heading itself is far off-screen above.
+(function () {
+  var links = {}, order = [];
+  document.querySelectorAll(".toc a").forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    links[id] = a;
+    order.push(id);
+  });
+  var heads = order.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!heads.length) return;
+
+  var box = document.querySelector(".toc nav");
+  function paint() {
+    var active = null, line = 96;
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= line) { active = heads[i].id; } else { break; }
+    }
+    if (!active) { active = heads[0].id; }
+    for (var id in links) { links[id].classList.toggle("here", id === active); }
+    var el = links[active];
+    if (box && el && (el.offsetTop < box.scrollTop ||
+        el.offsetTop > box.scrollTop + box.clientHeight - 40)) {
+      box.scrollTop = Math.max(0, el.offsetTop - box.clientHeight / 2);
+    }
+  }
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -29,7 +29,7 @@
     
     
     
-    <a href="../../whats-new.html">What&#39;s new in 0.3</a>
+    <a href="../../why-consumption.html">Why consumption</a>
     
     
     
@@ -54,6 +54,10 @@
     
     
     
+    <a href="../../production-map.html">Production map</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
     
     
@@ -68,6 +72,10 @@
     
     
     <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="../../cli-production-map.html">Production map</a>
     
     
     
@@ -151,41 +159,41 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 <tbody>
 
 
-<tr class="cat"><td colspan="6">Packaging Baseline · 10 points</td></tr>
+<tr class="cat"><td colspan="6">Packaging Baseline · 4 points</td></tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-001.html" data-level="0" data-sev="4" data-weight="2">
+<tr class="rowlink" data-href="MIRI-PY-001.html" data-level="0" data-sev="4" data-weight="0">
   <td class="id"><a href="MIRI-PY-001.html">MIRI-PY-001</a></td>
   <td><a class="rowname" href="MIRI-PY-001.html">Wheel structure valid</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">HIGH</span></td>
-  <td class="num">2</td>
+  <td class="num">0</td>
   <td><code>.dist-info/</code> with <code>METADATA</code>, <code>WHEEL</code>, <code>RECORD</code>; archive matches RECORD</td>
 </tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-002.html" data-level="0" data-sev="4" data-weight="2">
+<tr class="rowlink" data-href="MIRI-PY-002.html" data-level="0" data-sev="4" data-weight="0">
   <td class="id"><a href="MIRI-PY-002.html">MIRI-PY-002</a></td>
   <td><a class="rowname" href="MIRI-PY-002.html">Core metadata valid</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">HIGH</span></td>
-  <td class="num">2</td>
+  <td class="num">0</td>
   <td><code>METADATA</code> parses as Core Metadata 2.x; name normalized</td>
 </tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-003.html" data-level="0" data-sev="4" data-weight="2">
+<tr class="rowlink" data-href="MIRI-PY-003.html" data-level="0" data-sev="4" data-weight="0">
   <td class="id"><a href="MIRI-PY-003.html">MIRI-PY-003</a></td>
   <td><a class="rowname" href="MIRI-PY-003.html">Version scheme valid</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">HIGH</span></td>
-  <td class="num">2</td>
+  <td class="num">0</td>
   <td>Version parses under the canonical scheme</td>
 </tr>
 
@@ -215,7 +223,7 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
-<tr class="cat"><td colspan="6">Agent Metadata Core · 20 points</td></tr>
+<tr class="cat"><td colspan="6">Agent Metadata Core · 24 points</td></tr>
 
 
 
@@ -232,24 +240,24 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-007.html" data-level="0" data-sev="4" data-weight="4">
+<tr class="rowlink" data-href="MIRI-PY-007.html" data-level="0" data-sev="4" data-weight="6">
   <td class="id"><a href="MIRI-PY-007.html">MIRI-PY-007</a></td>
   <td><a class="rowname" href="MIRI-PY-007.html">sdk-manifest.json valid</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge deprecated">HIGH</span></td>
-  <td class="num">4</td>
+  <td class="num">6</td>
   <td>Present and validates against schema</td>
 </tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-008.html" data-level="0" data-sev="3" data-weight="3">
+<tr class="rowlink" data-href="MIRI-PY-008.html" data-level="0" data-sev="3" data-weight="5">
   <td class="id"><a href="MIRI-PY-008.html">MIRI-PY-008</a></td>
   <td><a class="rowname" href="MIRI-PY-008.html">usage-patterns.json valid</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge maintenance">MEDIUM</span></td>
-  <td class="num">3</td>
+  <td class="num">5</td>
   <td>Present and validates against schema</td>
 </tr>
 
@@ -315,29 +323,29 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
-<tr class="cat"><td colspan="6">Examples · 10 points</td></tr>
+<tr class="cat"><td colspan="6">Examples · 12 points</td></tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-014.html" data-level="0" data-sev="3" data-weight="3">
+<tr class="rowlink" data-href="MIRI-PY-014.html" data-level="0" data-sev="3" data-weight="4">
   <td class="id"><a href="MIRI-PY-014.html">MIRI-PY-014</a></td>
   <td><a class="rowname" href="MIRI-PY-014.html">Quickstart exists</a></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge maintenance">MEDIUM</span></td>
-  <td class="num">3</td>
+  <td class="num">4</td>
   <td><code>examples/quickstart.py</code> present</td>
 </tr>
 
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-015.html" data-level="0" data-sev="3" data-weight="3">
+<tr class="rowlink" data-href="MIRI-PY-015.html" data-level="0" data-sev="3" data-weight="4">
   <td class="id"><a href="MIRI-PY-015.html">MIRI-PY-015</a></td>
   <td><a class="rowname" href="MIRI-PY-015.html">Examples runnable</a> <span class="tag">execution</span></td>
   <td><span class="badge deprecated">must</span></td>
   <td><span class="badge maintenance">MEDIUM</span></td>
-  <td class="num">3</td>
+  <td class="num">4</td>
   <td>Every example compiles; runs in a clean virtual environment (except external credentials)</td>
 </tr>
 
@@ -694,7 +702,7 @@ document.querySelectorAll("tr.rowlink").forEach(function (row) {
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

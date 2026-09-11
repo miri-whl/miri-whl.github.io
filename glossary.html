@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -29,7 +29,7 @@
     
     
     
-    <a href="whats-new.html">What&#39;s new in 0.3</a>
+    <a href="why-consumption.html">Why consumption</a>
     
     
     
@@ -54,6 +54,10 @@
     
     
     
+    <a href="production-map.html">Production map</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
     
     
@@ -68,6 +72,10 @@
     
     
     <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="cli-production-map.html">Production map</a>
     
     
     
@@ -133,7 +141,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>docs/glossary.md</b></span><span>Version <b>0.4.0</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>docs/glossary.md</b></span><span>Version <b>0.5.0</b></span></div>
 <h1>Glossary</h1>
 
 <p class="lede">Every term this standard defines, and a few it deliberately does not.</p>
@@ -161,14 +169,19 @@
 <p><strong>Task</strong> — one of six jobs a consumer does: first use, scaffolding, upgrading, diagnosing, security, writing tests. Each is a read-order plus a set of prohibitions. Defined in <a href="consumption-map.html">Consumption Map §3</a>.</p>
 <p><strong>Vehicle</strong> (<a href="consumption-map.html">Consumption Map §1.1</a>) — <em>how</em> a read-step&#x27;s data arrives, and therefore what a consumer must possess to perform it.</p>
 <div class="tablewrap"><table><thead><tr><th></th><th>Vehicle</th><th>Needs</th></tr></thead><tbody><tr><td><strong>(S)</strong></td><td>Served by an operation</td><td>only a connection</td></tr><tr><td><strong>(S?)</strong></td><td>Served, but the surface may decline — the document is provisional</td><td>only a connection; absence is expected</td></tr><tr><td><strong>(F)</strong></td><td>Filesystem, read from the installed tree</td><td>read access to site-packages</td></tr><tr><td><strong>(X)</strong></td><td>External, obtained by executing something</td><td>the ability to run installed code</td></tr><tr><td><strong>(C)</strong></td><td>The consumer&#x27;s own workspace</td><td>nothing; it already has it</td></tr></tbody></table></div>
-<p><strong>Trigger</strong> (<a href="agent-integration-contract.html">Agent Integration §3.1</a>) — <em>when</em> a task becomes actionable. The third column of a table that already had <em>what</em> (task) and <em>how</em> (vehicle), and the one this standard was missing until 0.4. Six of them, named for observable actions: <code>dependency.add</code>, <code>dependency.version_change</code>, <code>package.first_reference</code>, <code>integration.begin</code>, <code>runtime.error</code>, <code>test.author</code>.</p>
+<p><strong>Trigger</strong> (<a href="agent-integration-contract.html">Agent Integration §3.1</a>) — <em>when</em> a task becomes actionable. The third column of a table that already had <em>what</em> (task) and <em>how</em> (vehicle), and the one this standard was missing until 0.4. Seven of them, named for observable actions: <code>dependency.add</code>, <code>dependency.version_change</code>, <code>package.replaced</code>, <code>package.first_reference</code>, <code>integration.begin</code>, <code>runtime.error</code>, <code>test.author</code>.</p>
+<p><code>package.replaced</code> is the odd one and worth reading twice: it fires when an installed artifact is replaced <strong>without its version changing</strong>, which is the case a purl cannot see — a purl identifies a name and a version, never a byte stream (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/lifecycle-security-metadata.md">Lifecycle and Security Metadata §9.6</a>). It is the only trigger routing to two tasks, because a replaced artifact raises two questions that do not answer each other: what the surface is now, and whether it may still be trusted.</p>
 <p><strong>Event</strong> — the message a host sends when a trigger fires. Governed by <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/agent-event-v1.json"><code>agent-event-v1.json</code></a>, whose root is <strong>closed</strong> so a host cannot smuggle a file path, a diff, or the user&#x27;s source into it.</p>
 <p><strong>Binding</strong> — one host&#x27;s implementation of a contract (<a href="discovery-contract.html">Discovery Contract §6</a> binds MCP; <a href="agent-integration-contract.html">Agent Integration §5–6</a> binds Claude Code). MCP is a binding of the Discovery Contract; a Claude Code plugin is a binding of the Agent Integration Contract. A binding names its host, maps the contract&#x27;s vocabulary onto that host&#x27;s mechanisms, and <strong>says which parts it cannot support</strong> rather than approximating them.</p>
 <p><strong>Hook</strong> — <em>not a term of this standard</em> (the reasoning is <a href="agent-integration-contract.html">Agent Integration §1</a>). It is what one host calls its delivery mechanism, and it appears in these documents only when describing git or setuptools. The sentence that has to keep working is <em>&quot;Claude Code delivers a trigger via a hook; CI delivers the same trigger via a step&quot;</em> — which only parses if hook is theirs and trigger is ours. Naming the mechanism in a specification is how a standard acquires one vendor&#x27;s vocabulary permanently.</p>
 <p><strong>Skip reason</strong> (<a href="consumption-map.html">Consumption Map §4</a>) — why a read-step produced no answer. A closed set of four, and the distinctions matter: <code>absent</code> (the vehicle worked; the artifact does not exist), <code>unavailable-vehicle</code> (the consumer lacks the vehicle), <code>error</code> (the vehicle was available and failed), <code>not-applicable</code> (the step&#x27;s stated condition does not hold). <code>absent</code> and <code>error</code> are kept apart because one is a fact about the package and the other a fact about the attempt.</p>
 <h2 id="checking">Checking</h2>
-<p><strong>Check</strong> — one numbered, mechanically decidable requirement, governed by <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json"><code>check-v1.json</code></a>. Its authoritative form is a YAML file under <code>standards/&lt;target&gt;/checks/</code>; the tables in the profiles are a derived rendering. IDs are <strong>never renumbered</strong>, and the numbering is <strong>sparse</strong> — <code>MIRI-CONSUMER</code> runs 001–051 across seventeen checks, so an ID range is an address space and never a count.</p>
-<p><strong><code>fires_when</code></strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json"><code>check-v1.json</code></a>) — the operative content of a check: the concrete conditions under which a conforming linter raises it. Everything else in a check file is explanation; this is the part an implementer implements.</p>
+<p><strong>Gate</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Python checklist</a>; <code>scoring: gate</code> in <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v2.json">check-v2</a>) — a check that is a <strong>precondition rather than a measurement</strong>. It carries weight 0, enters neither side of the conformance ratio, and failing it makes the artifact non-conforming. Three exist: <code>MIRI-PY-001</code>, <code>002</code>, <code>003</code>, the wheel-structure and metadata checks an index enforces at upload, which every correctly built wheel passed and which therefore separated nothing. A gate can only be a <code>MUST</code> — its sole declared effect is non-conformance, which a SHOULD cannot cause, so a SHOULD gate would be inert.</p>
+<p>Note the trap the mechanism carries: weight 0 means a failing gate leaves <strong>no arithmetic trace</strong>, so a scorer that computes conformance from weights alone cannot see it. Its only representation is <code>must_failures</code> in <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/lint-report-v1.json">lint-report-v1</a>, where it is coupled to the grade and the 74 cap.</p>
+<p><strong>Effective denominator</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Python checklist</a>) — the sum of the weights of the checks that <strong>applied and could be evaluated</strong>, which is what a conformance score is a percentage of. It is at most 100 and routinely less. A report MUST carry it, because 80 out of 100 and 80 out of 58 are different claims and the number alone cannot distinguish them. There is deliberately <strong>no floor</strong>: a small denominator usually means a simpler artifact rather than a worse one.</p>
+<p><strong>Undetermined</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/lint-report-v1.json">lint-report-v1</a> <code>grade</code>) — the grade when a <strong>forfeited</strong> MUST leaves conformance unknowable. Not non-conformance: the obligation applied and went unassessed, so the artifact is neither known to conform nor known to fail. An <strong>excluded</strong> MUST never produces it — that obligation did not exist for this artifact. See [[conditional]] and [[forfeited]] for the distinction that decides which.</p>
+<p><strong>Check</strong> — one numbered, mechanically decidable requirement, governed by <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v2.json"><code>check-v2.json</code></a>. Its authoritative form is a YAML file under <code>standards/&lt;target&gt;/checks/</code>; the tables in the profiles are a derived rendering. IDs are <strong>never renumbered</strong>, and the numbering is <strong>sparse</strong> — <code>MIRI-CONSUMER</code> runs 001–052 across eighteen checks, so an ID range is an address space and never a count.</p>
+<p><strong><code>fires_when</code></strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v2.json"><code>check-v2.json</code></a>) — the operative content of a check: the concrete conditions under which a conforming linter raises it. Everything else in a check file is explanation; this is the part an implementer implements.</p>
 <p><strong>Level</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — <code>MUST</code> or <code>SHOULD</code>. A failing MUST makes an artifact <strong>non-conforming</strong>, and a non-conforming result carries no grade at all — only the score, capped, to show distance. Distinct from <strong>severity</strong> (<code>LOW</code> … <code>CRITICAL</code>), which is about how bad one violation is for health scoring. Level answers <em>may I proceed</em>; severity answers <em>how bad is this</em>.</p>
 <p><strong>Weight</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — a check&#x27;s share of 100. Every target&#x27;s active weights sum to exactly 100, which is why adding a check means redistributing rather than appending.</p>
 <p><strong>Conditional</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — a check whose obligation only applies in some circumstances. <strong>Not-applicable is not a pass</strong>: a conditional check whose condition does not hold is removed from <em>both</em> the numerator and the denominator, never credited. The earlier model awarded a CLI twenty points for never deprecating anything.</p>
@@ -250,7 +263,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Production Map (CLI) · miri-standard</title>
+<link rel="icon" type="image/png" href="assets/miri-green.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="index.html"><img class="avatar" src="assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <a class="version" href="changelog.html" title="What each release delivered">
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+  
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="index.html">Overview</a>
+    
+    
+    
+    <a href="why-consumption.html">Why consumption</a>
+    
+    
+    
+    <a href="glossary.html">Glossary</a>
+    
+    
+    
+    <a href="changelog.html">Changelog</a>
+    
+    
+    
+    <a href="origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="production-map.html">Production map</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a class="active" href="cli-production-map.html">Production map</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a href="checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="agent-integration-contract.html">Agent integration</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Document <b>standards/cli/production-map.md</b></span><span>Status <b>0.5.0-draft</b></span></div>
+<h1>Production Map (CLI)</h1>
+
+<p class="lede">What a CLI author settles first, what depends on what, and what a first release cannot be scored on.</p>
+<div class="prose-layout">
+<article class="prose">
+<p><em>Specification Version: 0.5.0-draft</em> <em>Status: Draft</em> <em>Created: 2026</em></p>
+<h2 id="abstract">Abstract</h2>
+<p>The <a href="production-map.html">Python Production Map</a> gives a wheel author an ordered model: five stages, each naming the checks that make it a dependency rather than a preference. The CLI side has a <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">checklist</a> — forty-three numbered checks in six categories, the largest target in the standard — and no ordered model at all.</p>
+<p>The asymmetry is the same one an implementation team reported on the Python side, and it is worse here: a CLI author faces more checks than a wheel author, and more of them depend on each other. <code>--describe</code> is checked against <code>--version</code>; the advisory sources are checked against the purl; the deprecation blocks are checked against both <code>--describe</code> and <code>changelog --since</code>. An author who builds these in the wrong order writes documents that cannot be verified until something else exists.</p>
+<p>This document is the counterpart to the Python map — <strong>the dependency order among the surfaces, and which must exist before which can be verified</strong>. It is not a second checklist. Every ordering below is <em>derived from an existing check</em>, and each stage names the checks that impose it; a stage with no check behind it would be advice, and advice does not belong in a specification.</p>
+<h2 id="1-what-this-is-not">1. What This Is Not</h2>
+<p><strong>It is not a new conformance surface.</strong> No check scores an author on following this order. Two authors who arrive at the same binary by different routes are equally conformant, because the checklist grades the artifact and not the process. What this map removes is the need to <em>discover</em> the order by hitting a check that cannot pass yet.</p>
+<p><strong>It is not the checklist reordered.</strong> The checklist is organized by category — baseline, machine output, identity, update, deprecation, safety — which is the right shape for scoring and the wrong shape for building. A category groups obligations that are <em>similar</em>; a stage groups obligations that are <em>ready at the same time</em>.</p>
+<p><strong>It is not a design guide for the CLI itself.</strong> Nothing here says what commands a tool should have. The map begins after that decision, at the point where the tool must describe itself.</p>
+<h2 id="2-the-stages">2. The Stages</h2>
+<p>Each stage lists what must be settled, and the checks that make it a dependency rather than a preference.</p>
+<h3 id="stage-0-the-binary-answers-for-itself">Stage 0 — The binary answers for itself</h3>
+<p><strong>Settled:</strong> <code>--help</code> and <code>--version</code> behavior, exit codes, and the non-interactive contract.</p>
+<p><code>MIRI-CLI-017</code> requires <code>identity.version</code> in <code>--describe</code> to equal <em>the version the binary actually prints</em>, and the <code>@version</code> segment of <code>identity.purl</code> to equal it in turn. Until <code>--version</code> is correct and stable, the identity block has nothing to be checked against. <code>MIRI-CLI-015</code> requires <code>--describe</code> to exit zero rather than emit a usage error, which is the same exit convention <code>MIRI-CLI-002</code> and <code>MIRI-CLI-003</code> establish for <code>--help</code> and <code>--version</code>.</p>
+<p><code>MIRI-CLI-004</code> is checked <em>against the subcommand set</em>: for any subcommand listed in <code>--describe</code> or the root help, <code>&lt;cli&gt; &lt;sub&gt; --help</code> must work. The command surface therefore has to be settled before the introspection document that enumerates it.</p>
+<p><code>MIRI-CLI-006</code> belongs here rather than later because it constrains every command at once: nothing may block on a prompt when stdin is not a TTY. A tool that discovers this after building its introspection surface discovers it as a property of code it has already written everywhere.</p>
+<h3 id="stage-1-the-machine-channel">Stage 1 — The machine channel</h3>
+<p><strong>Settled:</strong> JSON output on every command, one flag that selects it, and the envelope convention.</p>
+<p>This stage precedes <code>--describe</code> because <code>--describe</code> is <em>one of the JSON payloads it governs</em>, not an exception to it. <code>MIRI-CLI-010</code> makes the coupling explicit in its own trigger conditions: the check fires when the top-level <code>schema_version</code> in <code>--describe</code> disagrees with the value stamped on command payloads. The convention cannot be derived from the introspection document, because the introspection document is judged against it.</p>
+<p><code>MIRI-CLI-011</code> forbids prose, warnings, and ANSI bytes on the stdout of <em>any</em> JSON-mode invocation, and <code>MIRI-CLI-015</code> repeats the requirement for <code>--describe</code> specifically — a banner printed by a shared output helper fails both. <code>MIRI-CLI-013</code> and <code>MIRI-CLI-014</code> settle the error envelope, which Stage 4 then depends on: <code>MIRI-CLI-033</code>&#x27;s teaching error for a removed surface is required to carry a stable <code>error.code</code>, <code>retryable: false</code>, and a non-empty <code>suggestions</code> array — the envelope shape defined here.</p>
+<h3 id="stage-2-identity-and-support">Stage 2 — Identity and support</h3>
+<p><strong>Settled:</strong> the <code>--describe</code> document: <code>identity</code>, <code>support</code>, <code>advisory_sources</code>.</p>
+<p>It depends on Stage 0&#x27;s version (<code>MIRI-CLI-017</code>) and Stage 1&#x27;s envelope (<code>MIRI-CLI-010</code>, <code>MIRI-CLI-011</code>, <code>MIRI-CLI-015</code>). Within the stage the order is also check-imposed, and in two places it is not the order the checklist lists them in:</p>
+<ul><li><strong><code>identity.purl</code> precedes <code>advisory_sources</code>.</strong> <code>MIRI-CLI-022</code> fires when an entry marked authoritative names an</li><li>  ecosystem the artifact is not distributed in — a condition evaluated by keying an OSV query on the declared</li><li>  <code>identity.purl</code>. The purl decides whether the advisory sources are reachable.</li><li><strong><code>identity.purl</code> precedes the SBOM decision.</strong> <code>MIRI-CLI-024</code> is conditional <em>on the purl</em>: a <code>pkg:generic/</code> purl</li><li>  with a <code>repository_url</code> means direct binary distribution and the check applies; a registry purl takes it out of</li><li>  scope, excluded from both numerator and denominator rather than scored as passing. An author cannot know whether</li><li>  the SBOM obligation binds until the purl is written.</li><li><strong><code>identity.distribution</code> precedes advisory composition.</strong> <code>MIRI-CLI-023</code> fires only when <code>distribution</code> is</li><li>  <code>private</code>, and then constrains what <code>advisory_sources</code> may contain. The open-source and private paths diverge here</li><li>  and nowhere earlier.</li></ul>
+<p><code>support</code> (<code>MIRI-CLI-020</code>, <code>MIRI-CLI-021</code>) needs Stage 0 only in the ordinary case. The exception is worth naming because it is easy to miss: <code>MIRI-CLI-021</code> accepts <code>support.replacement</code> as <em>either</em> a purl <em>or</em> a subcommand path in an absorbing CLI, and in that second form the value must resolve against a command surface — which makes an otherwise Stage 2 obligation depend on the inventory. An author replacing a whole tool writes a purl and stays in this stage; an author folding a tool into a subcommand of another does not.</p>
+<p>Note that this is a different field from the <code>lifecycle.replacement</code> of Stage 4: <code>MIRI-CLI-021</code> governs the <em>artifact&#x27;s</em> successor, <code>MIRI-CLI-038</code> governs a <em>surface&#x27;s</em>. They are checked separately and the redirect attack targets the first.</p>
+<h3 id="stage-3-update-and-changelog">Stage 3 — Update and changelog</h3>
+<p><strong>Settled:</strong> <code>check-update --json</code>, <code>changelog --since &lt;v&gt; --json</code>.</p>
+<p><code>check-update</code> depends on Stage 2 rather than the reverse. <code>MIRI-CLI-028</code> requires <code>urgency: security</code> when a record in <em>a declared authoritative advisory source</em> lists the running version in its affected range: the sources come from <code>MIRI-CLI-022</code>, the running version from <code>MIRI-CLI-017</code>. A <code>check-update</code> written before the identity block has nothing to query and no version to query it about.</p>
+<p><code>MIRI-CLI-026</code> and <code>MIRI-CLI-027</code> are constraints on the same command — passive by default, and offline returns <code>update_available: null</code> with exit 0 rather than an error — and are satisfiable as it is written.</p>
+<h3 id="stage-4-deprecation-coherence">Stage 4 — Deprecation coherence</h3>
+<p><strong>Settled:</strong> the <code>lifecycle</code> blocks on flags and subcommands, and the structured removal error.</p>
+<p>This is the last stage that other stages feed, and the most constrained in the standard, for the same reason <code>migration-guide.json</code> is last on the Python side: it is the only surface that depends on <em>every</em> other one.</p>
+<ul><li>It depends on <strong>Stage 2&#x27;s <code>--describe</code></strong>. <code>MIRI-CLI-038</code> requires every <code>lifecycle.replacement</code> to name a surface</li><li>  that resolves against the same binary&#x27;s current <code>--describe</code>, and requires the removal error&#x27;s <code>suggestions</code> to</li><li>  draw from that same resolved data. <code>MIRI-CLI-031</code> requires a <code>lifecycle</code> object on every surface observably</li><li>  deprecated, which presupposes the entry exists.</li><li>It depends on <strong>Stage 3&#x27;s changelog</strong>. <code>MIRI-CLI-036</code> requires every surface whose <code>lifecycle.deprecated_since</code> is</li><li>  release X to appear among the deprecated entries of <code>changelog --since</code>. Writing the lifecycle blocks first means</li><li>  writing claims the changelog has not yet been made to agree with.</li><li>It depends on <strong>Stage 1&#x27;s error envelope</strong>, through <code>MIRI-CLI-033</code> as described above.</li><li>Four of its eight checks additionally need a <strong>previous release</strong> (§3).</li></ul>
+<p><code>MIRI-CLI-038</code> also forbids a replacement that points at another deprecated or removed surface. Chains are resolved, not merely present, so the replacement targets must be settled before the blocks that name them.</p>
+<h3 id="stage-5-safety-annotations">Stage 5 — Safety annotations</h3>
+<p><strong>Settled:</strong> <code>--dry-run</code>, the destructive and read-vs-write markings, signal handling.</p>
+<p><code>MIRI-CLI-040</code> and <code>MIRI-CLI-041</code> place fields <em>inside</em> the Stage 2 document — a <code>destructive: true</code> marker and a machine-readable <code>mutating</code>/<code>mode</code> field on each command&#x27;s <code>--describe</code> entry.</p>
+<p><strong>This stage is last in the sense that nothing downstream of it exists, not in the sense that it may be deferred</strong>, and the distinction is load-bearing. <code>MIRI-CLI-041</code> requires the <code>mutating</code> field; <code>MIRI-CLI-039</code> (MUST, weight 4 — the heaviest Safety check) and <code>MIRI-CLI-042</code> both draw their entire evaluation population from it, declaring <code>population_unit: all mutating commands in --describe</code>. An author who defers the marking defers the population those two checks are scored over, and <code>MIRI-CLI-039</code> cannot be evaluated at all rather than passing.</p>
+<p>So the ordering within Stage 5 is itself check-imposed: the <code>mutating</code> marking (<code>MIRI-CLI-041</code>) precedes <code>--dry-run</code> (<code>MIRI-CLI-039</code>) and the idempotency guarantees (<code>MIRI-CLI-042</code>), because it defines what those two are about. <code>MIRI-CLI-040</code>&#x27;s <code>destructive</code> marker and <code>MIRI-CLI-043</code>&#x27;s signal handling are the only genuinely terminal obligations here — no check reads either.</p>
+<p>An earlier draft of this section claimed &quot;no check makes any other surface depend on them. Nothing reads them.&quot; That was false, and it was the most damaging kind of error this document can make: it told an author to defer a field a weight-4 MUST check consumes. It is recorded rather than silently corrected because the mistake has a shape worth recognizing — it was a universal negative written from a mental model of the standard rather than from the check text, and the check that refutes it is named in the same paragraph.</p>
+<h2 id="3-what-cannot-be-verified-yet">3. What Cannot Be Verified Yet</h2>
+<p>Five checks require a <strong>previous release</strong> and are therefore not evaluable on a project&#x27;s first one — <code>MIRI-CLI-030</code> (the changelog covers every added, removed, and deprecated surface), <code>MIRI-CLI-033</code> (a removed surface yields the structured teaching error), <code>MIRI-CLI-035</code> (deprecated surfaces survive at least one minor release), <code>MIRI-CLI-036</code> (every deprecation appears in the deprecating release&#x27;s changelog), and <code>MIRI-CLI-037</code> (every removed surface was deprecated earlier). All five are MUST-level, and together they carry <strong>14 of the 100 weight</strong>.</p>
+<p>A linter without access to a prior release <strong>MUST skip these and report the skip</strong> with the reason <code>previous_release_unavailable</code>, never pass them. Under the scoring model a forfeited check leaves both the numerator and the denominator, so a first release is scored over what could actually be evaluated. <strong>A first CLI release cannot score 100 on a suite that includes them and should not appear to.</strong></p>
+<p>This is a sharper constraint than the wheel standard imposes: the Python checklist has two such checks and the CLI checklist has five. Four of them (<code>033</code>, <code>035</code>, <code>036</code>, <code>037</code>) are Stage 4&#x27;s; the fifth, <code>MIRI-CLI-030</code>, belongs to the Update &amp; Changelog category and is therefore Stage 3&#x27;s. An earlier draft said all five lived in Stage 4, which contradicted this document&#x27;s own Stage 4 paragraph thirty lines above.</p>
+<p>The concentration in Stage 4 is structural rather than accidental — a CLI&#x27;s deprecation contract is a claim about <em>what the binary used to do</em>, and a single release contains no evidence of that.</p>
+<p>One check requires <strong>network</strong>: <code>MIRI-CLI-028</code>, weight 2. A first release linted in an offline sandbox is therefore scored over 84 of the 100 weight.</p>
+<p>No CLI check declares the <code>execution</code> capability, and this is not an omission. Execution is the <em>baseline</em> analysis mode for this target — static inspection is the baseline for wheels, local invocation for CLIs — so a check that runs the binary declares nothing, while the equivalent wheel check must declare <code>execution</code> explicitly.</p>
+<h2 id="4-the-ungraded-requirement">4. The Ungraded Requirement</h2>
+<p><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Lifecycle Specification §9</a> lists six conditions for conformance. Five map onto checks. The sixth does not:</p>
+<blockquote>All of the above derive from the same schema-as-data source as <code>--help</code> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">§2.3</a>).</blockquote>
+<p><strong>No check grades this, and no check can.</strong> Two hand-maintained outputs that happen to agree are indistinguishable from two outputs derived from one struct, when all a linter may do is run the binary. The requirement is a constraint on the <em>implementation</em>, and every other clause in the checklist is a constraint on <em>observable behavior</em>.</p>
+<p>It is named here rather than omitted, because an author reading <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">§9</a> will otherwise look for the check that enforces item 6 and conclude they have missed one. They have not: the requirement is real, it is the design principle the rest of the standard is built on, and it is enforced by nothing but the author&#x27;s own discipline.</p>
+<p>One observable shadow of it <em>is</em> decidable and is currently unchecked. <code>MIRI-CLI-004</code> tests containment in one direction — every subcommand listed in <code>--describe</code> must have a working <code>--help</code> — but nothing tests the converse. A subcommand reachable in <code>--help</code> and absent from <code>--describe</code> is exactly what divergent sources produce, it is mechanically detectable, and no check fires on it. That gap is recorded here rather than left to be discovered; if it is closed, it is closed with a new check ID and a redistribution of weight, never by renumbering an existing one.</p>
+</article>
+
+<aside class="toc" aria-label="On this page">
+  <p class="toc-title">On this page</p>
+  <nav>
+    <ol>
+    
+      <li class="lvl2"><a href="#abstract">Abstract</a></li>
+    
+      <li class="lvl2"><a href="#1-what-this-is-not">1. What This Is Not</a></li>
+    
+      <li class="lvl2"><a href="#2-the-stages">2. The Stages</a></li>
+    
+      <li class="lvl3"><a href="#stage-0-the-binary-answers-for-itself">Stage 0 — The binary answers for itself</a></li>
+    
+      <li class="lvl3"><a href="#stage-1-the-machine-channel">Stage 1 — The machine channel</a></li>
+    
+      <li class="lvl3"><a href="#stage-2-identity-and-support">Stage 2 — Identity and support</a></li>
+    
+      <li class="lvl3"><a href="#stage-3-update-and-changelog">Stage 3 — Update and changelog</a></li>
+    
+      <li class="lvl3"><a href="#stage-4-deprecation-coherence">Stage 4 — Deprecation coherence</a></li>
+    
+      <li class="lvl3"><a href="#stage-5-safety-annotations">Stage 5 — Safety annotations</a></li>
+    
+      <li class="lvl2"><a href="#3-what-cannot-be-verified-yet">3. What Cannot Be Verified Yet</a></li>
+    
+      <li class="lvl2"><a href="#4-the-ungraded-requirement">4. The Ungraded Requirement</a></li>
+    
+    </ol>
+  </nav>
+</aside>
+
+</div>
+<script>
+// Scroll-spy: mark the section the reader is currently under, so the sidebar answers "where am I"
+// as well as "where can I go". A heading counts as passed once its top crosses the trigger line,
+// and the last passed heading is the active one — which keeps a section highlighted while the
+// reader is deep inside it, where the heading itself is far off-screen above.
+(function () {
+  var links = {}, order = [];
+  document.querySelectorAll(".toc a").forEach(function (a) {
+    var id = decodeURIComponent(a.getAttribute("href").slice(1));
+    links[id] = a;
+    order.push(id);
+  });
+  var heads = order.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!heads.length) return;
+
+  var box = document.querySelector(".toc nav");
+  function paint() {
+    var active = null, line = 96;
+    for (var i = 0; i < heads.length; i++) {
+      if (heads[i].getBoundingClientRect().top <= line) { active = heads[i].id; } else { break; }
+    }
+    if (!active) { active = heads[0].id; }
+    for (var id in links) { links[id].classList.toggle("here", id === active); }
+    var el = links[active];
+    if (box && el && (el.offsetTop < box.scrollTop ||
+        el.offsetTop > box.scrollTop + box.clientHeight - 40)) {
+      box.scrollTop = Math.max(0, el.offsetTop - box.clientHeight / 2);
+    }
+  }
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  paint();
+})();
+</script>
+
+<div class="footer">
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIRI-CONSUMER-052 — No trust determination survives a `package.replaced` event · miri-standard</title>
+<link rel="icon" type="image/png" href="../../assets/miri-green.png">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="../../index.html"><img class="avatar" src="../../assets/miri-grey.png" alt="Miri" width="28" height="28">
+    <span class="logotype">miri<span class="hyphen">-</span>standard</span></a>
+  <span class="badge gold">Incubation</span>
+  <div class="right"><a class="btn-secondary" href="https://github.com/miri-whl/miri-standard">GitHub</a></div>
+</header>
+<div class="shell">
+<nav class="sidenav">
+  
+  <a class="version" href="../../changelog.html" title="What each release delivered">
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+  
+  
+  <div class="section">
+    <div class="label">Project</div>
+    
+    
+    <a href="../../index.html">Overview</a>
+    
+    
+    
+    <a href="../../why-consumption.html">Why consumption</a>
+    
+    
+    
+    <a href="../../glossary.html">Glossary</a>
+    
+    
+    
+    <a href="../../changelog.html">Changelog</a>
+    
+    
+    
+    <a href="../../origin.html">Origin story</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Python</div>
+    
+    
+    <a href="../../checks/python/index.html">Check definitions</a>
+    
+    
+    
+    <a href="../../production-map.html">Production map</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Agent metadata schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">CLI</div>
+    
+    
+    <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="../../cli-production-map.html">Production map</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/linter-checklist.md">Linter checklist ↗</a>
+    
+    
+    
+    <span class="planned"><span>Introspection schema</span><span class="mark">planned</span></span>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Consumption</div>
+    
+    
+    <a class="active" href="../../checks/consumer/index.html">Consumer checks</a>
+    
+    
+    
+    <a href="../../checks/surface/index.html">Surface checks</a>
+    
+    
+    
+    <a href="../../discovery-contract.html">Discovery contract</a>
+    
+    
+    
+    <a href="../../consumption-map.html">Consumption map</a>
+    
+    
+    
+    <a href="../../consumer-conformance.html">Consumer conformance</a>
+    
+    
+    
+    <a href="../../surface-conformance.html">Surface conformance</a>
+    
+    
+    
+    <a href="../../agent-integration-contract.html">Agent integration</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/proposals/20260821-consumption-specification.md">Originating RFC (superseded) ↗</a>
+    
+    
+  </div>
+  
+  <div class="section">
+    <div class="label">Go / Rust</div>
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/go/README.md">Go scope sketch ↗</a>
+    
+    
+    
+    <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/rust/README.md">Rust scope sketch ↗</a>
+    
+    
+  </div>
+  
+</nav>
+<main class="content"><div class="inner">
+
+<div class="spec-eyebrow"><span>Schema <b>check-v1</b></span><span>Status <b>canonical</b></span><span>Added <b>0.5.0-draft</b></span></div>
+<h1>MIRI-CONSUMER-052 — No trust determination survives a `package.replaced` event</h1>
+<p class="lede">Never carries a trust determination across a replacement of the artifact</p>
+
+<div class="badgerow">
+  <span class="badge deprecated">must</span>
+  <span class="badge deprecated">severity CRITICAL · 5</span>
+  <span class="tag">weight 5</span>
+  <span class="tag">conditional</span>
+  
+  <span class="tag">Lifecycle and Security Metadata 9.6 - The Artifact Can Change Under a Stable Identity</span><span class="tag">Agent Integration Contract 3.1 - the `package.replaced` trigger</span><span class="tag">Consumption Map 3.5 - security and trust</span><span class="tag">purl specification</span>
+</div>
+
+<p class="deffile">Definition:
+<span class="mono">standards/consumption/checks/MIRI-CONSUMER-052.yaml</span> ·
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumption/checks/MIRI-CONSUMER-052.yaml">view</a> ·
+<a href="https://raw.githubusercontent.com/miri-whl/miri-standard/main/standards/consumption/checks/MIRI-CONSUMER-052.yaml">raw</a></p>
+
+<div class="cardstack">
+  <div class="card"><div class="card-title">Violation</div>
+    <span class="mono example-bad">A consumer reads <code>greet@1.0.0</code>, queries its advisory sources, finds nothing, and records &quot;greet@1.0.0: clean&quot;. The wheel is rebuilt and reinstalled at 1.0.0 with a hostile <code>usage-patterns.json</code>. On the next question about greet the consumer answers from the recorded verdict and never re-reads.</span></div>
+  <div class="card"><div class="card-title">Compliant</div>
+    <span class="mono example-good">The same consumer receives <code>package.replaced</code> for greet, discards its recorded verdict, re-runs Map 3.1 then 3.5 against the new bytes, and reports what it found now - noting, because greet carries no attestation, that the read is a re-read and not a verification.</span></div>
+</div>
+
+<h2>Why this matters</h2>
+<p>A purl as this standard requires it identifies a name and a version rather than a byte stream, so two different artifacts can carry the same <code>identity.purl</code> and nothing in the standard detects it. Uninstalling a distribution and installing different bytes at the same version moves no field a consumer would compare. The adversary is the one Lifecycle and Security Metadata 9.1 already names - a package trustworthy when adopted and malicious later - arriving by a route that publishes nothing, and 9.4 explains why the payoff is larger here than in plain documentation - structured, authoritative-looking metadata invites a consumer to lower its guard, so an agent taught to read and act on it is a better target than one that was not. The exposure is worst where 9.5&#x27;s foundation is absent. PEP 740 attestation is the only field tying an artifact to an independent identity, it is network-gated and conditional, and a locally built wheel carries none - which is also the workflow where same-version replacement is routine, because a maintainer rebuilding cannot bump a version on every edit. A consumer caching a verdict keyed on purl is caching on a key that does not identify what it read.</p>
+
+<h2>Definition</h2>
+<p>This check verifies the consumer treats a trust determination as a statement about BYTES rather than about a purl. On notice that an installed artifact was replaced without its version changing, any previous verdict about that artifact - that its advisory sources were queried, that its replacement was judged legitimate, that its patterns carried no directive text - is void, and the reads that produced it must be performed again against the new bytes before the consumer acts on them.</p>
+
+<h2>When it fires</h2>
+<ul class="plain">
+  <li>The consumer is driven with a <code>package.replaced</code> event for a package it previously read, and reports a security, advisory, replacement or antipattern conclusion drawn from the earlier read rather than re-reading</li><li>The consumer caches served metadata keyed on <code>identity.purl</code> alone, with no re-read on replacement notice, so the cache cannot distinguish two builds of one version</li><li>The consumer presents a re-read as a verification where the artifact carries no attestation. Re-reading yields fresher metadata, never verified metadata, and saying otherwise converts a freshness mechanism into a false check</li><li>The consumer treats a matching <code>identity.purl</code> as evidence that the artifact is unchanged</li>
+</ul>
+
+<h2>How to fix it</h2>
+<p>Void and re-derive a package&#x27;s trust determinations on notice that its artifact was replaced; never treat a matching purl as evidence the bytes are unchanged.</p>
+<ol class="plain">
+  <li>Scope every trust determination to the bytes it was made about, not to the purl</li><li>On a <code>package.replaced</code> event, void the determinations for that package and re-run the reads that produced them - Consumption Map 3.1 for the surface, then 3.5 for trust</li><li>Where metadata is cached, key the cache on something that changes when the artifact does, or re-read on notice</li><li>Report a re-read as a re-read. Where no attestation is present the standard binds nothing about the contents, and the consumer must not imply that it does</li>
+</ol>
+
+<h2>Fields</h2>
+<dl class="meta">
+  <dt>severity.default</dt><dd>CRITICAL (numeric 5 of 5)</dd>
+  <dt>violation_unit</dt><dd>each trust determination reused after the artifact it concerned was replaced</dd>
+  
+  
+  <dt>category</dt><dd>Trust and Verdicts</dd>
+  <dt>status</dt><dd>active</dd>
+  <dt>added_in</dt><dd>0.5.0-draft</dd>
+  
+</dl>
+
+<h2>References</h2>
+<ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumer/../python/lifecycle-security-metadata.md">Lifecycle and Security Metadata 9.6 - The Artifact Can Change Under a Stable Identity</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumer/agent-integration-contract.md">Agent Integration Contract 3.1 - the `package.replaced` trigger</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumer/consumption-map.md">Consumption Map 3.5 - security and trust</a> <em>(spec)</em></li>
+  
+  <li><a href="https://github.com/package-url/purl-spec">purl specification</a></li>
+  
+</ul>
+
+<p class="source-note">Source of truth:
+<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/consumption/checks/MIRI-CONSUMER-052.yaml" class="mono">MIRI-CONSUMER-052.yaml</a> ·
+schema <a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/check-v1.json" class="mono">check-v1.json</a> ·
+canonical <a href="https://miri-whl.github.io/checks/consumer/MIRI-CONSUMER-052.html" class="mono">MIRI-CONSUMER-052.html</a></p>
+
+<div class="prevnext">
+  <a href="MIRI-CONSUMER-051.html">← MIRI-CONSUMER-051</a>
+  <span></span>
+</div>
+
+<div class="footer">
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
+</div>
+</div></main>
+</div>
+</body>
+</html>

@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -29,7 +29,7 @@
     
     
     
-    <a href="../../whats-new.html">What&#39;s new in 0.3</a>
+    <a href="../../why-consumption.html">Why consumption</a>
     
     
     
@@ -54,6 +54,10 @@
     
     
     
+    <a href="../../production-map.html">Production map</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
     
     
@@ -68,6 +72,10 @@
     
     
     <a class="active" href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="../../cli-production-map.html">Production map</a>
     
     
     
@@ -175,7 +183,7 @@ $ trivy rootfs .   # 0 packages found — the vendored OpenSSL is invisible</spa
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li><code>identity.purl</code> indicates direct binary distribution (<code>pkg:generic/</code> with <code>repository_url</code>) — registry-distributed CLIs pass this conditional check automatically</li><li>the binary yields no embedded module inventory (<code>go version -m</code> fails, no <code>.dep-v0</code> section) and <code>build_info.embedded_modules</code> is absent or <code>false</code></li><li><code>identity.sbom</code> is absent, or the referenced URL/path does not resolve to a CycloneDX/SPDX document for the release under test</li>
+  <li><code>identity.purl</code> indicates direct binary distribution (<code>pkg:generic/</code> with <code>repository_url</code>) — registry-distributed CLIs are out of scope and are excluded from both numerator and denominator, never scored as passing</li><li>the binary yields no embedded module inventory (<code>go version -m</code> fails, no <code>.dep-v0</code> section) and <code>build_info.embedded_modules</code> is absent or <code>false</code></li><li><code>identity.sbom</code> is absent, or the referenced URL/path does not resolve to a CycloneDX/SPDX document for the release under test</li>
 </ul>
 
 <h2>How to fix it</h2>
@@ -218,7 +226,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-024.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

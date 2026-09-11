@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -29,7 +29,7 @@
     
     
     
-    <a href="whats-new.html">What&#39;s new in 0.3</a>
+    <a href="why-consumption.html">Why consumption</a>
     
     
     
@@ -54,6 +54,10 @@
     
     
     
+    <a href="production-map.html">Production map</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
     
     
@@ -68,6 +72,10 @@
     
     
     <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="cli-production-map.html">Production map</a>
     
     
     
@@ -133,7 +141,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>standards/consumption/surface-conformance.md</b></span><span>Status <b>0.3-draft</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>standards/consumption/surface-conformance.md</b></span><span>Status <b>0.3.1-draft</b></span></div>
 <h1>Surface Conformance</h1>
 
 <p class="lede">What a conformant metadata-query surface is — the obligations a consumer cannot be held to.</p>
@@ -185,7 +193,7 @@
 <p>A consumer emits no responses, so it cannot be held to the shape of one. A surface makes no decisions about what to call, so it cannot be held to the judgment a consumer exercises. Scoring them together would produce a number that answers neither &quot;can I trust this server&quot; nor &quot;can I trust this agent&quot; — and when it dropped, would not say which.</p>
 <p>The division follows the actor table in <a href="consumer-conformance.html">Consumer Conformance §4</a>: every obligation marked there as binding the <strong>Surface</strong> is numbered here, and every category in §4 appears in that table. The one obligation named on both sides is absence — a surface must <em>signal</em> it correctly and a consumer must <em>report</em> it correctly, which are different failures that can occur independently. That table was written as a declared gap; this document closes it.</p>
 <h2 id="6-check-definitions">6. Check Definitions</h2>
-<p>The authoritative definition of each check is its YAML file in <code>standards/consumption/checks/</code>, governed by <code>schemas/check-v1.json</code> with <code>target: surface</code>. The tables in §4 are the derived rendering: where the two disagree, the YAML is correct.</p>
+<p>The authoritative definition of each check is its YAML file in <code>standards/consumption/checks/</code>, governed by <code>schemas/check-v2.json</code> with <code>target: surface</code>. The tables in §4 are the derived rendering: where the two disagree, the YAML is correct.</p>
 <p>Surface and consumer checks share a directory because they share a suite and a contract; they are separated by <code>target</code>, and their weights sum to 100 independently.</p>
 </article>
 
@@ -270,7 +278,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

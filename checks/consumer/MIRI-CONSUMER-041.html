@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -29,7 +29,7 @@
     
     
     
-    <a href="../../whats-new.html">What&#39;s new in 0.3</a>
+    <a href="../../why-consumption.html">Why consumption</a>
     
     
     
@@ -54,6 +54,10 @@
     
     
     
+    <a href="../../production-map.html">Production map</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
     
     
@@ -68,6 +72,10 @@
     
     
     <a href="../../checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="../../cli-production-map.html">Production map</a>
     
     
     
@@ -141,7 +149,7 @@
   <span class="badge deprecated">must</span>
   <span class="badge neutral">severity MINOR · 2</span>
   <span class="tag">weight 1</span>
-  
+  <span class="tag">conditional</span>
   
   <span class="tag">Consumption Map §3.6</span>
 </div>
@@ -165,17 +173,17 @@ not the package&#x27;s, and nothing guarantees it matches real behavior.</span><
 <p>A test built on a fake the package does not support drifts silently from the real behavior, and the drift surfaces as a passing test over broken code. Only <code>supported_test_doubles</code> entries carry the author&#x27;s fidelity commitment.</p>
 
 <h2>Definition</h2>
-<p>This check verifies the consumer distinguishes doubles the package ships from ones the consumer invented.</p>
+<p>Consumer obligation from Consumption Map 3.6. CONDITIONAL, and the condition is the point: no producer check requires any package to ship test-patterns.json, so a consumer can be driven against a conforming wheel that ships none, or one that ships the document with an empty supported_test_doubles. In either state the only way to satisfy this check is to present no double at all - which is also what a consumer must do when there is nothing to present. The check could not distinguish a careful consumer from an inert one, and was passing vacuously. Under the not-applicable-is-not-a-pass rule it is now excluded from both numerator and denominator where the package declares no doubles, and scored only where there is a declared double to misrepresent.</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>The consumer presents a mock absent from <code>supported_test_doubles</code> as the package&#x27;s official test double</li>
+  <li>The package declares at least one entry in <code>supported_test_doubles</code> and the consumer presents a mock absent from that list as the package&#x27;s official double</li><li>The package declares doubles and the consumer presents its own synthesized mock without saying it is synthesized, where a declared one exists for the same surface</li>
 </ul>
 
 <h2>How to fix it</h2>
-<p>Use only declared doubles when claiming support; label anything else as the consumer&#x27;s own construction</p>
+<p>Present a double from <code>supported_test_doubles</code> where one exists for the surface under test</p>
 <ol class="plain">
-  <li>Use only declared doubles when claiming support; label anything else as the consumer&#x27;s own construction</li>
+  <li>Present a double from <code>supported_test_doubles</code> where one exists for the surface under test</li><li>Where none exists, say the mock is the consumer&#x27;s own rather than the package&#x27;s</li>
 </ol>
 
 <h2>Fields</h2>
@@ -208,7 +216,7 @@ canonical <a href="https://miri-whl.github.io/checks/consumer/MIRI-CONSUMER-041.
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

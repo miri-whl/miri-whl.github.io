@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>What&#39;s new in 0.3 · miri-standard</title>
+<title>Why consumption · miri-standard</title>
 <link rel="icon" type="image/png" href="assets/miri-green.png">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.4.0</span><span class="what">changelog</span></a>
+    <span class="v">0.5.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -29,7 +29,7 @@
     
     
     
-    <a class="active" href="whats-new.html">What&#39;s new in 0.3</a>
+    <a class="active" href="why-consumption.html">Why consumption</a>
     
     
     
@@ -54,6 +54,10 @@
     
     
     
+    <a href="production-map.html">Production map</a>
+    
+    
+    
     <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/linter-checklist.md">Linter checklist ↗</a>
     
     
@@ -68,6 +72,10 @@
     
     
     <a href="checks/cli/index.html">Check definitions</a>
+    
+    
+    
+    <a href="cli-production-map.html">Production map</a>
     
     
     
@@ -133,18 +141,18 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>docs/whats-new-0.3.md</b></span><span>Version <b>0.4.0</b></span></div>
-<h1>What&#39;s new in 0.4.0</h1>
+<div class="spec-eyebrow"><span>Document <b>docs/why-consumption.md</b></span></div>
+<h1>Why the standard has a consumption half</h1>
 
 <p class="lede">0.1 and 0.2 specified what an artifact ships. 0.3 specifies how an agent consumes it.</p>
 <div class="prose-layout">
 <article class="prose">
-<p>Versions 0.1 and 0.2 specified what an artifact <strong>ships</strong>. Version 0.3 specifies how an agent <strong>consumes</strong> it.</p>
-<p>That is the whole of it. A package could score Gold and help no agent, because nothing in the standard said how the metadata was supposed to reach a decision, what to read for a given task, or what it means to consume it correctly. 0.3 closes that loop with three documents, a fixture set, and fifteen numbered checks.</p>
-<h2 id="the-three-documents">The three documents</h2>
+<p>Versions 0.1 and 0.2 specified what an artifact <strong>ships</strong>. From 0.3 the standard also specifies how an agent <strong>consumes</strong> it — and this page is the argument for why that half had to exist. Per-release detail lives in the <a href="../CHANGELOG.md">changelog</a>; the reasoning here does not change from one version to the next.</p>
+<p>That is the whole of it. A package could score Gold and help no agent, because nothing in the standard said how the metadata was supposed to reach a decision, what to read for a given task, or what it means to consume it correctly. The consumption suite closes that loop with four documents, a fixture set, and thirty-six numbered checks.</p>
+<h2 id="the-documents">The documents</h2>
 <p><strong>Discovery Contract</strong> — how metadata reaches an agent at the moment it is deciding what to call. Eight read-only operations in three kinds: <em>retrieval</em> (<code>document</code>, with <code>lifecycle</code> and <code>migration-guide</code> shorthands), <em>derived views</em> (<code>api-index</code>, <code>patterns</code>, <code>graph</code>), and <em>determination</em> (<code>list</code>, <code>resolve</code>). MCP is the first binding, not the contract itself.</p>
 <p><strong>Consumption Map</strong> — what to read, per task, and in what order. Six tasks: first use, scaffolding an integration, upgrading a dependency, diagnosing a runtime failure, answering a security question, and writing tests. Each carries a read-order, prohibitions, and informative heuristics, and the three are deliberately graded differently.</p>
-<p><strong>Consumer Conformance</strong> — what a conformant consumer <em>is</em>: fifteen <code>MIRI-CONSUMER</code> checks weighted to 100.</p>
+<p><strong>Consumer Conformance</strong> — what a conformant consumer <em>is</em>: eighteen <code>MIRI-CONSUMER</code> checks weighted to 100.</p>
 <h2 id="the-idea-that-shaped-everything">The idea that shaped everything</h2>
 <p><strong>The surface owns the envelope; the publisher owns the payload.</strong></p>
 <p>Every response is a surface-authored envelope with the package&#x27;s bytes nested inside it. The two never share a namespace. That sounds like a formatting decision and is actually the security model: because a publisher cannot write to the top level, a publisher cannot forge the signals a consumer branches on.</p>
@@ -161,7 +169,7 @@
 <ul><li><code>api-index</code> can <strong>confirm a claim</strong> and never refute one. It is capped and filtered, so a symbol missing from a</li><li>  response may simply have been dropped — which is exactly how a hostile package can hide a surface by padding.</li><li><code>resolve</code> can <strong>confirm existence</strong> and never refute it. It parses source without importing, so a surface built at</li><li>  runtime is invisible to it — <code>not-in-source</code> means <em>not defined statically</em>, never <em>does not exist</em>.</li></ul>
 <p>A consumer that collapses either asymmetry is wrong in a specific, predictable way, and the standard names both.</p>
 <h2 id="what-this-version-does-not-claim">What this version does not claim</h2>
-<p>Nothing here asserts that consuming this metadata improves agent outcomes. That is an empirical question with a pre-registered experiment attached, and the specification deliberately stays on the mechanism side of it. 0.3 makes the experiment <em>possible</em> — it could not run without a defined consumption contract — but it does not anticipate the result.</p>
+<p>Nothing here asserts that consuming this metadata improves agent outcomes. That is an empirical question with a pre-registered experiment attached, and the specification deliberately stays on the mechanism side of it. The specification makes the experiment <em>possible</em> — it could not run without a defined consumption contract — but it does not anticipate the result.</p>
 <p>Two scope decisions are stated rather than left to be discovered: the contract answers only for the <strong>installed</strong> version, so choosing a package before installing it and asking what breaks on a future upgrade are both out of scope for 0.3; and several obligations bind the <strong>surface</strong> rather than the consumer, so the consumer profile does not score them and says which those are. A Surface Conformance profile does not exist yet, and the standard says so.</p>
 </article>
 
@@ -209,7 +217,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.4.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
