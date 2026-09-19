@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -186,6 +186,16 @@
   <li>no example listed in AGENT_EXAMPLES.json contains a try/except (or equivalent guard) around a fallible call</li><li>none of the exception types declared in sdk-manifest.json error_handling or common_errors appears in any example&#x27;s AST</li><li>the examples/ tree lacks an error-handling example even though sdk-manifest.json declares package exception types</li>
 </ul>
 
+
+<h2>Tiers</h2>
+<p class="muted">Weight is earned as a cumulative schedule; the obligation is satisfied at <strong>T1</strong>. Tiers above it price weight only.</p>
+<dl class="meta">
+  <dt>T0</dt>
+  <dd><ul class="plain"><li>At least one example listed in <code>AGENT_EXAMPLES.json</code> contains a <code>try</code>/<code>except</code> (or equivalent guard) around a call into the package</li></ul></dd><dt>T1 — conformance</dt>
+  <dd><ul class="plain"><li>Every exception type an example catches that is attributed to the package resolves in <code>sdk-manifest.json</code> <code>error_handling</code> / <code>common_errors</code> or in <code>api_index</code></li></ul></dd><dt>T2</dt>
+  <dd><ul class="plain"><li>At least the calibrated floor of the exception types declared in <code>sdk-manifest.json</code> appears caught in some example&#x27;s AST (weightless until <code>t2_activation</code> is met)</li></ul></dd>
+</dl>
+
 <h2>How to fix it</h2>
 <p>Demonstrate the package&#x27;s exception handling in each example.</p>
 <ol class="plain">
@@ -224,7 +234,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-017.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

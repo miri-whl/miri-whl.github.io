@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -184,6 +184,7 @@ AttributeError: module &#x27;weather_sdk&#x27; has no attribute &#x27;show_quick
   <li>Any §6.1 discovery function is absent from the package&#x27;s top-level namespace after installing the wheel into a clean venv</li><li>Calling a discovery function raises, or returns a path that does not exist in the installed distribution</li><li>Returned data contradicts the shipped files — e.g. <code>list_examples()</code> disagrees with <code>AGENT_EXAMPLES.json</code> or with the contents of <code>examples/</code>, or <code>get_agent_metadata()</code> disagrees with <code>agent-metadata/</code></li><li>An <code>sdk-manifest.json</code> api_index entry does not resolve against the installed package — the named class or function is absent, or a listed <code>key_methods</code> / <code>init_params</code> entry disagrees with the object&#x27;s actual <code>inspect.signature</code></li><li>An api_index entry names a console-script entry point declared in the wheel&#x27;s <code>entry_points</code> (<code>console_scripts</code>) — the CLI surface belongs in the CLI standard&#x27;s <code>--describe</code>, not api_index, and MUST be excluded from it (Generation Invariant §5.4)</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Implement the package-level discovery functions over the generated metadata.</p>
 <ol class="plain">
@@ -224,7 +225,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-036.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

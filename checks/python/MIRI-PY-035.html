@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -183,6 +183,7 @@ def legacy_connect(self):
   <li>Calling or importing an interface listed in migration-guide.json <code>deprecations</code> under <code>warnings.catch_warnings(record=True)</code> with <code>simplefilter(&quot;always&quot;)</code> captures no warning</li><li>A warning is emitted but its category is not <code>DeprecationWarning</code> or a subclass (e.g. <code>UserWarning</code>, or a bare print to stderr)</li><li>The deprecation exists only as docstring or comment text, with no PEP 702 decorator and no <code>warnings.warn</code> call on the executable path</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Ensure the PEP 702 decorator (or warnings call) fires at runtime.</p>
 <ol class="plain">
@@ -223,7 +224,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-035.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

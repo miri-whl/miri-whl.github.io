@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -177,6 +177,7 @@
   <li>A truncated response omits <code>next_cursor</code> where the surface can continue</li><li>A supplied <code>cursor</code> restarts the ordering rather than continuing it</li><li>A cursor presented with a changed operation, package, cap, or filter input is honored rather than rejected</li><li>A scope-changed or expired cursor is answered with <code>INVALID_INPUT</code>, or as absence, rather than <code>INVALID_CURSOR</code></li><li>The surface emits <code>next_cursor</code> but rejects every cursor presented back to it</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Return <code>next_cursor</code> on truncation, continue the same ordering, and reject out-of-scope cursors as INVALID_CURSOR</p>
 <ol class="plain">
@@ -213,7 +214,7 @@ canonical <a href="https://miri-whl.github.io/checks/surface/MIRI-SURFACE-033.ht
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

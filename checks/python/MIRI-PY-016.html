@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -183,6 +183,7 @@ On disk but unindexed:
   <li>an examples[*].file path in AGENT_EXAMPLES.json does not exist in the wheel</li><li>a *.py file under examples/ (excluding __init__.py) has no entry in the index</li><li>learning_paths, categories, prerequisites, or related reference an example id absent from the examples map</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Regenerate the example index from the files on disk.</p>
 <ol class="plain">
@@ -198,8 +199,10 @@ On disk but unindexed:
   
   
   <dt>category</dt><dd>Examples</dd>
-  <dt>status</dt><dd>active</dd>
+  <dt>status</dt><dd>withdrawn</dd>
   <dt>added_in</dt><dd>0.1-draft</dd>
+  
+  <dt>withdrawn_in</dt><dd>0.6.0-draft</dd>
   
 </dl>
 
@@ -221,7 +224,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-016.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

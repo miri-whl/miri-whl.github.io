@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -180,6 +180,7 @@
   <li>--describe carries no <code>advisory_sources</code>, or the array is empty</li><li>An entry&#x27;s <code>type</code> is outside osv / osv-internal / osv-local, or its <code>url</code> is missing</li><li>An entry of type &quot;osv&quot; omits the <code>ecosystem</code> field needed to scope the OSV.dev query</li><li>No entry is authoritative for the artifact itself: every entry carries <code>authoritative: false</code>, which per CLI Spec 4 covers only the dependency tree, and <code>advisory_coverage</code> is not <code>none</code>. Without this clause the check is satisfied by an array that declares in its own fields that nothing covers the artifact, so a consumer asking whether the tool is vulnerable finds every field valid and no source to query</li><li><code>advisory_coverage</code> is <code>none</code> but <code>support.security_policy</code> is absent, leaving neither a machine channel nor a human one</li><li>An entry marked authoritative for the artifact names an ecosystem the artifact is not distributed in: an OSV query keyed on the declared <code>identity.purl</code> cannot match records in that ecosystem, so the source is unreachable in practice while well-formed on paper. This clause is scoped to authoritative entries deliberately: a non-authoritative entry covers the dependency tree, where naming the ecosystem the dependencies come from is correct even when the artifact itself is distributed elsewhere</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Declare at least one OSV-compatible advisory endpoint.</p>
 <ol class="plain">
@@ -218,7 +219,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-022.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

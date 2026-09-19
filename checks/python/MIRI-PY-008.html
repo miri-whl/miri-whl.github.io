@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge maintenance">severity MEDIUM · 3</span>
-  <span class="tag">weight 5</span>
+  <span class="tag">weight 4</span>
   
   
   <span class="tag">Agent Metadata §4.2</span><span class="tag">schema</span>
@@ -184,6 +184,7 @@
 <ul class="plain">
   <li><code>agent-metadata/usage-patterns.json</code> is absent</li><li>The top level lacks version, generated_at, or patterns</li><li>A pattern entry lacks any of id, name, description, complexity, category, or code</li><li><code>patterns</code> is present but an empty array. The two clauses below quantify over the pattern list, so an empty one satisfies them vacuously — and usage-patterns.json is the document whose entire value is its contents. The standard already says this for advisory sources (MIRI-PY-021, &quot;absent, null, or an empty array&quot;) and did not say it here. Raised by the miri-py team from scoring five real wheels.</li><li>A <code>categories</code> or <code>learning_paths</code> entry lists a pattern id that no pattern defines</li>
 </ul>
+
 
 <h2>How to fix it</h2>
 <p>Regenerate usage-patterns.json; every pattern needs id and code.</p>
@@ -223,7 +224,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-008.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

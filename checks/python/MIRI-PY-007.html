@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge deprecated">severity HIGH · 4</span>
-  <span class="tag">weight 6</span>
+  <span class="tag">weight 5</span>
   
   
   <span class="tag">Agent Metadata §4.1</span><span class="tag">schema</span>
@@ -178,12 +178,21 @@
 <p>Agent Metadata §4.1 defines sdk-manifest.json as the agent&#x27;s substitute for parsing source: quick_reference for orientation, api_index for signatures, error_handling for recovery. Agents do not read it skeptically — an api_index entry that omits its parameters, or a common_imports line naming a module that moved, is transcribed directly into generated code, and the defect reproduces at machine speed across every consumer of the package instead of surfacing in one developer&#x27;s editor. Schema validation at build time is the cheapest point to stop that class of error.</p>
 
 <h2>Definition</h2>
-<p>The agent-metadata directory is the wheel&#x27;s machine-readable surface; every file in it must be present, schema-valid, and generated at build time so agents can consume it without parsing or guessing. This check verifies: Present and validates against schema.</p>
+<p>The agent-metadata directory is the wheel&#x27;s machine-readable surface; every file in it must be present, schema-valid, and generated at build time so agents can consume it without parsing or guessing. This check verifies: Present and validates against schema. Since 0.6.0 it is TIERED: schema validity is T0 (exists), and T1 (true) requires that <code>common_imports</code> actually import — the manifest is a document an agent transcribes into code, so a line that is valid JSON and not valid Python is a lie the schema cannot see.</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
   <li><code>agent-metadata/sdk-manifest.json</code> is absent from the wheel</li><li>The document fails validation against sdk-manifest-v1.json (any of sdk_version, generated_at, miri_version, quick_reference, api_index missing)</li><li><code>quick_reference</code> lacks primary_classes, key_methods, or common_imports</li><li><code>api_index</code> is present but empty. The clause below quantifies over its entries, so an empty index satisfies it vacuously and a manifest declaring no public surface passes. The miri-py proposal that raised this class believed 007 already failed an empty index &quot;on other grounds&quot;; it does not, and verifying that claim turned up a second instance rather than fewer.</li><li>An <code>api_index</code> entry lacks <code>type</code> or <code>purpose</code>, or uses a <code>type</code> outside the schema&#x27;s allowed values</li>
 </ul>
+
+
+<h2>Tiers</h2>
+<p class="muted">Weight is earned as a cumulative schedule; the obligation is satisfied at <strong>T1</strong>. Tiers above it price weight only.</p>
+<dl class="meta">
+  <dt>T0</dt>
+  <dd><ul class="plain"><li><code>agent-metadata/sdk-manifest.json</code> is present, parses as strict JSON, and validates against sdk-manifest-v1.json</li></ul></dd><dt>T1 — conformance</dt>
+  <dd><ul class="plain"><li>Every <code>quick_reference.common_imports</code> entry parses as a Python import statement AND resolves: each module it names exists in the wheel and each imported name is defined there (a <code>from _version.py import X</code> line is schema-valid text and not a valid import; this clause is what makes it fail)</li><li>Every <code>api_index</code> key parses as a dotted public path rooted at the package, and keys are unique</li><li>Every <code>quick_reference.primary_classes</code> and <code>key_methods</code> entry names a key present in <code>api_index</code></li></ul></dd>
+</dl>
 
 <h2>How to fix it</h2>
 <p>Regenerate sdk-manifest.json with the Miri build tooling; validate against sdk-manifest-v1.json.</p>
@@ -223,7 +232,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-007.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

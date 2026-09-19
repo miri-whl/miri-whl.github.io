@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -180,6 +180,7 @@
   <li>The surface copies publisher-controlled bytes into its own <code>reason</code> field — document contents, an echo of an offending line from a parser, or a path drawn from package data. <code>reason</code> is surface-authored: the permitted variable parts are values the surface computed or received from the consumer. A field carrying arbitrary publisher text into the envelope is an injection channel wearing a human-readable label, which is this check&#x27;s own defect one field over</li><li>A transport-layer message the binding emits on the surface&#x27;s behalf quotes a publisher string — the same bytes through a different door</li><li>A payload document&#x27;s keys appear at the envelope&#x27;s top level</li><li>The surface injects <code>schema_version</code> or any envelope field into the payload document</li><li>The surface hoists a payload field into the envelope</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Nest every payload under its operation&#x27;s payload key: <code>document</code>, <code>entries</code>, <code>packages</code>, <code>patterns</code>, <code>graph</code>, <code>resolution</code></p>
 <ol class="plain">
@@ -216,7 +217,7 @@ canonical <a href="https://miri-whl.github.io/checks/surface/MIRI-SURFACE-002.ht
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

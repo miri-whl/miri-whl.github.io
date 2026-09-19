@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge maintenance">severity MEDIUM · 3</span>
-  <span class="tag">weight 4</span>
+  <span class="tag">weight 5</span>
   
   <span class="tag">requires execution</span>
   <span class="tag">Miri Wheel Ext. §7.2.2</span>
@@ -184,6 +184,17 @@
 <ul class="plain">
   <li>py_compile fails on any example listed in AGENT_EXAMPLES.json</li><li>an example exits nonzero or raises when executed in a clean venv containing only the built wheel plus the dependencies its index entry declares</li><li>an example imports a module provided neither by the package&#x27;s Requires-Dist nor by its AGENT_EXAMPLES.json dependencies entry</li><li>an example needs live credentials but carries no documented placeholder (e.g. YOUR_API_KEY) marking it exempt from clean-venv execution</li>
 </ul>
+
+
+<h2>Tiers</h2>
+<p class="muted">Weight is earned as a cumulative schedule; the obligation is satisfied at <strong>T1</strong>. Tiers above it price weight only.</p>
+<dl class="meta">
+  <dt>T0</dt>
+  <dd><ul class="plain"><li>Every example listed in <code>AGENT_EXAMPLES.json</code> passes <code>py_compile</code></li></ul></dd><dt>T1 — conformance</dt>
+  <dd><ul class="plain"><li>Every example exits zero in a clean virtual environment holding only the built wheel and its declared dependencies (credentials placeholders documented per the existing clause), and every API name it calls resolves in <code>api_index</code></li></ul></dd><dt>T2</dt>
+  <dd><ul class="plain"><li>Across all examples, at least the calibrated floor of <code>api_index</code> keys is exercised — an api_index entry counts as exercised only by an example that itself clears T1 (weightless until <code>t2_activation</code> is met)</li></ul></dd><dt>T3</dt>
+  <dd><ul class="plain"><li>No example calls a symbol that the previous release&#x27;s <code>api_index</code> carried and the current one does not: a stale example that still runs is documentation of a removed API</li></ul></dd>
+</dl>
 
 <h2>How to fix it</h2>
 <p>Fix or guard the example; examples must run with only documented prerequisites.</p>
@@ -225,7 +236,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-015.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

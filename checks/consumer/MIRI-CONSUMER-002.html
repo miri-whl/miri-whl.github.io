@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -181,6 +181,7 @@ not the package&#x27;s, and nothing verified it runs.</span></div>
   <li>Driven against <code>bare</code>, the consumer presents lifecycle, usage, or API content attributed to the package</li><li>The consumer&#x27;s output does not distinguish what it read from what it inferred</li><li>A skipped read-step is reported without naming all three of the task and step (<code>3.3 step 2</code>), and a reason from the fixed set <code>absent</code> / <code>unavailable-vehicle</code> / <code>error</code> / <code>not-applicable</code>. A report missing the reason leaves a caller unable to tell a package fact from an attempt fact, which is the distinction the set exists to draw</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>On an absent response, emit the absence and stop; do not fall back to model priors while retaining attribution</p>
 <ol class="plain">
@@ -217,7 +218,7 @@ canonical <a href="https://miri-whl.github.io/checks/consumer/MIRI-CONSUMER-002.
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

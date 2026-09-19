@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge maintenance">severity MEDIUM · 3</span>
-  <span class="tag">weight 4</span>
+  <span class="tag">weight 5</span>
   
   
   <span class="tag">Miri Wheel Ext. §5.1</span>
@@ -177,12 +177,23 @@
 <p>Miri Wheel Extensions §5.1 names examples/quickstart.py as the one required example and §9.1.1 makes its presence the floor of basic conformance; the enhanced METADATA field Agent-Quickstart-File points to it by path. It is the first artifact an agent executes to confirm its model of the API before generating integration code — in its absence the agent synthesizes the install-to-first-result path from prose and signatures, which is exactly the guessing this standard exists to remove.</p>
 
 <h2>Definition</h2>
-<p>Embedded examples are the primary learning path for agents; an example that does not run teaches a wrong lesson at machine speed. This check verifies: <code>examples/quickstart.py</code> present.</p>
+<p>Embedded examples are the primary learning path for agents; an example that does not run teaches a wrong lesson at machine speed. This check verifies: <code>examples/quickstart.py</code> present. Since 0.6.0 it is TIERED: presence is T0 and earns a fraction of the weight, never all of it; the index/file join that MIRI-PY-016 performed until its withdrawal is this check&#x27;s T3 clause, and 016&#x27;s weight moved here with it.</p>
 
 <h2>When it fires</h2>
 <ul class="plain">
   <li>examples/quickstart.py is absent from the built wheel</li><li>METADATA Agent-Quickstart-File names a path that does not exist in the wheel</li><li>quickstart.py exists but never imports the package it ships in, or contains no executable statements (empty stub)</li>
 </ul>
+
+
+<h2>Tiers</h2>
+<p class="muted">Weight is earned as a cumulative schedule; the obligation is satisfied at <strong>T1</strong>. Tiers above it price weight only.</p>
+<dl class="meta">
+  <dt>T0</dt>
+  <dd><ul class="plain"><li><code>examples/quickstart.py</code> is present in the built wheel and <code>py_compile</code> succeeds on it</li></ul></dd><dt>T1 — conformance</dt>
+  <dd><ul class="plain"><li>Every import in quickstart.py resolves against the wheel&#x27;s own package or its Requires-Dist, and every attribute path it takes on the package (<code>Client.fetch</code>, <code>example_sdk.connect</code>) names a key in <code>sdk-manifest.json</code> <code>api_index</code></li></ul></dd><dt>T2</dt>
+  <dd><ul class="plain"><li>quickstart.py exercises at least the calibrated floor of <code>quick_reference.primary_classes</code> and <code>key_methods</code> (floor: scoring-v1.json <code>conformance.tiers</code>; weightless until <code>t2_activation</code> is met)</li></ul></dd><dt>T3</dt>
+  <dd><ul class="plain"><li><code>AGENT_EXAMPLES.json</code> entries ↔ files on disk hold in both directions: every <code>examples[*].file</code> exists, every <code>*.py</code> under examples/ (bar <code>__init__.py</code>) has an entry, and every id named in learning_paths, categories, prerequisites or related exists in the examples map — the join withdrawn MIRI-PY-016 performed</li><li>No example names a symbol absent from the current release&#x27;s <code>api_index</code></li></ul></dd>
+</dl>
 
 <h2>How to fix it</h2>
 <p>Add a minimal runnable quickstart example.</p>
@@ -220,7 +231,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-014.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

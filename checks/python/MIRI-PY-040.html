@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -184,6 +184,7 @@ _META = json.load(open(Path(__file__).parent / &quot;agent-metadata&quot; / &quo
   <li>Importing the package fails, or its core (non-discovery) functions change behavior, after <code>agent-metadata/</code>, <code>docs/</code>, <code>examples/</code>, and <code>templates/</code> are deleted from an installed copy</li><li>The package&#x27;s <code>__init__.py</code> reads Miri metadata at module import time (top-level <code>open()</code>/<code>json.load</code> of <code>agent-metadata/</code> paths, or an unconditional import of discovery machinery that can raise)</li><li>With the metadata absent, discovery functions raise unhandled exceptions instead of returning the documented degraded result</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Guard all Miri integration so the package works identically without it.</p>
 <ol class="plain">
@@ -218,11 +219,11 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-040.html" cl
 
 <div class="prevnext">
   <a href="MIRI-PY-039.html">← MIRI-PY-039</a>
-  <span></span>
+  <a href="MIRI-PY-041.html">MIRI-PY-041 →</a>
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

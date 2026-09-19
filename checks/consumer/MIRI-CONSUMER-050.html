@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -177,6 +177,7 @@
   <li>Driven with a trigger for a package that ships no agent-metadata, the consumer answers <code>ok: true, present: true</code> with an empty <code>findings</code> array rather than the absent shape</li><li>The consumer emits prose confirming that it checked and found nothing</li><li>The consumer emits any output at all for a trigger whose task produced no finding</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Answer a trigger with no findings using the Discovery Contract 4.2 absent shape: ok true, present false, a reason, and no payload key</p>
 <ol class="plain">
@@ -215,7 +216,7 @@ canonical <a href="https://miri-whl.github.io/checks/consumer/MIRI-CONSUMER-050.
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

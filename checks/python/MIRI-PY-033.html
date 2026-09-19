@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge deprecated">severity HIGH · 4</span>
-  <span class="tag">weight 3</span>
+  <span class="tag">weight 2</span>
   
   
   <span class="tag">Lifecycle §3.1</span><span class="tag">schema</span>
@@ -180,6 +180,7 @@
 <ul class="plain">
   <li><code>support.status</code> in lifecycle.json is not one of <code>active</code>, <code>maintenance</code>, <code>deprecated</code>, <code>eol</code></li><li><code>support.status</code> is <code>deprecated</code> or <code>eol</code> while <code>support.replacement</code> is null, absent, or empty</li><li><code>support.replacement</code> is present but does not parse as a purl (<code>pkg:</code> scheme)</li>
 </ul>
+
 
 <h2>How to fix it</h2>
 <p>Name the successor purl whenever status is deprecated or eol.</p>
@@ -219,7 +220,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-033.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

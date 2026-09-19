@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -180,6 +180,7 @@ not the package&#x27;s, and nothing guarantees it matches real behavior.</span><
   <li>The package declares at least one entry in <code>supported_test_doubles</code> and the consumer presents a mock absent from that list as the package&#x27;s official double</li><li>The package declares doubles and the consumer presents its own synthesized mock without saying it is synthesized, where a declared one exists for the same surface</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Present a double from <code>supported_test_doubles</code> where one exists for the surface under test</p>
 <ol class="plain">
@@ -216,7 +217,7 @@ canonical <a href="https://miri-whl.github.io/checks/consumer/MIRI-CONSUMER-041.
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

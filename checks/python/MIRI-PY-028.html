@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge deprecated">severity HIGH · 4</span>
-  <span class="tag">weight 4</span>
+  <span class="tag">weight 3</span>
   <span class="tag">conditional</span>
   
   <span class="tag">PEP 702</span><span class="tag">Lifecycle §6.1</span>
@@ -181,6 +181,7 @@ def legacy_connect(host: str) -&gt; Connection:
 <ul class="plain">
   <li>A function, class, method, or overload listed in <code>migration-guide.json</code> <code>deprecations</code> carries no <code>@deprecated</code> decorator (neither <code>warnings.deprecated</code> nor <code>typing_extensions.deprecated</code>); module-level attributes and constants — which cannot carry the decorator — are exempt and are deprecated via a module <code>__getattr__</code> (MIRI-PY-035, Lifecycle §6.1)</li><li>A decorator message names no replacement interface</li><li>A decorator message names no planned removal version</li>
 </ul>
+
 
 <h2>How to fix it</h2>
 <p>Mark it with warnings.deprecated (PEP 702) naming the replacement and removal version.</p>
@@ -222,7 +223,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-028.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

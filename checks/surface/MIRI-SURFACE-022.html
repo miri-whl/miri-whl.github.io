@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -177,6 +177,7 @@
   <li>Any query imports the target package or executes any of its code</li><li>A package that cannot be resolved without importing is imported rather than reported <code>NOT_DISCOVERABLE</code></li><li>Resolving a dotted <code>package</code> value imports the parent package on the way to the target (§3.0)</li><li>The surface serves a request from an interpreter that has the target environment on its import path, so that a .pth file, sitecustomize, usercustomize, or an eagerly loaded entry-point plugin executed publisher code before the first request arrived. Import-freedom is a property of the process, not of the request handler, and the hostile-import canary detects only the handler path</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Resolve locations through the import system&#x27;s path finders and read files; never import the target</p>
 <ol class="plain">
@@ -215,7 +216,7 @@ canonical <a href="https://miri-whl.github.io/checks/surface/MIRI-SURFACE-022.ht
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

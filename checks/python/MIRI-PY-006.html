@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -183,6 +183,7 @@ unzip -l dist/example_sdk-2.1.0-py3-none-any.whl | grep agent-metadata
   <li>No <code>agent-metadata/</code> directory exists under any import package in the wheel (checked against RECORD and the archive listing)</li><li>The directory exists but contains none of the files the specification defines (sdk-manifest.json, usage-patterns.json, lifecycle.json, ...)</li><li>The directory&#x27;s files are present but unreadable (zero-byte or undecodable)</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Add the agent-metadata/ directory and generate its files at build time.</p>
 <ol class="plain">
@@ -219,7 +220,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-006.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

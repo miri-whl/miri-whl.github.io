@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge deprecated">severity CRITICAL · 5</span>
-  <span class="tag">weight 4</span>
+  <span class="tag">weight 3</span>
   
   
   <span class="tag">purl spec</span><span class="tag">Lifecycle §8 (Conformance Requirements), item 2</span>
@@ -183,6 +183,7 @@ lifecycle.json:  &quot;purl&quot;: &quot;pkg:pypi/example-sdk@2.1.1&quot;
 <ul class="plain">
   <li>the purl name does not equal the PEP 503 normalization of METADATA Name (re.sub(r&#x27;[-_.]+&#x27;, &#x27;-&#x27;, name).lower())</li><li>the purl @version does not equal METADATA Version exactly</li><li>the purl lacks an @version component, or fails the pkg:pypi/... pattern of lifecycle-v1.json</li><li>the purl type is not pkg:pypi for a wheel distributed through a Python index (type/channel mismatch)</li>
 </ul>
+
 
 <h2>How to fix it</h2>
 <p>Generate the purl from the same source as METADATA at build time.</p>
@@ -222,7 +223,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-019.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

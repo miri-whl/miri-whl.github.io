@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -184,6 +184,7 @@
   <li>generated_at in any agent-metadata file is absent or does not parse as an RFC 3339 / ISO 8601 timestamp</li><li>generated_at predates the wheel&#x27;s build (dist-info METADATA creation or the release tag) by more than 24 hours (the standard&#x27;s build-window tolerance)</li><li>generated_at values across agent-metadata files spread wider than the 24-hour build-window tolerance (files stamped by different generator runs)</li><li>generated_at is later than the wheel&#x27;s own build timestamp (file edited after packaging)</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Generate agent metadata inside the build, never by hand afterward.</p>
 <ol class="plain">
@@ -222,7 +223,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-011.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -179,6 +179,7 @@ absence from this list is not evidence.</span></div>
   <li>Driven against a <code>document</code> response carrying <code>truncated: true</code>, the consumer presents the partial document as the whole one — quoting it, summarizing it, or answering from it without saying it was cut. This check is named for <code>api-index</code> because that is where truncation was first specified, but the obligation holds wherever <code>truncated</code> appears, and reading half a document as complete is wrong in the same way</li><li>Driven against <code>adversarial</code>, the consumer states or implies that a symbol dropped past the cap does not exist</li><li>The consumer summarizes a <code>truncated: true</code> response as the package&#x27;s full API</li><li>The consumer states or acts on a count, size or completeness claim about a package surface derived from a filtered response — <code>truncated: false</code> after a <code>query</code> means complete WITH RESPECT TO THAT FILTER and nothing more, and a consumer that reports &#x27;the package has N public symbols&#x27; from one is wrong even when nothing was cut</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Check <code>truncated</code> on every response and qualify any surface-level statement drawn from a truncated one</p>
 <ol class="plain">
@@ -217,7 +218,7 @@ canonical <a href="https://miri-whl.github.io/checks/consumer/MIRI-CONSUMER-012.
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

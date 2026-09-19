@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -181,6 +181,17 @@
   <li>The installed package contains no <code>docs/</code> directory</li><li><code>docs/</code> exists but lacks <code>api_reference.md</code> or <code>troubleshooting.md</code></li><li>Either file is a stub — zero-length or headings with no body content</li>
 </ul>
 
+
+<h2>Tiers</h2>
+<p class="muted">Weight is earned as a cumulative schedule; the obligation is satisfied at <strong>T1</strong>. Tiers above it price weight only.</p>
+<dl class="meta">
+  <dt>T0</dt>
+  <dd><ul class="plain"><li><code>docs/api_reference.md</code> and <code>docs/troubleshooting.md</code> exist and are not stubs (non-zero length, at least one heading with body content)</li></ul></dd><dt>T1 — conformance</dt>
+  <dd><ul class="plain"><li>Every fenced <code>python</code> block in both files parses (<code>ast.parse</code>), and every import and dotted package path inside those blocks resolves in the wheel or in <code>api_index</code> — a block that is syntactically valid but names a module the wheel does not ship is a lie, and lies fail the MUST boundary of a document that is otherwise thin</li><li>Every identifier-shaped reference in prose that is backtick-quoted and rooted at the package name resolves in <code>api_index</code></li></ul></dd><dt>T2</dt>
+  <dd><ul class="plain"><li><code>api_reference.md</code> mentions at least the calibrated floor of <code>api_index</code> keys; a mention counts only inside a document whose code blocks clear T1 (weightless until <code>t2_activation</code> is met)</li></ul></dd><dt>T3</dt>
+  <dd><ul class="plain"><li>No documented symbol is absent from the current release&#x27;s <code>api_index</code>, and any version string the docs name for the package equals the wheel&#x27;s version</li></ul></dd>
+</dl>
+
 <h2>How to fix it</h2>
 <p>Embed api_reference.md and troubleshooting.md in the package.</p>
 <ol class="plain">
@@ -217,7 +228,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-037.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

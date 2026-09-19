@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -183,6 +183,7 @@ sdk-manifest.json api_index.DatabaseClient.key_methods:
   <li>A <code>deprecations[].replacement</code> value in migration-guide.json names an interface path with no matching entry in the same wheel&#x27;s sdk-manifest.json <code>api_index</code> (as a class, a method under <code>key_methods</code>, or a module-level function)</li><li><code>replacement</code> is null, empty, or free-form prose from which no interface path can be parsed</li><li><code>replacement</code> names an interface that is itself listed in the same release&#x27;s <code>deprecations</code> (a chain into another dead end)</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Point replacement at an interface that exists in the release performing the removal.</p>
 <ol class="plain">
@@ -221,7 +222,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-031.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

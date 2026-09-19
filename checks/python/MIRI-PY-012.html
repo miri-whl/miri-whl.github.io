@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -148,7 +148,7 @@
 <div class="badgerow">
   <span class="badge deprecated">must</span>
   <span class="badge deprecated">severity HIGH · 4</span>
-  <span class="tag">weight 3</span>
+  <span class="tag">weight 2</span>
   
   
   <span class="tag">Agent Metadata §4.1</span>
@@ -183,6 +183,7 @@
 <ul class="plain">
   <li>sdk_version in sdk-manifest.json is not exactly (byte-for-byte) equal to the wheel&#x27;s METADATA Version</li><li>any other agent-metadata file carrying the package version (the @version in lifecycle.json identity.purl, migration-guide.json to_version) is not exactly equal to METADATA Version</li><li>version strings are canonically equal but not textually identical (e.g. a 1.2.0 manifest in a 1.2 wheel); this check requires exact string equality — matching MIRI-PY-019 — so near-misses still fire</li>
 </ul>
+
 
 <h2>How to fix it</h2>
 <p>Derive sdk_version from the single package version source at build time.</p>
@@ -222,7 +223,7 @@ canonical <a href="https://miri-whl.github.io/checks/python/MIRI-PY-012.html" cl
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.5.0</span><span class="what">changelog</span></a>
+    <span class="v">0.6.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -186,6 +186,7 @@ true — the payload parses clean, the warning reached the diagnostic channel</s
   <li>Invoking a surface whose <code>lifecycle.status</code> is <code>deprecated</code> emits no deprecation warning on **either** channel — the grace period exists so that a caller is told before removal, and a tool that warns nowhere satisfies every clause about *which channel* the warning avoids by never emitting one</li><li>Invoking a surface whose <code>lifecycle.status</code> is <code>deprecated</code> with the JSON output flag produces stdout that is not a single parseable JSON document</li><li>Deprecation notice text (e.g. a line matching /deprecat/i naming the surface) appears in captured stdout rather than in captured stderr</li><li>Warning output interleaves with or prefixes the payload only when the deprecated surface is used — the clean-payload check (MIRI-CLI-011) passes on non-deprecated invocations of the same command</li>
 </ul>
 
+
 <h2>How to fix it</h2>
 <p>Emit grace-period warnings on stderr only.</p>
 <ol class="plain">
@@ -222,7 +223,7 @@ canonical <a href="https://miri-whl.github.io/checks/cli/MIRI-CLI-034.html" clas
 </div>
 
 <div class="footer">
-  <span>miri-standard · 0.5.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
