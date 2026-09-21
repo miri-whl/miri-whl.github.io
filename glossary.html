@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.6.0</span><span class="what">changelog</span></a>
+    <span class="v">0.7.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -145,7 +145,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>docs/glossary.md</b></span><span>Version <b>0.6.0</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>docs/glossary.md</b></span><span>Version <b>0.7.0</b></span></div>
 <h1>Glossary</h1>
 
 <p class="lede">Every term this standard defines, and a few it deliberately does not.</p>
@@ -195,9 +195,11 @@
 <p><strong>Conditional</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — a check whose obligation only applies in some circumstances. <strong>Not-applicable is not a pass</strong>: a conditional check whose condition does not hold is removed from <em>both</em> the numerator and the denominator, never credited. The earlier model awarded a CLI twenty points for never deprecating anything.</p>
 <p><strong>Forfeited</strong> (<a href="consumer-conformance.html">Consumer Conformance §3</a>) — a check the suite could not drive. Also excluded from both sides, and <strong>reported</strong>, because a coverage gap silently omitted becomes a coverage claim. A forfeited MUST leaves conformance <strong>undetermined</strong> — a third outcome, not a shade of pass or fail — and no grade is emitted. Two sources of forfeit, one arithmetic: a <strong>capability</strong> the linter lacks (<code>network_unavailable</code>, <code>previous_release_unavailable</code>, <code>execution_disabled</code>) and, since 0.6.0, <strong>implementation coverage</strong> — the linter ships no verification for the check at all (<code>not_implemented</code>, which must name a <code>blocker</code>). Neither is ever an exclusion, because the obligation existed; see <code>scoring-v1.json</code> <code>conformance.coverage</code> for the five driver clauses.</p>
 <h2 id="verifying">Verifying</h2>
-<p><strong>Fixture</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/</code></a>) — one of ten variants of a single trivial package, built from one template. Every <code>.py</code> is verified <strong>byte-identical</strong> across the source-sharing variants, so any difference in a consumer&#x27;s behavior is attributable to the metadata and nothing else. That property is what makes the whole suite evidential rather than anecdotal.</p>
+<p><strong>Fixture</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/</code></a>) — one variant of a single trivial artifact, built from one template, differing from its siblings <strong>only</strong> in shipped metadata. Every <code>.py</code> is verified <strong>byte-identical</strong> across the source-sharing variants, so any difference in behavior is attributable to the metadata and nothing else. That property is what makes a suite evidential rather than anecdotal. Three suites exist: the consumption fixtures (three wheels, driving a <em>consumer</em>), the <code>greetctl</code> fixtures (driving a <em>CLI linter</em>), and the <code>greetlib</code> wheel fixtures (nine wheels, driving a <em>wheel linter</em>).</p>
 <p><strong>Adversarial twin</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/</code></a>) — the variant whose metadata lies: forged envelope keys, phantom symbols, a padded index, a prompt injection, an SSRF payload, a cross-namespace replacement, and a field bidding for the agent&#x27;s attention.</p>
-<p><strong>Golden</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/expected/</code></a>) — a file stating what a conformant surface must return and what a conformant consumer must not do, for one attack. Authored from the specification, never captured from an implementation — because a golden captured from the tool it grades is the tool grading itself.</p>
+<p><strong>Golden</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/expected/</code></a>) — a file stating, for one case, what a conformant implementation must produce: what a surface must return and a consumer must not do, or which checks a linter must report against which arm. Authored from the specification, never captured from an implementation — because a golden captured from the tool it grades is the tool grading itself. A golden an implementation does not attempt is <strong>forfeited as unimplemented</strong>, which is reported; it is never counted as a pass.</p>
+<p><strong>Attribution</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/examples/fixtures/README.md"><code>examples/fixtures/python/</code></a>) — the property a golden grades beyond detection: a finding satisfies a golden only if it names the right check <strong>and</strong> points at the declared evidence, keyed per check. Detection and attribution are different properties, and a grader that pools evidence across a case scores a shotgun report full marks.</p>
+<p><strong>Evidence</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/schemas/lint-report-v1.json"><code>lint-report-v1</code></a>) — an outcome&#x27;s array of <code>&lt;document&gt;:&lt;field&gt;</code> strings naming what a finding points at. The document-only form (<code>changelog.json</code>, no field) is correct where the check&#x27;s own <code>violation_unit</code> is the document. Added in 0.7.0, because until it existed the standard could ask a linter to be right and had no way to ask it to say where.</p>
 <p><strong>Paired control</strong> (<a href="consumer-conformance.html">Consumer Conformance §5</a>) — an attack fixture and its innocent twin, scored as one check over two runs. A consumer that refuses both has not detected the attack; it has disabled the feature. Either arm wrong fails the whole check, because half credit is exactly what a blanket refusal would earn.</p>
 <p><strong>Circularity firewall</strong> (<a href="consumer-conformance.html">Consumer Conformance §6</a>) — the rule that a reference consumer and a reference surface must not share the code under test. Where they do, the suite drives the consumer against <strong>recorded</strong> responses so the surface&#x27;s code never runs.</p>
 <h2 id="identity-and-trust">Identity and trust</h2>
@@ -271,7 +273,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.6.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.7.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
