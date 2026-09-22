@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.7.0</span><span class="what">changelog</span></a>
+    <span class="v">0.7.1</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -145,7 +145,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.7.0</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.7.1</b></span></div>
 <h1>Changelog</h1>
 
 <p class="lede">What each release delivered, and what a version number promises. A patch release contains bug fixes and clarifications only.</p>
@@ -154,6 +154,18 @@
 <p>All notable changes to the Miri Standard are recorded here.</p>
 <p>Versions follow the policy in <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/README.md#versioning">standards/README.md</a>: a <strong>major</strong> version marks a breaking change, a <strong>minor</strong> version a backward-compatible addition, and a <strong>patch</strong> version bug fixes and clarifications only. That policy is a contract with implementers, and it is worth keeping strictly: a reader should be able to see <code>0.3.1</code> and know it contains no additions without having to check.</p>
 <p>While the major version is 0 the standard is in initial development, so a <strong>minor</strong> bump may carry a breaking change (<a href="https://semver.org/#spec-item-4">Semantic Versioning §4</a>). Where one does, the entry says <strong>BREAKING</strong> in its first line and names what breaks. From 1.0.0 onward a breaking change takes a major bump.</p>
+<h2 id="071-unreleased">0.7.1 — unreleased</h2>
+<p>Four blockers miri-py found by vendoring the 0.7.0 wheel and nothing else, all invisible from inside this repository, because every tool here has the repository.</p>
+<p><strong>A patch rather than a minor, deliberately.</strong> Nothing normative moved: no check definition, no schema, no specification sentence. What changed is how the standard is <em>packaged</em> — a digest that described the wrong tree, a manifest that could not name the checklist revision it implements, a directory holding two families with nothing to tell them apart, and a corpus of fixtures that existed only in a clone. The additions here are additions to the artifact, not to the standard, and the standard is still 0.7.</p>
+<h3 id="added">Added</h3>
+<ul><li><strong>The fixture pack — <code>miri-standard-fixtures-&lt;version&gt;.tar.gz</code>, attached to each release.</strong> The wheel</li><li>  ships the rules for four check families and nothing to run them against, so a vendor could read all</li><li>  four and exercise two. The pack carries all three suites — 11 consumption variants, 4 CLI arms, 9</li><li>  greetlib wheels, 40 goldens — with the build recipes, the validators, and the attribution graders.</li><li>  Recipes rather than built artifacts: each suite derives its arms from one template and then asserts</li><li>  byte-identity across them, so shipping the built wheels would ship the thing the suite exists to</li><li>  derive. It carries no check definitions: those are the wheel&#x27;s job, and the validators resolve them</li><li>  from the installed wheel when run outside a checkout. Byte-reproducible — gzip&#x27;s header mtime is</li><li>  pinned, so two builds of one tree produce one sha256.</li><li><strong><code>families</code> in the wheel&#x27;s manifest</strong> — one row per check family carrying <code>checklist_version</code>,</li><li>  <code>governing_document</code>, <code>directory</code>, <code>id_prefix</code>, <code>active_checks</code> and <code>weight_total</code>. It answers two</li><li>  of miri-py&#x27;s four blockers at once. A vendor could report &quot;standard 0.7.0, checks at 41aa2682&quot; and</li><li>  not which checklist revision those checks implement, where a vendor who clones could; the</li><li>  checklists are prose and are not packaged, so the revision travels here or nowhere. Keyed by</li><li>  <strong>family</strong> rather than target because the four revisions are four values (<code>0.3-draft</code>, <code>0.2-draft</code>,</li><li>  <code>0.3.1-draft</code>, <code>0.5.0-draft</code>), and because <code>checks/consumption/</code> holds MIRI-SURFACE and</li><li>  MIRI-CONSUMER on two separate 100-point scales — a consumer reading one directory per family sums</li><li>  200 and fails a weight invariant with a message about arithmetic rather than about layout. The id</li><li>  prefix was the only discriminator and had to be known out of band; it is now declared and</li><li>  verifiable. Not <code>max(added_in)</code>, which gives the newest check&#x27;s release — a different question.</li><li><strong><code>checks(family=...)</code></strong>, so the per-directory read that sums 200 has an alternative that cannot.</li><li>**<code>families()</code>, <code>checklist_version()</code>, <code>verify_content()</code> and <code>content_digest()</code> in the installed</li><li>  package**, so a consumer calls the algorithm rather than reconstructing it from prose.</li></ul>
+<h3 id="fixed">Fixed</h3>
+<ul><li>**BREAKING — <code>content_sha256</code> did not describe the installed package, and could not be reproduced</li><li>  from any reading of its own description.** miri-py tried 36 combinations — three file sets, six</li><li>  length encodings, two path spellings — and none matched, because the answer was in none of those</li><li>  dimensions: the digest was computed over the <strong>staging tree</strong>, which carries</li><li>  <code>_agent_examples.json.src</code>, a build intermediate <code>inject_dist_info()</code> moves into <code>.dist-info/</code> and</li><li>  deletes from the wheel. The field hashed one file the consumer never receives, so no encoding could</li><li>  have matched. The description said &quot;every file in the installed package&quot;, which was false.</li></ul>
+<p>Both halves are closed: the digest now covers exactly what is installed, and the two length prefixes are both 8 bytes where they were 4 and 8 — an asymmetry no reader guesses and the prose never stated. <code>verify_shipped_digest()</code> now recomputes the value from the <strong>finished wheel</strong> and fails the build if it disagrees, so the claim is gated rather than asserted. It had agreed with itself for two releases because only one computation of it existed.</p>
+<p>The shipped <code>docs/api_reference.md</code> now carries a worked example over two files — computed at build time by the same function that hashes the package, so it cannot go stale against the algorithm it documents.</p>
+<p>Every 0.7.0 <code>content_sha256</code> is unverifiable and stays that way; verify that wheel against the release&#x27;s SHA256SUMS or its build attestation, which are unaffected.</p>
+<h3 id="known-and-open">Known and open</h3>
+<ul><li><strong><code>pip install miri-standard-checks</code> 404s.</strong> <code>pkg:pypi/miri-standard-checks</code> is unclaimed and</li><li>  nothing has been published to PyPI, so every consumer hardcodes a versioned release URL and an</li><li>  upgrade is a text edit. What works today is the published index, which resolves by name and</li><li>  version: <code>pip install --index-url https://miri-whl.github.io/simple/ miri-standard-checks</code>.</li><li>  Publishing to PyPI proper needs the name claimed and trusted publishing configured.</li></ul>
 <h2 id="070-2026-09-21">0.7.0 — 2026-09-21</h2>
 <p><strong>BREAKING.</strong> The tier arithmetic changes: <code>scoring-v2.json</code> withdraws v1&#x27;s rule that a parked T2&#x27;s share is parked in T1, in favour of renormalizing over the tiers a check declares. Every tiered score moves.</p>
 <p>Otherwise, coverage. The <code>MIRI-PY</code> family had 43 checks, 100 weight and no artifact that falsified any of them — the founding family, and the only one with nothing to test against. It now has nine wheels and seven goldens.</p>
@@ -287,6 +299,8 @@
   <nav>
     <ol>
     
+      <li class="lvl2"><a href="#071-unreleased">0.7.1 — unreleased</a></li>
+    
       <li class="lvl2"><a href="#070-2026-09-21">0.7.0 — 2026-09-21</a></li>
     
       <li class="lvl2"><a href="#060-never-tagged-first-published-inside-070">0.6.0 — never tagged; first published inside 0.7.0</a></li>
@@ -347,7 +361,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.7.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.7.1 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
