@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.7.1</span><span class="what">changelog</span></a>
+    <span class="v">0.7.2</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -145,7 +145,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>docs/glossary.md</b></span><span>Version <b>0.7.1</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>docs/glossary.md</b></span><span>Version <b>0.7.2</b></span></div>
 <h1>Glossary</h1>
 
 <p class="lede">Every term this standard defines, and a few it deliberately does not.</p>
@@ -204,6 +204,10 @@
 <p><strong>Circularity firewall</strong> (<a href="consumer-conformance.html">Consumer Conformance §6</a>) — the rule that a reference consumer and a reference surface must not share the code under test. Where they do, the suite drives the consumer against <strong>recorded</strong> responses so the surface&#x27;s code never runs.</p>
 <h2 id="identity-and-trust">Identity and trust</h2>
 <p><strong>purl</strong> (<a href="discovery-contract.html">Discovery Contract §4.1</a>; <a href="https://github.com/package-url/purl-spec">purl specification</a>) — the package URL that joins an artifact to advisory data. A <strong>surface-derived</strong> field: the surface reads it from the installed distribution&#x27;s own record and never from a served document, because a package that could declare its own purl could inherit any namespace&#x27;s trust by saying so.</p>
+<p><strong>SBOM</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-024.yaml">MIRI-PY-024</a>; <a href="https://peps.python.org/pep-0770/">PEP 770</a>) — the inventory of what an artifact <em>contains</em> beyond the code its package manager knows about. A wheel that vendors a native library has two identities: the one its purl declares and the one linked inside it, which no dependency-graph scan can see. PEP 770 places the documents at <code>.dist-info/sboms/</code>, where scanners find them without a Miri-specific pointer. Required only when the artifact bundles non-Python components, and required to <strong>cover</strong> them — a document that exists and inventories something else satisfies the form and not the rule.</p>
+<p><strong>VEX</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-026.yaml">MIRI-PY-026</a>; <a href="https://github.com/openvex/spec">OpenVEX</a>) — a vendor-authored statement that a vulnerability in a listed component is or is not exploitable in this artifact, letting a consumer suppress a false positive with an auditable record instead of an ignore-list. It is a <em>source</em>, not a verdict: a declared <code>vex</code> URL that serves nothing is worse than none, because a consumer that planned to apply suppressions on its authority either re-raises every finding or fails open.</p>
+<p><strong>Provenance</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-005.yaml">MIRI-PY-005</a>; <a href="https://slsa.dev/spec/v1.2/build-provenance">SLSA build provenance</a>) — a signed statement binding an artifact to the source and the build that produced it. The <strong>mechanism</strong> and the <strong>content</strong> are separate and often confused: PEP 740 is how an index receives, verifies and republishes an attestation, while SLSA provenance is what the attestation says — <code>buildDefinition</code>, <code>runDetails</code>, and a <code>builder.id</code>. Miri checks the first and not yet the second, so an attestation asserting nothing useful about the build still satisfies <code>MIRI-PY-005</code>.</p>
+<p><strong>Attestation versus self-consistency</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/checks/MIRI-PY-001.yaml">MIRI-PY-001</a>) — the boundary a conformance report must not blur. Checks computed <em>inside</em> an artifact — RECORD matching the archive, a manifest digest matching the files — prove the artifact agrees with itself, which detects corruption and an edit nobody hid. They cannot establish where the artifact came from, because whatever rewrote a file rewrote the manifest in the same motion. Only a root outside the artifact does that: an attestation, a digest published beside the release, or a resolver-enforced lock. A report rendering internal consistency as <em>&quot;verified&quot;</em> states a verdict its evidence cannot support.</p>
 <p><strong><code>advisory_coverage</code></strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/cli/cli-lifecycle-specification.md">CLI Spec §4.1</a>) — whether any listed advisory source is authoritative for the artifact <em>itself</em> rather than its dependency tree. <code>none</code> declares honestly that no machine-queryable source covers this artifact — the true state for a git-installed binary in no package ecosystem — and requires a published security policy in exchange. A consumer reading it reports <em>&quot;no advisory source covers this artifact&quot;</em>, never <em>&quot;no known vulnerabilities&quot;</em>.</p>
 <p><strong>Content versus control</strong> (<a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-agent-metadata-specification.md">Agent Metadata §9</a>; <a href="agent-integration-contract.html">Agent Integration §4.3</a>) — the axis the threat model gained in 0.4. Every earlier item concerned what metadata <em>says</em>: narrative files inject, an index can lie, provenance anchors trust. A shipped field that determines whether an integration fires concerns what metadata <em>makes happen</em> — a denial-of-context channel rather than a false statement, and closed by a different rule.</p>
 </article>
@@ -273,7 +277,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.7.1 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.7.2 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
