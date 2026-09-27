@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="../../changelog.html" title="What each release delivered">
-    <span class="v">0.7.2</span><span class="what">changelog</span></a>
+    <span class="v">0.7.3</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -145,7 +145,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Checks <b>44</b></span><span>Levels <b>32 MUST · 12 SHOULD</b></span><span>Weights <b>Σ = 100</b></span></div>
+<div class="spec-eyebrow"><span>Checks <b>45</b></span><span>Levels <b>32 MUST · 13 SHOULD</b></span><span>Weights <b>Σ = 100</b></span></div>
 <h1>Python wheels — check definitions</h1>
 
 <p class="lede">Each requirement is verified by a check; each check failure instance is a violation.
@@ -168,6 +168,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-001.html" data-level="0" data-sev="4" data-weight="0">
   <td class="id"><a href="MIRI-PY-001.html">MIRI-PY-001</a></td>
   <td><a class="rowname" href="MIRI-PY-001.html">Wheel structure valid</a></td>
@@ -176,6 +178,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">0</td>
   <td><code>.dist-info/</code> with <code>METADATA</code>, <code>WHEEL</code>, <code>RECORD</code>; archive matches RECORD</td>
 </tr>
+
+
 
 
 
@@ -192,6 +196,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-003.html" data-level="0" data-sev="4" data-weight="0">
   <td class="id"><a href="MIRI-PY-003.html">MIRI-PY-003</a></td>
   <td><a class="rowname" href="MIRI-PY-003.html">Version scheme valid</a></td>
@@ -204,6 +210,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-004.html" data-level="1" data-sev="2" data-weight="2">
   <td class="id"><a href="MIRI-PY-004.html">MIRI-PY-004</a></td>
   <td><a class="rowname" href="MIRI-PY-004.html">Declarative build config</a></td>
@@ -212,6 +220,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">2</td>
   <td><code>pyproject.toml</code> with <code>[project]</code> table drives the build</td>
 </tr>
+
+
 
 
 
@@ -232,6 +242,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-006.html" data-level="0" data-sev="5" data-weight="2">
   <td class="id"><a href="MIRI-PY-006.html">MIRI-PY-006</a></td>
   <td><a class="rowname" href="MIRI-PY-006.html">agent-metadata/ present</a></td>
@@ -240,6 +252,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">2</td>
   <td>Directory exists in the package</td>
 </tr>
+
+
 
 
 
@@ -256,6 +270,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-008.html" data-level="0" data-sev="3" data-weight="4">
   <td class="id"><a href="MIRI-PY-008.html">MIRI-PY-008</a></td>
   <td><a class="rowname" href="MIRI-PY-008.html">usage-patterns.json valid</a></td>
@@ -264,6 +280,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">4</td>
   <td>Present and validates against schema</td>
 </tr>
+
+
 
 
 
@@ -280,14 +298,18 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-010.html" data-level="1" data-sev="1" data-weight="1">
+
+
+<tr class="rowlink withdrawn" data-href="MIRI-PY-010.html" data-level="1" data-sev="1" data-weight="0" data-withdrawn="1">
   <td class="id"><a href="MIRI-PY-010.html">MIRI-PY-010</a></td>
-  <td><a class="rowname" href="MIRI-PY-010.html">api-graph.json valid</a></td>
-  <td><span class="badge neutral">should</span></td>
-  <td><span class="badge neutral">LOW</span></td>
-  <td class="num">1</td>
+  <td><a class="rowname" href="MIRI-PY-010.html">api-graph.json valid</a> <span class="badge eol">withdrawn 0.7.3-draft</span></td>
+  <td>—</td>
+  <td>—</td>
+  <td class="num">—</td>
   <td>If present, validates against schema</td>
 </tr>
+
+
 
 
 
@@ -304,6 +326,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-012.html" data-level="0" data-sev="4" data-weight="2">
   <td class="id"><a href="MIRI-PY-012.html">MIRI-PY-012</a></td>
   <td><a class="rowname" href="MIRI-PY-012.html">Version coherence</a></td>
@@ -312,6 +336,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">2</td>
   <td><code>sdk_version</code> in every metadata file equals the wheel version</td>
 </tr>
+
+
 
 
 
@@ -332,6 +358,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-014.html" data-level="0" data-sev="3" data-weight="5">
   <td class="id"><a href="MIRI-PY-014.html">MIRI-PY-014</a></td>
   <td><a class="rowname" href="MIRI-PY-014.html">Quickstart exists</a></td>
@@ -340,6 +368,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">5</td>
   <td><code>examples/quickstart.py</code> present</td>
 </tr>
+
+
 
 
 
@@ -356,14 +386,18 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
-<tr class="rowlink" data-href="MIRI-PY-016.html" data-level="0" data-sev="2" data-weight="2">
+
+
+<tr class="rowlink withdrawn" data-href="MIRI-PY-016.html" data-level="0" data-sev="2" data-weight="0" data-withdrawn="1">
   <td class="id"><a href="MIRI-PY-016.html">MIRI-PY-016</a></td>
-  <td><a class="rowname" href="MIRI-PY-016.html">Example index coherent</a></td>
-  <td><span class="badge deprecated">must</span></td>
-  <td><span class="badge neutral">MINOR</span></td>
-  <td class="num">2</td>
+  <td><a class="rowname" href="MIRI-PY-016.html">Example index coherent</a> <span class="badge eol">withdrawn 0.6.0-draft</span></td>
+  <td>—</td>
+  <td>—</td>
+  <td class="num">—</td>
   <td><code>AGENT_EXAMPLES.json</code> entries ↔ files on disk, both directions</td>
 </tr>
+
+
 
 
 
@@ -384,6 +418,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-018.html" data-level="0" data-sev="5" data-weight="4">
   <td class="id"><a href="MIRI-PY-018.html">MIRI-PY-018</a></td>
   <td><a class="rowname" href="MIRI-PY-018.html">lifecycle.json valid</a></td>
@@ -392,6 +428,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">4</td>
   <td>Present and validates against schema</td>
 </tr>
+
+
 
 
 
@@ -408,6 +446,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-020.html" data-level="0" data-sev="3" data-weight="2">
   <td class="id"><a href="MIRI-PY-020.html">MIRI-PY-020</a></td>
   <td><a class="rowname" href="MIRI-PY-020.html">Distribution &amp; registry declared</a></td>
@@ -416,6 +456,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">2</td>
   <td><code>distribution</code> set; <code>registry</code> a well-formed index URL</td>
 </tr>
+
+
 
 
 
@@ -432,6 +474,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-022.html" data-level="0" data-sev="4" data-weight="3">
   <td class="id"><a href="MIRI-PY-022.html">MIRI-PY-022</a></td>
   <td><a class="rowname" href="MIRI-PY-022.html">Private-source rule</a></td>
@@ -440,6 +484,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">3</td>
   <td><code>distribution: private</code> does not rely solely on public OSV</td>
 </tr>
+
+
 
 
 
@@ -456,6 +502,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-024.html" data-level="0" data-sev="4" data-weight="4">
   <td class="id"><a href="MIRI-PY-024.html">MIRI-PY-024</a></td>
   <td><a class="rowname" href="MIRI-PY-024.html">SBOM when bundling</a></td>
@@ -464,6 +512,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">4</td>
   <td>Wheels with non-Python components carry <code>.dist-info/sboms/</code></td>
 </tr>
+
+
 
 
 
@@ -480,6 +530,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-026.html" data-level="1" data-sev="1" data-weight="1">
   <td class="id"><a href="MIRI-PY-026.html">MIRI-PY-026</a></td>
   <td><a class="rowname" href="MIRI-PY-026.html">VEX well-formed</a> <span class="tag">network</span></td>
@@ -488,6 +540,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">1</td>
   <td><code>vex</code> URL, if present, serves an OpenVEX/CycloneDX VEX document</td>
 </tr>
+
+
 
 
 
@@ -508,6 +562,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-028.html" data-level="0" data-sev="4" data-weight="3">
   <td class="id"><a href="MIRI-PY-028.html">MIRI-PY-028</a></td>
   <td><a class="rowname" href="MIRI-PY-028.html">PEP 702 markers</a></td>
@@ -516,6 +572,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">3</td>
   <td>Every interface listed as deprecated carries <code>@deprecated</code>; decorator message names replacement + removal version</td>
 </tr>
+
+
 
 
 
@@ -532,6 +590,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-030.html" data-level="0" data-sev="5" data-weight="4">
   <td class="id"><a href="MIRI-PY-030.html">MIRI-PY-030</a></td>
   <td><a class="rowname" href="MIRI-PY-030.html">No silent removals</a> <span class="tag">previous-release</span></td>
@@ -540,6 +600,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">4</td>
   <td>Every public interface removed since the prior release was listed in an earlier release&#x27;s <code>deprecations</code></td>
 </tr>
+
+
 
 
 
@@ -556,6 +618,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-032.html" data-level="0" data-sev="2" data-weight="2">
   <td class="id"><a href="MIRI-PY-032.html">MIRI-PY-032</a></td>
   <td><a class="rowname" href="MIRI-PY-032.html">Removal versions sane</a></td>
@@ -564,6 +628,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">2</td>
   <td>Every <code>removal_version</code> is greater than the current release</td>
 </tr>
+
+
 
 
 
@@ -580,6 +646,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-034.html" data-level="1" data-sev="2" data-weight="2">
   <td class="id"><a href="MIRI-PY-034.html">MIRI-PY-034</a></td>
   <td><a class="rowname" href="MIRI-PY-034.html">Grace period</a> <span class="tag">previous-release</span></td>
@@ -588,6 +656,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">2</td>
   <td>Deprecated interfaces survive ≥2 releases before removal</td>
 </tr>
+
+
 
 
 
@@ -608,6 +678,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-036.html" data-level="0" data-sev="3" data-weight="3">
   <td class="id"><a href="MIRI-PY-036.html">MIRI-PY-036</a></td>
   <td><a class="rowname" href="MIRI-PY-036.html">Discovery and manifest verification</a> <span class="tag">execution</span></td>
@@ -616,6 +688,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">3</td>
   <td>Discovery functions work and <code>sdk-manifest.json</code> api_index resolves against the installed API surface</td>
 </tr>
+
+
 
 
 
@@ -632,6 +706,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-038.html" data-level="1" data-sev="1" data-weight="1">
   <td class="id"><a href="MIRI-PY-038.html">MIRI-PY-038</a></td>
   <td><a class="rowname" href="MIRI-PY-038.html">Templates coherent</a></td>
@@ -644,6 +720,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-039.html" data-level="1" data-sev="1" data-weight="1">
   <td class="id"><a href="MIRI-PY-039.html">MIRI-PY-039</a></td>
   <td><a class="rowname" href="MIRI-PY-039.html">Prompt templates valid</a></td>
@@ -652,6 +730,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">1</td>
   <td><code>prompt-templates.md</code>, if present, follows the specified structure</td>
 </tr>
+
+
 
 
 
@@ -672,6 +752,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-041.html" data-level="0" data-sev="4" data-weight="3">
   <td class="id"><a href="MIRI-PY-041.html">MIRI-PY-041</a></td>
   <td><a class="rowname" href="MIRI-PY-041.html">changelog.json valid</a></td>
@@ -688,6 +770,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-042.html" data-level="0" data-sev="4" data-weight="3">
   <td class="id"><a href="MIRI-PY-042.html">MIRI-PY-042</a></td>
   <td><a class="rowname" href="MIRI-PY-042.html">Version silence</a></td>
@@ -696,6 +780,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td class="num">3</td>
   <td><code>changelog.json</code> <code>releases[0].version</code> equals the wheel&#x27;s version (*conditional*: document present)</td>
 </tr>
+
+
 
 
 
@@ -712,6 +798,8 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
 
 
 
+
+
 <tr class="rowlink" data-href="MIRI-PY-044.html" data-level="0" data-sev="3" data-weight="2">
   <td class="id"><a href="MIRI-PY-044.html">MIRI-PY-044</a></td>
   <td><a class="rowname" href="MIRI-PY-044.html">Dangling claim</a></td>
@@ -719,6 +807,24 @@ the <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/pytho
   <td><span class="badge maintenance">MEDIUM</span></td>
   <td class="num">2</td>
   <td>Every symbol named in <code>changelog.json</code> resolves in the current or previous <code>api_index</code> (*conditional*: document present)</td>
+</tr>
+
+
+
+<tr class="cat"><td colspan="6">Agent Metadata Core · 24 points</td></tr>
+
+
+
+
+
+
+<tr class="rowlink" data-href="MIRI-PY-045.html" data-level="1" data-sev="1" data-weight="1">
+  <td class="id"><a href="MIRI-PY-045.html">MIRI-PY-045</a></td>
+  <td><a class="rowname" href="MIRI-PY-045.html">Precomputed code index declared</a></td>
+  <td><span class="badge neutral">should</span></td>
+  <td><span class="badge neutral">LOW</span></td>
+  <td class="num">1</td>
+  <td>A precomputed code index ships in the wheel and <code>sdk-manifest.json</code> declares where it is</td>
 </tr>
 
 
@@ -762,7 +868,7 @@ document.querySelectorAll("tr.rowlink").forEach(function (row) {
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.7.2 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.7.3 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

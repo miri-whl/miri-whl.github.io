@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.7.2</span><span class="what">changelog</span></a>
+    <span class="v">0.7.3</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -176,7 +176,7 @@
 <p><code>lifecycle.json</code> needs Stage 0 only (<code>MIRI-PY-018</code>, <code>MIRI-PY-019</code>, <code>MIRI-PY-021</code>).</p>
 <p><code>migration-guide.json</code> is the most constrained document in the standard, and is last for that reason. It needs Stage 1&#x27;s markers (<code>MIRI-PY-028</code>, <code>MIRI-PY-029</code>), Stage 2&#x27;s manifest (<code>MIRI-PY-031</code>), Stage 0&#x27;s version (<code>MIRI-PY-032</code>, which requires every <code>removal_version</code> to exceed it) — and, for two of its obligations, a previous release that may not exist (§3).</p>
 <h3 id="stage-4-views-over-the-surface">Stage 4 — Views over the surface</h3>
-<p><strong>Settled:</strong> <code>usage-patterns.json</code>, <code>api-graph.json</code>.</p>
+<p><strong>Settled:</strong> <code>usage-patterns.json</code>. (<code>api-graph.json</code> was withdrawn at 0.7.3 — Agent Metadata §4.5.)</p>
 <p>Both describe the surface Stage 2 declared. They are last in dependency order and may be generated in either order, or in parallel, and no <em>metadata document</em> is generated from either.</p>
 <p>They are not, however, unread. <code>MIRI-PY-039</code> fires when a prompt template &quot;references a metadata file the wheel does not ship (e.g. cites <code>api-graph.json</code> when none is present)&quot;, and <code>MIRI-PY-036</code> checks the discovery functions against the whole of <code>agent-metadata/</code>. An author who ships a template or a discovery function naming a Stage 4 document, and then does not generate it, fails both. An earlier draft claimed &quot;neither is depended upon by any other document — no check couples them to one&quot;; a single counterexample kills a universal, and there are two.</p>
 <h2 id="3-what-cannot-be-verified-yet">3. What Cannot Be Verified Yet</h2>
@@ -261,7 +261,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.7.2 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.7.3 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
