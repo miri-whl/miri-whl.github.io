@@ -10,7 +10,9 @@
     {
       "filename": "miri_standard_checks-0.7.3-py3-none-any.whl",
       "url": "https://github.com/miri-whl/miri-standard/releases/download/0.7.3/miri_standard_checks-0.7.3-py3-none-any.whl",
-      "hashes": {},
+      "hashes": {
+        "sha256": "7d5acd058a58f9505e3ba7c20a99507cf5a4b04066dab31681d7a73af48dbbde"
+      },
       "requires-python": ">=3.9",
       "yanked": false
     }

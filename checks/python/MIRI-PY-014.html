@@ -185,7 +185,7 @@
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>examples/quickstart.py is absent from the built wheel</li><li>METADATA Agent-Quickstart-File names a path that does not exist in the wheel</li><li>quickstart.py exists but never imports the package it ships in, or contains no executable statements (empty stub)</li>
+  <li>examples/quickstart.py is absent from the wheel, or present in the archive but installs outside every import package - a <code>.data</code>-routed member satisfies neither this clause nor any other path requirement. A finding here MUST name where the file actually shipped, because a producer who wrote a quickstart and placed it wrong needs to move it rather than write another</li><li>METADATA Agent-Quickstart-File names a path that does not exist in the wheel</li><li>quickstart.py exists but never imports the package it ships in, or contains no executable statements (empty stub)</li>
 </ul>
 
 
@@ -193,7 +193,7 @@
 <p class="muted">Weight is earned as a cumulative schedule; the obligation is satisfied at <strong>T1</strong>. Tiers above it price weight only.</p>
 <dl class="meta">
   <dt>T0</dt>
-  <dd><ul class="plain"><li><code>examples/quickstart.py</code> is present in the built wheel and <code>py_compile</code> succeeds on it</li></ul></dd><dt>T1 — conformance</dt>
+  <dd><ul class="plain"><li><code>examples/quickstart.py</code> is reachable from an installed import package - <code>importlib.resources.files(&lt;pkg&gt;).joinpath(&quot;examples/quickstart.py&quot;)</code> resolves to a file - and <code>py_compile</code> succeeds on it. Presence in the archive is NOT sufficient: a member routed through the PEP 427 <code>.data</code> scheme installs to <code>&lt;venv&gt;/examples/</code>, detached from the package, where no consumer will look (see the checklist&#x27;s Reachability clause)</li></ul></dd><dt>T1 — conformance</dt>
   <dd><ul class="plain"><li>Every import in quickstart.py resolves against the wheel&#x27;s own package or its Requires-Dist, and every attribute path it takes on the package (<code>Client.fetch</code>, <code>example_sdk.connect</code>) names a key in <code>sdk-manifest.json</code> <code>api_index</code></li></ul></dd><dt>T2</dt>
   <dd><ul class="plain"><li>quickstart.py exercises at least the calibrated floor of <code>quick_reference.primary_classes</code> and <code>key_methods</code> (floor: scoring-v1.json <code>conformance.tiers</code>; weightless until <code>t2_activation</code> is met)</li></ul></dd><dt>T3</dt>
   <dd><ul class="plain"><li><code>AGENT_EXAMPLES.json</code> entries ↔ files on disk hold in both directions: every <code>examples[*].file</code> exists, every <code>*.py</code> under examples/ (bar <code>__init__.py</code>) has an entry, and every id named in learning_paths, categories, prerequisites or related exists in the examples map — the join withdrawn MIRI-PY-016 performed</li><li>No example names a symbol absent from the current release&#x27;s <code>api_index</code></li></ul></dd>
