@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.7.3</span><span class="what">changelog</span></a>
+    <span class="v">0.7.4</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -173,7 +173,7 @@
 <ul><li><strong>Read, in order</strong> — the recommended reading sequence, <strong>SHOULD</strong> for every consumer including the reference one,</li><li>  skipping steps whose vehicle is unavailable (§1.1). It is deliberately <strong>not</strong> a MUST, because reading order is</li><li>  internal and unobservable: <a href="consumer-conformance.html">Consumer Conformance §2</a> can only check what a consumer says</li><li>  or emits, so a MUST here would be a requirement its own named enforcer declines to verify. What the order buys is</li><li>  stated in the heuristics; what is <em>enforced</em> is the prohibitions below.</li><li><strong>Must not</strong> — <strong>correctness and safety prohibitions</strong>, <strong>MUST</strong> for any conformant consumer. Each is verifiable</li><li>  from a consumer&#x27;s <em>observable output</em> by driving a reference consumer against the paired bare/miri and</li><li>  adversarial-metadata fixtures. Where a prohibition constrains only unobservable internal ordering, it is stated as</li><li>  the observable claim the consumer must not make.</li><li><strong>Should not</strong> — <strong>context-budget preferences</strong>, <strong>SHOULD</strong>. These are efficiency, not correctness; a consumer that</li><li>  violates one is wasteful, not wrong, and Consumer Conformance grades them separately from the MUSTs.</li><li><em>Heuristic</em> — informative. Judgment calls and rationale that no linter adjudicates; never a verdict.</li></ul>
 <p>The split is the answer to &quot;is a heterogeneous consumer contract enforceable?&quot;: the read-<em>order</em> is graded guidance precisely because it cannot be observed from outside, while the prohibitions are hard rules checkable against a reference tool. It is the prohibitions that keep a consumer honest, and no clause claims otherwise.</p>
 <h2 id="3-the-task-to-document-map">3. The Task-to-Document Map</h2>
-<p>Six tasks, each a read-order plus a set of prohibitions. The routing is the substance of this document.</p>
+<p>Six tasks, each a read-order plus a set of prohibitions. The read-order decides which operations a surface-only consumer can complete and which it must refuse.</p>
 <p>Each task also has a <strong>trigger</strong> — the observable moment at which it becomes actionable. A trigger is what a task answers <em>when</em>, as a vehicle (§1.1) answers <em>how</em> and the read-order answers <em>what</em>. The triggers are specified in the <a href="agent-integration-contract.html">Agent Integration Contract §3.1</a>, and named here because a task whose trigger lives only in a binding document is a task the map has described without saying when to perform it:</p>
 <div class="tablewrap"><table><thead><tr><th>Task</th><th>Trigger</th><th>Level</th></tr></thead><tbody><tr><td>§3.1 first use</td><td>a package not yet used in this session is first referenced</td><td>SHOULD</td></tr><tr><td>§3.2 scaffolding</td><td>new code is about to be written against a package</td><td>SHOULD</td></tr><tr><td>§3.3 upgrading</td><td>a dependency&#x27;s version is about to change</td><td><strong>REQUIRED</strong></td></tr><tr><td>§3.4 diagnosing</td><td>an error naming an installed package is observed</td><td>SHOULD</td></tr><tr><td>§3.5 security and trust</td><td>a dependency is about to be added</td><td>SHOULD †</td></tr><tr><td>§3.6 tests</td><td>a test touching a package is about to be written</td><td>SHOULD</td></tr></tbody></table></div>
 <p>† <code>dependency.add</code> is SHOULD, not REQUIRED: at the moment a dependency is added it is not installed, so it ships nothing a local surface can read and this task has no subject. It becomes REQUIRED when a registry-side surface exists (<a href="agent-integration-contract.html">Agent Integration §3.1</a>).</p>
@@ -345,7 +345,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.7.3 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.7.4 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>

@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.7.3</span><span class="what">changelog</span></a>
+    <span class="v">0.7.4</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -145,7 +145,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.7.3</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.7.4</b></span></div>
 <h1>Changelog</h1>
 
 <p class="lede">What each release delivered, and what a version number promises. A patch release contains bug fixes and clarifications only.</p>
@@ -154,6 +154,21 @@
 <p>All notable changes to the Miri Standard are recorded here.</p>
 <p>Versions follow the policy in <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/README.md#versioning">standards/README.md</a>: a <strong>major</strong> version marks a breaking change, a <strong>minor</strong> version a backward-compatible addition, and a <strong>patch</strong> version bug fixes and clarifications only. That policy is a contract with implementers, and it is worth keeping strictly: a reader should be able to see <code>0.3.1</code> and know it contains no additions without having to check.</p>
 <p>While the major version is 0 the standard is in initial development, so a <strong>minor</strong> bump may carry a breaking change (<a href="https://semver.org/#spec-item-4">Semantic Versioning §4</a>). Where one does, the entry says <strong>BREAKING</strong> in its first line and names what breaks. From 1.0.0 onward a breaking change takes a major bump.</p>
+<h2 id="074-unreleased">0.7.4 — unreleased</h2>
+<h3 id="fixed">Fixed</h3>
+<ul><li><strong>&quot;Reachability&quot; is now stated once, normatively, instead of being re-derived by every implementer.</strong> Six checks</li><li>  require a file to live inside an installed import package — <code>006</code>, <code>014</code>, <code>015</code>, <code>037</code>, <code>038</code>, and <code>014</code>&#x27;s T3</li><li>  clause — and exactly one of them said so. A grep of all 45 definitions finds <code>import package</code> in <code>MIRI-PY-006</code></li><li>  alone.</li></ul>
+<p><strong>Two checks said the opposite.</strong> <code>MIRI-PY-014</code> required <code>examples/quickstart.py</code> <em>&quot;present in the built wheel&quot;</em> and fired when it was <em>&quot;absent from the built wheel&quot;</em> — archive presence, which is the reading the new clause excludes. An implementer following that text literally produced the defect; they would have had to contradict the check to be correct. Both clauses are corrected, and the clause in the checklist preamble now governs all six.</p>
+<p>Reported by the miri-py team, who implemented the defect twice three weeks apart — the second time in <code>MIRI-PY-006</code>, whose own text already carried the rule. That is how a rule living in one check&#x27;s prose fails to reach the rest. Measured on two wheels from one source tree with byte-identical Python and placement the only difference, the checks separating a working wheel from a broken one went from 1 to 9 once they scoped correctly.</p>
+<p>A wheel routing <code>examples/</code> or <code>agent-metadata/</code> through the PEP 427 <code>.data</code> scheme installs those files to <code>&lt;venv&gt;/examples/</code>, detached from the package, where <code>importlib.resources</code> cannot reach them. The files exist and are listed in <code>RECORD</code>. Nothing that needs them can open them.</p>
+<ul><li><strong>Remediation text must distinguish absent from orphaned.</strong> The two have opposite fixes — write the file, or move</li><li>  the one you already wrote — and a check failing on reachability SHOULD name the path the file actually shipped</li><li>  at. miri-py shipped the right verdict with the wrong diagnosis and a panel caught the fix card telling a producer</li><li>  who <em>had</em> written a quickstart to write another.</li></ul>
+<ul><li><strong><code>docs/glossary.md</code> gains Reachable</strong>, whose near neighbor is <em>present</em> and whose distinction is the entire</li><li>  defect.</li></ul>
+<ul><li><strong>A dead citation.</strong> <code>scanrook.io</code> returns 502 at the root, so both links to it in</li><li>  <code>update-and-vulnerability-signaling.md</code> had stopped resolving. Replaced with NIST IR 7696, *CPE Name Matching</li><li>  Specification 2.3* — and the sentence reworded rather than the URL swapped underneath it, because the old link</li><li>  was cited for CPE matching being <em>unreliable</em> and the NIST document specifies how matching <em>works</em>. The</li><li>  unreliability claim now rests on the mechanism (a one-to-one comparison of two well-formed names presumes the</li><li>  name is known, and a stripped binary does not carry it) plus <code>cve-bin-tool</code>&#x27;s documented byte-signature</li><li>  fallback, which was already cited beside it.</li></ul>
+<ul><li><strong>A release job that would publish a tag from any branch.</strong> 0.7.3 was first tagged on a feature</li><li>  branch and published: the release was real — wheel, fixture pack, hash in the index — and built from</li><li>  a tree <code>main</code> did not contain, including work from this version that had not been reviewed. Correcting it</li><li>  meant deleting a published artifact ten minutes old, which is the act <code>MIRI-CONSUMER-052</code> exists to</li><li>  forbid; it is recorded here because an exception nobody writes down is indistinguishable from the</li><li>  defect. The wheel at digest <code>7d5acd05…</code> no longer resolves; <code>0.7.3</code> is now <code>235591bb…</code>, built from</li><li>  <code>f97b547</code> on <code>main</code>. <code>publish-checks.yml</code> now refuses a tag that <code>main</code> does not contain, which is</li><li>  the check that would have turned this into a failed run rather than a published one.</li></ul>
+<h3 id="changed">Changed</h3>
+<ul><li><strong>The pages a visitor reads lost their AI-voice tells.</strong> The published site was run through an</li><li>  editorial panel for the word choices and sentence shapes readers associate with machine-written</li><li>  text: first the three visitor-facing pages, then all 143, then <code>agent-integration-contract</code> alone.</li><li>  The repeated habit was <strong>manufactured closure</strong> — a tidy sentence sealing a section while making no</li><li>  further claim. <em>&quot;That is the whole of it&quot;</em>, <em>&quot;That gap is not cosmetic&quot;</em>, *&quot;It promises no magic</li><li>  beyond that&quot;<em>, and the epigram </em>&quot;Silence is the violation, not the absence of findings&quot;* are gone;</li><li>  so are five bold topic-sentence openers, two phrases praising the writing rather than making a</li><li>  claim, and 14 em dashes standing in for a colon or a full stop.</li></ul>
+<p>Two rewrites a reader will notice: the landing page closed by mirroring the <em>Beggars in Spain</em> quote (<em>&quot;gaps where information ought to go&quot;</em> → <em>&quot;the standard fills the gaps&quot;</em>) and now states what a wheel omits; <code>origin-story</code> repeated that same line nearly verbatim one click away. No meaning changed anywhere.</p>
+<p>Of 124 check pages, the sweep found one finding. The voice problem was in the hand-written narrative documents, and <code>agent-integration-contract</code> held a quarter of it.</p>
+<p>No check changed weight, level or intent.</p>
 <h2 id="073-unreleased">0.7.3 — unreleased</h2>
 <p><code>api-graph.json</code> is withdrawn, and <code>MIRI-PY-010</code> with it. A wheel need not ship the document and a consumer must not expect it; the schema stays published and frozen so anything already validating against it still can.</p>
 <p><strong>A patch carrying a withdrawal, which the versioning policy would normally place in a minor.</strong> Stated rather than glossed: the withdrawn check is a SHOULD worth 1 point, its weight moved to <code>MIRI-PY-045</code> in the same change, no MUST moved, and no wheel becomes invalid — <code>code_index</code> is optional and a wheel still shipping <code>api-graph.json</code> is not non-conforming for carrying it. The largest effect on any published score is one point. Everything else here is a fix or a clarification.</p>
@@ -346,6 +361,8 @@
   <nav>
     <ol>
     
+      <li class="lvl2"><a href="#074-unreleased">0.7.4 — unreleased</a></li>
+    
       <li class="lvl2"><a href="#073-unreleased">0.7.3 — unreleased</a></li>
     
       <li class="lvl2"><a href="#072-2026-09-24">0.7.2 — 2026-09-24</a></li>
@@ -412,7 +429,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.7.3 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.7.4 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
