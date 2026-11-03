@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.7.4</span><span class="what">changelog</span></a>
+    <span class="v">0.8.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -145,7 +145,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.7.4</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.8.0</b></span></div>
 <h1>Changelog</h1>
 
 <p class="lede">What each release delivered, and what a version number promises. A patch release contains bug fixes and clarifications only.</p>
@@ -154,7 +154,9 @@
 <p>All notable changes to the Miri Standard are recorded here.</p>
 <p>Versions follow the policy in <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/README.md#versioning">standards/README.md</a>: a <strong>major</strong> version marks a breaking change, a <strong>minor</strong> version a backward-compatible addition, and a <strong>patch</strong> version bug fixes and clarifications only. That policy is a contract with implementers, and it is worth keeping strictly: a reader should be able to see <code>0.3.1</code> and know it contains no additions without having to check.</p>
 <p>While the major version is 0 the standard is in initial development, so a <strong>minor</strong> bump may carry a breaking change (<a href="https://semver.org/#spec-item-4">Semantic Versioning §4</a>). Where one does, the entry says <strong>BREAKING</strong> in its first line and names what breaks. From 1.0.0 onward a breaking change takes a major bump.</p>
-<h2 id="080-unreleased">0.8.0 — unreleased</h2>
+<h2 id="080-2026-11-03">0.8.0 — 2026-11-03</h2>
+<h3 id="fixed-release-hygiene">Fixed (release hygiene)</h3>
+<ul><li><strong>The 0.7.3 and 0.7.4 headings said &quot;unreleased&quot; while both tags existed.</strong> Both were cut and neither heading was</li><li>  filled in, so the changelog stated something false about two published releases for weeks. Dated from their tags,</li><li>  2026-09-27 and 2026-10-17. The versioning policy calls this file a contract with implementers; a reader checking</li><li>  whether a version shipped was being told no.</li></ul>
 <p><strong>BREAKING.</strong> Seven <code>patternProperties</code> blocks gain <code>additionalProperties: false</code>. A key that matches no pattern was previously validated against nothing at all, so a vendored mirror will start refusing documents it used to accept. Regenerate against the 0.8.0 pin rather than letting it drift.</p>
 <h3 id="fixed">Fixed</h3>
 <ul><li><strong><code>api_index</code> keys could not express the key space the standard already defined.</strong> The Discovery Contract defines</li><li>  <code>resolve</code>&#x27;s input (§3.6) as a dotted qualified name *&quot;in the same key space <code>api_index</code> uses (e.g. <code>Greeter</code>,</li><li>  <code>Greeter.greet</code>)&quot;*, and §3.5 repeats it for graph node keys. <code>sdk-manifest-v1.json</code> admitted only a bare Python</li><li>  identifier. The schema never implemented the contract, and <code>api-graph-v1.json</code> had already been corrected for the</li><li>  same defect in an earlier review while this file was left behind. The pattern is now the one api-graph has carried</li><li>  since then, character for character.</li></ul>
@@ -172,7 +174,7 @@
 <p><code>version</code> is fixed at <code>&quot;1.0&quot;</code>, a value released wheels have carried with no definition behind it. <code>dependencies</code> is specified as IMPORT names (<code>yaml</code>) and not requirement strings (<code>PyYAML&gt;=6</code>), because the gap it closes is the mapping between the two. Reported by the miri-py team, who found the field was not merely unpopulated but unread: no generator wrote it and no linter consumed it, so <code>MIRI-PY-015</code>&#x27;s second clause had prose, no data and no code.</p>
 <ul><li><strong>§5.4 defines what counts as a public definition, and <code>surface_scope</code> states its glob dialect.</strong> Both were</li><li>  answers miri-py asked for rather than inherited from them. <code>__all__</code> now governs where a module declares one,</li><li>  which their walker parses and never consults; they called that an omission rather than a decision and asked to be</li><li>  told to honour it. Inherited methods stay out of scope, but for a reason rather than an implementation limit: the</li><li>  index routes to where a name is described, and <code>resolve</code> settles whether a member exists on an object. Matching in</li><li>  <code>surface_scope.exclude</code> is <code>fnmatch</code>, so a <code>*</code> crosses directory separators, with no negation and no</li><li>  directory-only form. The dialect is stated because the obvious alternative, <code>PurePath.full_match</code>, arrived in</li><li>  Python 3.13 and is unavailable to a producer supporting 3.11, and because two implementations otherwise diverge</li><li>  here without noticing.</li></ul>
 <ul><li><strong>§5.4 states what <code>api_index</code> is.</strong> A routing map and not an inventory; membership never settles existence, which</li><li>  is what <code>resolve</code> is for (<code>MIRI-CONSUMER-010</code>); keys are dotted qualified names. Three passages already implied the</li><li>  first. None stated it.</li></ul>
-<h2 id="074-unreleased">0.7.4 — unreleased</h2>
+<h2 id="074-2026-10-17">0.7.4 — 2026-10-17</h2>
 <h3 id="fixed">Fixed</h3>
 <ul><li><strong>&quot;Reachability&quot; is now stated once, normatively, instead of being re-derived by every implementer.</strong> Six checks</li><li>  require a file to live inside an installed import package — <code>006</code>, <code>014</code>, <code>015</code>, <code>037</code>, <code>038</code>, and <code>014</code>&#x27;s T3</li><li>  clause — and exactly one of them said so. A grep of all 45 definitions finds <code>import package</code> in <code>MIRI-PY-006</code></li><li>  alone.</li></ul>
 <p><strong>Two checks said the opposite.</strong> <code>MIRI-PY-014</code> required <code>examples/quickstart.py</code> <em>&quot;present in the built wheel&quot;</em> and fired when it was <em>&quot;absent from the built wheel&quot;</em> — archive presence, which is the reading the new clause excludes. An implementer following that text literally produced the defect; they would have had to contradict the check to be correct. Both clauses are corrected, and the clause in the checklist preamble now governs all six.</p>
@@ -187,7 +189,7 @@
 <p>Two rewrites a reader will notice: the landing page closed by mirroring the <em>Beggars in Spain</em> quote (<em>&quot;gaps where information ought to go&quot;</em> → <em>&quot;the standard fills the gaps&quot;</em>) and now states what a wheel omits; <code>origin-story</code> repeated that same line nearly verbatim one click away. No meaning changed anywhere.</p>
 <p>Of 124 check pages, the sweep found one finding. The voice problem was in the hand-written narrative documents, and <code>agent-integration-contract</code> held a quarter of it.</p>
 <p>No check changed weight, level or intent.</p>
-<h2 id="073-unreleased">0.7.3 — unreleased</h2>
+<h2 id="073-2026-09-27">0.7.3 — 2026-09-27</h2>
 <p><code>api-graph.json</code> is withdrawn, and <code>MIRI-PY-010</code> with it. A wheel need not ship the document and a consumer must not expect it; the schema stays published and frozen so anything already validating against it still can.</p>
 <p><strong>A patch carrying a withdrawal, which the versioning policy would normally place in a minor.</strong> Stated rather than glossed: the withdrawn check is a SHOULD worth 1 point, its weight moved to <code>MIRI-PY-045</code> in the same change, no MUST moved, and no wheel becomes invalid — <code>code_index</code> is optional and a wheel still shipping <code>api-graph.json</code> is not non-conforming for carrying it. The largest effect on any published score is one point. Everything else here is a fix or a clarification.</p>
 <h3 id="removed">Removed</h3>
@@ -379,11 +381,11 @@
   <nav>
     <ol>
     
-      <li class="lvl2"><a href="#080-unreleased">0.8.0 — unreleased</a></li>
+      <li class="lvl2"><a href="#080-2026-11-03">0.8.0 — 2026-11-03</a></li>
     
-      <li class="lvl2"><a href="#074-unreleased">0.7.4 — unreleased</a></li>
+      <li class="lvl2"><a href="#074-2026-10-17">0.7.4 — 2026-10-17</a></li>
     
-      <li class="lvl2"><a href="#073-unreleased">0.7.3 — unreleased</a></li>
+      <li class="lvl2"><a href="#073-2026-09-27">0.7.3 — 2026-09-27</a></li>
     
       <li class="lvl2"><a href="#072-2026-09-24">0.7.2 — 2026-09-24</a></li>
     
@@ -449,7 +451,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.7.4 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.8.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
