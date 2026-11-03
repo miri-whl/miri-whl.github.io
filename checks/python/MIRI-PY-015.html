@@ -155,7 +155,7 @@
   <span class="tag">weight 5</span>
   
   <span class="tag">requires execution</span>
-  <span class="tag">Miri Wheel Ext. §7.2.2</span>
+  <span class="tag">Agent Examples schema (agent-examples-v1)</span><span class="tag">Miri Wheel Ext. §7.2.2</span>
 </div>
 
 <p class="deffile">Definition:
@@ -186,7 +186,7 @@
 
 <h2>When it fires</h2>
 <ul class="plain">
-  <li>py_compile fails on any example listed in AGENT_EXAMPLES.json</li><li>an example exits nonzero or raises when executed in a clean venv containing only the built wheel plus the dependencies its index entry declares</li><li>an example imports a module provided neither by the package&#x27;s Requires-Dist nor by its AGENT_EXAMPLES.json dependencies entry</li><li>an example needs live credentials but carries no documented placeholder (e.g. YOUR_API_KEY) marking it exempt from clean-venv execution</li>
+  <li>py_compile fails on any example listed in AGENT_EXAMPLES.json</li><li>an example exits nonzero or raises when executed in a clean venv containing only the built wheel plus the dependencies its index entry declares</li><li>an example imports a module provided neither by the package&#x27;s Requires-Dist nor by its AGENT_EXAMPLES.json dependencies entry. That entry holds IMPORT names (<code>yaml</code>), never requirement strings (<code>PyYAML&gt;=6</code>), because the gap it closes is the mapping between the two. It is decidable from the artifact alone and MUST NOT be settled by inspecting the environment, which would make the verdict a function of what happens to be installed. Before 0.8.0 the field had no schema, no producer emitted it and no linter read it, so this clause could not be implemented</li><li>an example needs live credentials but carries no documented placeholder (e.g. YOUR_API_KEY) marking it exempt from clean-venv execution</li>
 </ul>
 
 
@@ -224,6 +224,8 @@
 
 <h2>References</h2>
 <ul class="plain">
+  
+  <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/../../schemas/agent-examples-v1.json">Agent Examples schema (agent-examples-v1)</a> <em>(spec)</em></li>
   
   <li><a href="https://github.com/miri-whl/miri-standard/blob/main/standards/python/miri-python-wheel-extensions.md">Miri Wheel Ext. §7.2.2</a> <em>(spec)</em></li>
   
