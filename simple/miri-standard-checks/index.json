@@ -4,15 +4,13 @@
   },
   "name": "miri-standard-checks",
   "versions": [
-    "0.8.0"
+    "0.9.0"
   ],
   "files": [
     {
-      "filename": "miri_standard_checks-0.8.0-py3-none-any.whl",
-      "url": "https://github.com/miri-whl/miri-standard/releases/download/0.8.0/miri_standard_checks-0.8.0-py3-none-any.whl",
-      "hashes": {
-        "sha256": "4a850d4c6702e301c3578f58374e6367110c5f2e1a211d3021e90a3606b0eae7"
-      },
+      "filename": "miri_standard_checks-0.9.0-py3-none-any.whl",
+      "url": "https://github.com/miri-whl/miri-standard/releases/download/0.9.0/miri_standard_checks-0.9.0-py3-none-any.whl",
+      "hashes": {},
       "requires-python": ">=3.9",
       "yanked": false
     }

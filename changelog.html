@@ -18,7 +18,7 @@
 <nav class="sidenav">
   
   <a class="version" href="changelog.html" title="What each release delivered">
-    <span class="v">0.8.0</span><span class="what">changelog</span></a>
+    <span class="v">0.9.0</span><span class="what">changelog</span></a>
   
   
   <div class="section">
@@ -145,7 +145,7 @@
 </nav>
 <main class="content"><div class="inner">
 
-<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.8.0</b></span></div>
+<div class="spec-eyebrow"><span>Document <b>CHANGELOG.md</b></span><span>Current version <b>0.9.0</b></span></div>
 <h1>Changelog</h1>
 
 <p class="lede">What each release delivered, and what a version number promises. A patch release contains bug fixes and clarifications only.</p>
@@ -154,7 +154,7 @@
 <p>All notable changes to the Miri Standard are recorded here.</p>
 <p>Versions follow the policy in <a href="https://github.com/miri-whl/miri-standard/blob/main/standards/README.md#versioning">standards/README.md</a>: a <strong>major</strong> version marks a breaking change, a <strong>minor</strong> version a backward-compatible addition, and a <strong>patch</strong> version bug fixes and clarifications only. That policy is a contract with implementers, and it is worth keeping strictly: a reader should be able to see <code>0.3.1</code> and know it contains no additions without having to check.</p>
 <p>While the major version is 0 the standard is in initial development, so a <strong>minor</strong> bump may carry a breaking change (<a href="https://semver.org/#spec-item-4">Semantic Versioning §4</a>). Where one does, the entry says <strong>BREAKING</strong> in its first line and names what breaks. From 1.0.0 onward a breaking change takes a major bump.</p>
-<h2 id="090-unreleased">0.9.0 — unreleased</h2>
+<h2 id="090-2026-11-10">0.9.0 — 2026-11-10</h2>
 <h3 id="added">Added</h3>
 <ul><li><strong><code>matched</code>, a reserved envelope field saying how much a capped operation selected.</strong> <code>truncated</code> says whether</li><li>  anything was cut and <code>cap</code> says the bound; neither says how much was lost, so a query matching 26 entries and one</li><li>  matching the whole index both return <code>truncated: true, cap: 25</code>. Required on every capped operation (<code>list</code>,</li><li>  <code>api-index</code>, <code>patterns</code>, <code>graph</code>) and present even when nothing was cut, for the reason <code>truncated</code> is never</li><li>  omitted as a shorthand for false: an omitted count cannot be told apart from a surface that does not count.</li><li>  <code>matched: 0</code> beside <code>present: true</code> says the filter selected nothing from a document that exists, which an empty</li><li>  capped view otherwise cannot distinguish from absence.</li></ul>
 <p>Requested by the miri-py team for a consumer that abandons the derived view and refetches the whole document whenever <code>truncated</code> is true, because <code>MIRI-CONSUMER-040</code> admits no silent loss and the envelope gave it nothing finer to act on. <code>patterns</code> is the sharpest case: antipatterns nest inside pattern entries, so a capped view drops the author&#x27;s misuse warnings for every entry past the cap without saying so.</p>
@@ -166,7 +166,7 @@
 <p>Nothing scores it. <code>MIRI-PY-008</code> validates the document against its schema, which settles the field&#x27;s type and says nothing about its relation to the arrays, and draft-07 cannot compare one array&#x27;s members against another array&#x27;s contents. The same section states that the order of <code>patterns</code> and of every learning path MUST be a function of the package&#x27;s content rather than of the build host, which is decidable only by building the same tree twice and so sits outside the artifact-inspection model.</p>
 <h3 id="fixed">Fixed</h3>
 <ul><li><strong>Three of the six payload keys had no schema, and the gap hid a live defect.</strong> <code>discovery-envelope-v1.json</code></li><li>  defined <code>packages</code>, <code>document</code> and <code>entries</code>; §4.1 names <code>resolution</code>, <code>patterns</code> and <code>graph</code> as well. §4.2 says</li><li>  an absent response carries a reason and NO payload key, and the schema enforced that only for the three that had</li><li>  been written down, so a surface could return <code>present: false</code> carrying a fully-formed <code>resolution</code> and validate.</li><li>  That is the forgery the envelope exists to deny, in the section where its un-forgeability argument lives. All six</li><li>  payloads are now defined and all six are refused on an absent response. Reported, in its narrower form, by the</li><li>  miri-py team.</li></ul>
-<ul><li><strong>§3.8&#x27;s example spelled the graph edge key <code>kind</code>.</strong> <code>api-graph-v1.json</code> has always spelled it <code>relationship</code>,</li><li>  with a six-value vocabulary, and that schema governs. The reference implementation emitted <code>relationship</code>, so the</li><li>  prose was the outlier rather than the surface. Corrected, and the envelope uses <code>relationship</code>.</li></ul>
+<ul><li><strong>§3.8&#x27;s example and §3.5.1&#x27;s ordering table spelled the graph edge key <code>kind</code>.</strong> <code>api-graph-v1.json</code> has always</li><li>  spelled it <code>relationship</code>, with a six-value vocabulary, and that schema governs. The reference implementation</li><li>  emitted <code>relationship</code>, so the prose was the outlier rather than the surface. Corrected, and the envelope uses</li><li>  <code>relationship</code>.</li></ul>
 <h3 id="changed">Changed</h3>
 <ul><li><strong><code>resolution</code> gains <code>may_be_inherited</code> and <code>definitions</code>.</strong> Both were shipped by the miri-py team ahead of the</li><li>  committee, as fields rather than <code>evidence</code> values, on the reasoning that an unknown field is ignorable by</li><li>  construction where an unknown value in a closed set makes the response unprocessable (§3.6.1). The reasoning</li><li>  holds and both are standardized. <code>resolution</code> keeps <code>additionalProperties</code> open for the reason §4.1 gives for the</li><li>  envelope root, so that line is now a property of the schema rather than an argument about one.</li></ul>
 <p><code>definitions</code> is required when <code>found</code> is true including at 1, because an omitted count cannot be told apart from a surface that does not count, and forbidden when <code>found</code> is false, because reporting 0 for a name that was not found would be a claim about the package that this operation never makes.</p>
@@ -398,7 +398,7 @@
   <nav>
     <ol>
     
-      <li class="lvl2"><a href="#090-unreleased">0.9.0 — unreleased</a></li>
+      <li class="lvl2"><a href="#090-2026-11-10">0.9.0 — 2026-11-10</a></li>
     
       <li class="lvl2"><a href="#080-2026-11-03">0.8.0 — 2026-11-03</a></li>
     
@@ -470,7 +470,7 @@
 </script>
 
 <div class="footer">
-  <span>miri-standard · 0.8.0 · generated from the canonical check definitions</span>
+  <span>miri-standard · 0.9.0 · generated from the canonical check definitions</span>
   <span><a href="https://github.com/miri-whl/miri-standard/tree/main/schemas">schemas</a> · <a href="https://github.com/miri-whl/miri-standard/tree/main/standards">specifications</a></span>
 </div>
 </div></main>
